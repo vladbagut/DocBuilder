@@ -40,7 +40,7 @@ export const docTypes = [
       'Adresa',
       'NumarInmatriculare',
       'ModelVehicul',
-      'SerieSaşiu',
+      'SerieŞasiu',
       'NumarInventar',
       'CapacitateaCilindrica',
       'Putere',
@@ -53,7 +53,7 @@ export const docTypes = [
   {
     key: 'contractVC',
     name: 'Contract vanzare Auto',
-    fields: ['Nume', 'CNP', 'NumarInmatriculare', 'SerieSaşiu'],
+    fields: ['Nume', 'CNP', 'NumarInmatriculare', 'SerieŞasiu'],
   },
   {
     key: 'cererePasaport',
