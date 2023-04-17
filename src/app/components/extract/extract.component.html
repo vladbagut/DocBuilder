@@ -1,0 +1,381 @@
+<rsz-layout
+  class="row"
+  [directions]="['none']"
+  [rFlex]="true"
+  class="d-flex w-100"
+>
+  <!-- LEFT - UPLOAD -->
+  <rsz-layout
+    class="cell"
+    [className]="'cell'"
+    [directions]="['right']"
+    [rFlex]="true"
+    (resizing)="resizing()"
+  >
+    <div appDragDrop (filesDropped)="setFile($event)" class="asig-wrapper">
+      <!-- upload & drag& drop area -->
+      <button
+        class="position-relative align-self-center upload-button"
+        mat-icon-button
+        (click)="fileInput.click()"
+      >
+        <mat-icon svgIcon="cloudUpload"></mat-icon>
+        <mat-icon>logout</mat-icon>
+      </button>
+
+      <div
+        color="primary"
+        class="mat-body-2 primary-main mt-3 align-self-center"
+      >
+        Incarca imagine
+      </div>
+      <div class="subtext align-self-center">
+        Tipurile de fisiere permise: *.jpg, *.png
+      </div>
+      <input
+        hidden
+        type="file"
+        onclick="this.value=null"
+        #fileInput
+        [accept]="CERTIFICATE_UPLOAD_FILE_FORMATS"
+        (change)="setFile($event.target.files[0])"
+      />
+      <mat-error class="mt-4 max-w-400 align-self-center" *ngIf="errorMessage">
+        Eroare la incarcare fisier: {{ errorMessage }}
+      </mat-error>
+
+      <!-- lista imagini incarcate -->
+      <div class="mt-4">
+        <div
+          *ngFor="let upFile of files; let i = index"
+          class="d-flex flex-row mt-3 file-item not-allow-drop"
+        >
+          <!-- o imagine incarcata -->
+          <mat-expansion-panel
+            [expanded]="upFile.expanded"
+            class="mat-elevation-z0 flex-grow-1"
+          >
+            <mat-expansion-panel-header>
+              <div
+                class="d-flex flex-row justify-content-between align-items-center w-100 ps-2"
+              >
+                <div class="text-start flex-grow-1 word-break">
+                  {{ upFile.fileName }}
+                </div>
+                <button
+                  class="ms-3 action-button close-button"
+                  mat-icon-button
+                  (click)="
+                    $event.preventDefault();
+                    $event.stopPropagation();
+                    deleteMedia(upFile)
+                  "
+                  color="primary"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </mat-expansion-panel-header>
+
+            <div class="d-flex flex-row">
+              <!-- imagine (cu un canvas ascuns pe care se deseneaza selectia) -->
+              <div
+                class="image-cropper-wrapper w-100 h-100 position-relative"
+                (contextmenu)="
+                  $event.preventDefault();
+                  $event.stopPropagation();
+                  textExtractingFor = upFile;
+                  contextMenuPosition.x = $event.clientX;
+                  contextMenuPosition.y = $event.clientY;
+                  upFile.croppedFile && contextMenuTrigger.openMenu()
+                "
+              >
+                <div
+                  style="visibility: hidden; position: fixed"
+                  [style.left]="contextMenuPosition.x + 'px'"
+                  [style.top]="contextMenuPosition.y + 'px'"
+                  #contextMenuTrigger="matMenuTrigger"
+                  [matMenuTriggerFor]="myMenu"
+                  [matMenuTriggerData]="{ upFile: upFile }"
+                  (onMenuOpen)="onMenuOpen(contextMenuTrigger)"
+                  (onMenuClose)="openedTrigger = null"
+                ></div>
+                <img
+                  appCropImage
+                  (imageCropped)="cropImg($event, upFile)"
+                  (imageDragged)="textExtractingFor = upFile"
+                  class="noselect"
+                  [src]="upFile.fileBase64"
+                  draggable="false"
+                  style="
+                    height: auto;
+                    object-fit: scale-down !important;
+                    max-width: 100%;
+                  "
+                />
+              </div>
+              <!-- butoane pt actiuni imagine-->
+              <div
+                style="width: 40px"
+                class="d-flex flex-column align-items-end pt-2"
+              >
+                <button
+                  type="button"
+                  [class.opacity-0]="!upFile.croppedFile"
+                  [class.spinner-grow-inline]="
+                    textExtracting && upFile == textExtractingFor
+                  "
+                  color="primary"
+                  mat-icon-button
+                  class="action-button mb-3"
+                >
+                  <a
+                    class="nav-link"
+                    #myMenuTrigger="matMenuTrigger"
+                    [matMenuTriggerData]="{ upFile: upFile }"
+                    [matMenuTriggerFor]="myMenu"
+                    (onMenuOpen)="onMenuOpen(myMenuTrigger)"
+                    (onMenuClose)="openedTrigger = null"
+                    (click)="textExtractingFor = upFile"
+                  >
+                    <mat-icon class="mt-1">arrow_forward</mat-icon>
+                  </a>
+                </button>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </div>
+      </div>
+    </div>
+  </rsz-layout>
+
+  <!-- RIGHT: FORMULAR SI CONSOLA -->
+  <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
+    <div class="asig-wrapper asig-wrapper-right w-100 px-3 pe-1">
+      <div class="content cols h-100 w-100">
+        <rsz-layout
+          class="row"
+          [directions]="['none']"
+          [rFlex]="true"
+          style="flex-basis: 100%"
+        >
+          <!-- FORMULAR -->
+          <rsz-layout
+            class="cell"
+            [directions]="['bottom']"
+            [rFlex]="true"
+            [class.flex-90]="textConsola"
+            [class.flex-100]="!textConsola"
+          >
+            <div class="d-flex flex-row h-100 pt-2">
+              <div class="h-100 d-flex flex-column flex-grow-1">
+                <!-- select tip formular -->
+                <mat-form-field class="mb-3 w-50 px-5">
+                  <mat-label>Tipul documentului</mat-label>
+                  <mat-select
+                    disableOptionCentering
+                    (selectionChange)="selectedDocType = $event.value"
+                  >
+                    <mat-option
+                      *ngFor="let docType of docTypes"
+                      [value]="docType"
+                    >
+                      {{ docType.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- formular -->
+                <ng-container *ngTemplateOutlet="pdfTemplate"> </ng-container>
+              </div>
+
+              <!-- butoane - actiuni pdf  -->
+              <div
+                style="width: 50px"
+                class="d-flex flex-column align-items-end pdfActionsWrapper"
+                [class.active]="selectedDocType"
+              >
+                <!-- Open PDF-->
+                <button
+                  (click)="generarePdf('open')"
+                  type="button"
+                  color="primary"
+                  mat-icon-button
+                  class="action-button big mb-2"
+                >
+                  <mat-icon>picture_as_pdf</mat-icon>
+                </button>
+
+                <!-- Download PDF-->
+                <button
+                  (click)="generarePdf('download')"
+                  type="button"
+                  color="primary"
+                  mat-icon-button
+                  class="action-button big mb-2"
+                >
+                  <mat-icon>cloud_download</mat-icon>
+                </button>
+
+                <!-- Print PDF-->
+                <button
+                  (click)="generarePdf('print')"
+                  type="button"
+                  color="primary"
+                  mat-icon-button
+                  class="action-button big mb-2"
+                >
+                  <mat-icon>print</mat-icon>
+                </button>
+
+                <!-- Reset PDF-->
+                <button
+                  (click)="resetForm()"
+                  type="button"
+                  color="primary"
+                  mat-icon-button
+                  class="action-button big"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </rsz-layout>
+
+          <!-- CONSOLA -->
+          <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
+            <!-- consola -->
+            <div
+              class="h-100 w-100 position-relative consola-wrapper"
+              *ngIf="textConsola"
+            >
+              <span class="consola-titlu position-absolute">Consola</span>
+              <button
+                class="action-button close-button position-absolute"
+                (click)="textConsola = null"
+                mat-icon-button
+                color="primary"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+              <div class="h-100 consola w-100">
+                <div class="py-4 ps-3 pe-4">{{ textConsola }}</div>
+              </div>
+            </div>
+          </rsz-layout>
+        </rsz-layout>
+      </div>
+    </div>
+  </rsz-layout>
+</rsz-layout>
+
+<!-- Meniu-->
+<mat-menu #myMenu="matMenu">
+  <ng-template matMenuContent let-upFile="upFile">
+    <button
+      [class.image-menu-button]="field == 'Imagine'"
+      *ngFor="let field of selectedDocType?.fields"
+      mat-menu-item
+      (click)="
+        sendFileInFiled(
+          { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
+          field
+        )
+      "
+    >
+      <mat-icon *ngIf="field != 'Imagine'; else imageImg"> </mat-icon>
+      <ng-template #imageImg>
+        <mat-icon>assignment_ind</mat-icon>
+      </ng-template>
+      <span class="px-2">{{ field | camelToSpace }}</span>
+      <mat-icon class="float-end">arrow_forward</mat-icon>
+    </button>
+
+    <button
+      mat-menu-item
+      (click)="
+        sendFileInFiled({
+          file: upFile.croppedFile,
+          fileBase64: upFile.croppedFileBase64
+        })
+      "
+      class="show-in-console"
+    >
+      <mat-icon>view_headline</mat-icon>
+      <span class="px-2">Afisare text extras in consola</span>
+      <mat-icon class="float-end">arrow_downward</mat-icon>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<!-- Formulare -->
+<ng-template appTemplateDirective #pdfTemplate templateName="pdfTemplate">
+  <form
+    autocomplete="off"
+    class="w-100 h-100 d-flex flex-row"
+    [formGroup]="form"
+  >
+    <!-- col 1 si 2 -->
+    <div
+      class="h-100 d-flex flex-column flex-grow-0 w-50 px-5"
+      *ngFor="let column of [1, 2]"
+    >
+      <div *ngFor="let field of getFormularFields(column)">
+        <mat-form-field
+          class="w-100"
+          *ngIf="field != 'Imagine'"
+          appearance="outline"
+          color="primary"
+          appDragDrop
+          (textDropped)="sendTextInField($event, field)"
+          (filesDropped)="sendFileInFiled({ file: $event }, field)"
+        >
+          <mat-label>{{ field | camelToSpace }}</mat-label>
+          <input
+            *ngIf="!selectedDocType.bigFields?.includes(field)"
+            type="text"
+            matInput
+            [formControlName]="field"
+          />
+
+          <textarea
+            *ngIf="selectedDocType.bigFields?.includes(field)"
+            type="text"
+            spellcheck="false"
+            rows="1"
+            matInput
+            [formControlName]="field"
+          ></textarea>
+          <mat-icon
+            (click)="form.get(field).setValue('')"
+            *ngIf="form?.get(field)?.value"
+            [@fadingAnimation]="{
+              value: form?.get(field)?.value ? true : false
+            }"
+            color="accent"
+            matSuffix
+            >close
+          </mat-icon>
+        </mat-form-field>
+
+        <!-- imagine formular-->
+        <div
+          class="w-100"
+          *ngIf="field == 'Imagine'"
+          [class.hasImage]="form.get('Imagine').value"
+          class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
+          appDragDrop
+          (filesDropped)="sendFileInFiled({ file: $event }, 'Imagine')"
+        >
+          <img
+            *ngIf="form.get('Imagine').value; else noIcon"
+            [src]="form.get('Imagine').value"
+          />
+          <ng-template #noIcon>
+            <mat-icon svgIcon="image"></mat-icon>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

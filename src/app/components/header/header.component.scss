@@ -1,0 +1,42 @@
+@import "src/styles";
+
+.toolbar {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 18px;
+  background: rgb(62, 124, 145);
+  background: linear-gradient(
+    107deg,
+    rgba(62, 124, 145, 1) 0%,
+    rgba(71, 141, 165, 1) 40%,
+    rgba(88, 166, 193, 1) 100%
+  );
+  background: linear-gradient(107deg, #4aa0bd 0%, #478da5 40%, #71b8d1 100%);
+}
+
+.toolbar img {
+  margin: 0 16px;
+}
+.red-text {
+  color: red;
+  font-weight: 600;
+  font-size: 60px;
+  transform: rotate(-23deg);
+  z-index: 1;
+}
+
+.white-text {
+  font-weight: 600;
+  color: white;
+  font-family: system-ui;
+  font-size: 33px !important;
+  margin-left: -12px;
+  z-index: 2;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

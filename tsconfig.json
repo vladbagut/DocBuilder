@@ -1,0 +1,28 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "allowJs": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "target": "es2017",
+    "module": "es2020",
+    "lib": ["es2020", "dom"],
+    "paths": {
+      "@shared/*": ["src/app/shared/*"]
+    },
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"]
+  },
+  //  "include": ["src/**/*.ts"],
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  }
+}

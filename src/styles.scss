@@ -1,0 +1,309 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+@import "styles/bootstrap";
+
+.fs-12 {
+  font-size: 12px;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+.dotdotdot {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+$accent-brand: #54a6c1;
+$background-clor: #f1f6f9;
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #add8e624;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: lightblue;
+}
+
+// Shades of gray
+$gray80: #313131;
+$gray60: #3f3f3f;
+$gray50: #585858;
+$gray40: #737373;
+$gray30: #b5b5b5;
+$gray20: #ececec;
+$gray15: #f4f4f4;
+$gray10: #fafafa;
+$invalid-color: #94153d;
+$dark-text: black;
+
+// ---------------------
+// datepicker
+// ---------------------
+
+//form field- calendar toggle
+.mat-datepicker-toggle,
+.mat-datepicker-toggle-active {
+  color: $gray40 !important;
+}
+.mat-datepicker-toggle {
+  &:hover .mat-icon-button .mat-button-focus-overlay {
+    opacity: 0.05;
+  }
+  .mat-icon-button.cdk-program-focused .mat-button-focus-overlay {
+    opacity: 0;
+  }
+}
+
+//calendar popup
+.mat-calendar {
+  min-height: 300px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+//header
+.mat-calendar-header {
+  .mat-calendar-previous-button:not(.mat-button-disabled),
+  .mat-calendar-next-button:not(.mat-button-disabled) {
+    color: $gray40 !important;
+  }
+}
+
+.mat-calendar-table-header-divider::after {
+  background-color: transparent;
+}
+
+//view title
+.mat-calendar-period-button {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: $gray40;
+}
+
+//change view - button arrow
+.mat-calendar-arrow {
+  fill: $gray40;
+}
+
+//month button hover overlay
+.mat-focus-indicator.cdk-focused .mat-button-focus-overlay,
+.mat-calendar-period-button:hover:not(.mat-button-disabled)
+  .mat-button-focus-overlay {
+  opacity: 0 !important;
+}
+
+//week day
+.mat-calendar-table-header th {
+  font-size: 12px;
+  color: $dark-text;
+}
+
+//day
+.mat-calendar-body-cell {
+  font-size: 14px;
+  color: $dark-text;
+}
+
+// regular date
+.mat-calendar-body-cell-content {
+  color: $dark-text;
+}
+
+// active date - not selected
+.mat-calendar-body-active
+  .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: transparent !important;
+}
+
+// selected date
+.mat-calendar-body-selected {
+  background-color: $accent-brand;
+  color: white;
+}
+.mat-calendar-body-disabled > .mat-calendar-body-selected {
+  background-color: $accent-brand;
+}
+
+// date hover
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover
+  > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(
+    .mat-calendar-body-comparison-identical
+  ) {
+  background-color: $gray15 !important;
+}
+
+//date disabled
+.mat-calendar-body-disabled
+  > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(
+    .mat-calendar-body-comparison-identical
+  ) {
+  color: $gray40;
+  background-color: $gray10;
+}
+
+// today
+.mat-calendar-body-today.mat-calendar-body-selected {
+  border-color: $accent-brand !important;
+  color: white;
+  border: none !important;
+}
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: $accent-brand !important;
+}
+
+.mat-calendar-body-label {
+  opacity: 0;
+}
+
+::ng-deep .mat-form-field-suffix {
+  padding-left: 8px;
+  padding-top: 2px;
+
+  .mat-icon-button {
+    border-radius: 50%;
+  }
+}
+::ng-deep .mat-form-field,
+.mat-form-field {
+  ::ng-deep .mat-form-field-flex {
+    font-weight: normal;
+    .mat-form-field-outline-thick {
+      border-width: 1px;
+    }
+  }
+
+  ::ng-deep .mat-form-field-label,
+  ::ng-deep .mat-input-element::placeholder {
+    font-weight: normal !important;
+  }
+
+  // work around to avoid clipping the floating label
+  &.mat-form-field-should-float .mat-form-field-label {
+    padding-bottom: 2px;
+  }
+
+  //normal
+
+  ::ng-deep .mat-form-field-flex {
+    .mat-form-field-outline {
+      color: lightblue !important;
+    }
+    &:hover {
+      .mat-form-field-outline {
+        color: #1da8d5 !important;
+        & > div {
+          border-width: 1px;
+        }
+      }
+    }
+    // label(placeholder) - not float
+    .mat-input-element::placeholder,
+    .mat-form-field-label {
+      color: $gray30;
+    }
+  }
+
+  // label float up
+  &.mat-form-field-can-float.mat-form-field-should-float ::ng-deep {
+    .mat-form-field-label,
+    .mat-form-field-required-marker {
+      color: #548daf;
+      transform: translateY(-1.6em) scale(0.9);
+      mat-label {
+        padding-right: 6px;
+        background-color: #f1f6f9;
+      }
+    }
+  }
+  &.mat-form-field-appearance-legacy {
+    &.mat-form-field-can-float.mat-form-field-should-float ::ng-deep {
+      .mat-form-field-label {
+        color: transparent;
+      }
+    }
+  }
+
+  // focused
+  &.mat-focused {
+    ::ng-deep .mat-form-field-flex {
+      .mat-form-field-outline {
+        color: #1da8d5 !important;
+        & > div {
+          border-width: 1px;
+        }
+      }
+    }
+  }
+
+  &.mat-focused .mat-form-field-ripple {
+    background-color: #1da8d5;
+  }
+}
+
+.mat-option.mat-selected:not(.mat-option-disabled) {
+  color: #08556e !important;
+}
+
+::ng-deep .mat-form-field-underline {
+  background-color: lightblue !important;
+}
+
+.spinner-grow {
+  color: $accent-brand;
+}
+
+.spinner-grow-inline {
+  * {
+    visibility: hidden;
+  }
+
+  &:before {
+    width: 2rem;
+    height: 2rem;
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -1rem;
+    margin-top: -1rem;
+    background-color: currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    animation: spinner-grow 0.75s linear infinite;
+  }
+}
+
+.noselect {
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+}
+
+.word-break {
+  white-space: break-spaces;
+  word-break: break-all;
+}
