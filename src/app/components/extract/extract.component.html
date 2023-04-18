@@ -273,21 +273,23 @@
 <mat-menu #myMenu="matMenu">
   <ng-template matMenuContent let-upFile="upFile">
     <button
-      [class.image-menu-button]="field == 'Imagine'"
+      [class.image-menu-button]="field.key == 'imagine'"
       *ngFor="let field of selectedDocType?.fields"
       mat-menu-item
       (click)="
         sendFileInFiled(
           { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
-          field
+          field.key
         )
       "
     >
-      <mat-icon *ngIf="field != 'Imagine'; else imageImg"> </mat-icon>
+      <mat-icon *ngIf="field.key != 'imagine'; else imageImg"> </mat-icon>
       <ng-template #imageImg>
         <mat-icon>assignment_ind</mat-icon>
       </ng-template>
-      <span class="px-2">{{ field | camelToSpace }}</span>
+
+      <span class="px-2">{{ field.name }}</span>
+      <span *ngIf="field.shortName" class="px-2">({{ field.shortName }})</span>
       <mat-icon class="float-end">arrow_forward</mat-icon>
     </button>
 
@@ -323,34 +325,36 @@
       <div *ngFor="let field of getFormularFields(column)">
         <mat-form-field
           class="w-100"
-          *ngIf="field != 'Imagine'"
+          *ngIf="field.key != 'imagine'"
           appearance="outline"
           color="primary"
           appDragDrop
-          (textDropped)="sendTextInField($event, field)"
-          (filesDropped)="sendFileInFiled({ file: $event }, field)"
+          (textDropped)="sendTextInField($event, field.key)"
+          (filesDropped)="sendFileInFiled({ file: $event }, field.key)"
         >
-          <mat-label>{{ field | camelToSpace }}</mat-label>
+          <mat-label>{{
+            field.name + (field.shortName ? " (" + field.shortName + ") " : "")
+          }}</mat-label>
           <input
-            *ngIf="!selectedDocType.bigFields?.includes(field)"
+            *ngIf="!field.big"
             type="text"
             matInput
-            [formControlName]="field"
+            [formControlName]="field.key"
           />
 
           <textarea
-            *ngIf="selectedDocType.bigFields?.includes(field)"
+            *ngIf="field.big"
             type="text"
             spellcheck="false"
             rows="1"
             matInput
-            [formControlName]="field"
+            [formControlName]="field.key"
           ></textarea>
           <mat-icon
-            (click)="form.get(field).setValue('')"
-            *ngIf="form?.get(field)?.value"
+            (click)="form.get(field.key).setValue('')"
+            *ngIf="form?.get(field.key)?.value"
             [@fadingAnimation]="{
-              value: form?.get(field)?.value ? true : false
+              value: form?.get(field.key)?.value ? true : false
             }"
             color="accent"
             matSuffix
@@ -361,15 +365,15 @@
         <!-- imagine formular-->
         <div
           class="w-100"
-          *ngIf="field == 'Imagine'"
-          [class.hasImage]="form.get('Imagine').value"
+          *ngIf="field.key == 'imagine'"
+          [class.hasImage]="form.get('imagine').value"
           class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
           appDragDrop
-          (filesDropped)="sendFileInFiled({ file: $event }, 'Imagine')"
+          (filesDropped)="sendFileInFiled({ file: $event }, 'imagine')"
         >
           <img
-            *ngIf="form.get('Imagine').value; else noIcon"
-            [src]="form.get('Imagine').value"
+            *ngIf="form.get('imagine').value; else noIcon"
+            [src]="form.get('imagine').value"
           />
           <ng-template #noIcon>
             <mat-icon svgIcon="image"></mat-icon>

@@ -30,52 +30,164 @@ export type UpFile = {
   textExtracting?: boolean;
 };
 
-//aici
 export const docTypes = [
   {
     key: 'asigAuto',
     name: 'Asigurare AUTO RCA',
     fields: [
-      'Nume',
-      'CNP',
-      'Adresa',
-      'NumarInmatriculare',
-      'ModelVehicul',
-      'SerieŞasiu',
-      'NumarInventar',
-      'CapacitateaCilindrica',
-      'Putere',
-      'NumarLocuri',
-      'GreutateMaximaAdmisa',
+      {
+        key: 'nume',
+        name: 'Nume',
+      },
+      {
+        key: 'CNP',
+        name: 'CNP',
+      },
+      {
+        key: 'adresa',
+        name: 'Adresa',
+        big: true,
+      },
+      {
+        key: 'nrInmatriculare',
+        name: 'Numar inmatriculare',
+        column: 2,
+      },
+      {
+        key: 'modelVehicul',
+        name: 'Model vehicul',
+        column: 2,
+      },
+      {
+        key: 'serieŞasiu',
+        name: 'Serie şasiu',
+        shortName: 'E',
+        column: 2,
+      },
+      {
+        key: 'nrInventar',
+        name: 'Numar inventar',
+        shortName: 'X',
+        column: 2,
+      },
+      {
+        key: 'capacitateaCilindrica',
+        name: 'Capacitatea cilindrica',
+        shortName: 'P.1',
+        column: 2,
+      },
+      {
+        key: 'putere',
+        name: 'Putere',
+        shortName: 'P.2',
+        column: 2,
+      },
+      {
+        key: 'numarLocuri',
+        name: 'Numar locuri',
+        shortName: 'S.1',
+        column: 2,
+      },
+      {
+        key: 'greutateMaximaAdmisa',
+        name: 'Greutate maxima admisa',
+        shortName: 'F.1',
+        column: 2,
+      },
     ],
-    maxNoFieldsInFirstColumn: 3,
-    bigFields: ['Adresa'],
   },
   {
     key: 'contractVC',
     name: 'Contract vanzare Auto',
-    fields: ['Nume', 'CNP', 'NumarInmatriculare', 'SerieŞasiu'],
+    fields: [
+      {
+        key: 'nume',
+        name: 'Nume',
+      },
+      {
+        key: 'CNP',
+        name: 'CNP',
+      },
+      {
+        key: 'adresa',
+        name: 'Adresa',
+        big: true,
+      },
+      {
+        key: 'nrInmatriculare',
+        name: 'Numar inmatriculare',
+        column: 2,
+      },
+      {
+        key: 'modelVehicul',
+        name: 'Model vehicul',
+        column: 2,
+      },
+    ],
   },
   {
     key: 'cererePasaport',
     name: 'Cerere pasapoarte',
-    fields: ['Nume', 'CNP', 'Imagine'],
-    maxNoFieldsInFirstColumn: 2,
+    fields: [
+      {
+        key: 'nume',
+        name: 'Nume',
+      },
+      {
+        key: 'CNP',
+        name: 'CNP',
+      },
+      {
+        key: 'adresa',
+        name: 'Adresa',
+        big: true,
+      },
+      {
+        key: 'imagine',
+        name: 'Imagine',
+        column: 2,
+      },
+    ],
   },
   {
     key: 'cerereVisa',
     name: 'Cerere viza',
-    fields: ['Nume', 'CNP'],
+    fields: [
+      {
+        key: 'nume',
+        name: 'Nume',
+      },
+      {
+        key: 'CNP',
+        name: 'CNP',
+      },
+    ],
   },
   {
     key: 'contractMunca',
     name: 'Contract de munca',
-    fields: ['Nume', 'CNP', 'Imagine'],
+    fields: [
+      {
+        key: 'nume',
+        name: 'Nume',
+      },
+      {
+        key: 'CNP',
+        name: 'CNP',
+      },
+      {
+        key: 'adresa',
+        name: 'Adresa',
+        big: true,
+      },
+      {
+        key: 'imagine',
+        name: 'Imagine',
+        column: 2,
+      },
+    ],
   },
 ];
-
-export const areaFields = ['Descriere'];
-export const datesFields = [];
 
 @Component({
   selector: 'app-extract',
@@ -105,9 +217,12 @@ export class ExtractComponent implements OnInit {
   public menuTriggers: QueryList<MatMenuTrigger>;
 
   constructor(public fileService: FileService, private elRef: ElementRef) {
-    this.getItemsFieldFlat(docTypes, 'fields').map((field) =>
-      this.form.addControl(field, new FormControl())
-    );
+    uniqBy(
+      docTypes
+        ?.filter((item) => item['fields'])
+        .map((item) => item['fields'].map((f) => f.key))
+        .flat() || []
+    ).map((field) => this.form.addControl(field, new FormControl()));
   }
 
   async ngOnInit() {
@@ -168,7 +283,7 @@ export class ExtractComponent implements OnInit {
   }
 
   async sendFileInFiled(source?: { file?: File; fileBase64?: string }, field?) {
-    if (field !== 'Imagine') {
+    if (field !== 'imagine') {
       //text
       this.extractText(source.file).then((text) => {
         if (field)
@@ -182,7 +297,7 @@ export class ExtractComponent implements OnInit {
     } else {
       // imagine
       this.form
-        .get('Imagine')
+        .get('imagine')
         .setValue(
           source.fileBase64 || (await this.fileService.getBase64(source.file))
         );
@@ -234,14 +349,6 @@ export class ExtractComponent implements OnInit {
       img.src = last;
     });
   }
-  public getItemsFieldFlat(list, field) {
-    return uniqBy(
-      list
-        ?.filter((item) => item[field]?.length)
-        .map((item) => item[field])
-        .flat() || []
-    );
-  }
 
   getFormularTemplate() {
     var key = this.selectedDocType?.key;
@@ -264,12 +371,9 @@ export class ExtractComponent implements OnInit {
 
   getFormularFields(column) {
     if (this.selectedDocType) {
-      const maxNoInFirstColumn =
-        this.selectedDocType.maxNoFieldsInFirstColumn ||
-        this.selectedDocType.fields?.length;
-      const fieldsNoImage = this.selectedDocType?.fields || [];
-      if (column == 1) return fieldsNoImage.slice(0, maxNoInFirstColumn);
-      else return fieldsNoImage.slice(maxNoInFirstColumn);
+      const list = this.selectedDocType?.fields || [];
+      if (column == 1) return list.filter((f) => !f.column || f.column == 1);
+      else return list.filter((f) => f.column && f.column == 2);
     }
     return [];
   }
@@ -308,11 +412,11 @@ export class ExtractComponent implements OnInit {
   }
   getImagine() {
     if (
-      this.selectedDocType?.fields.includes('Imagine') &&
-      this.form.get('Imagine').value
+      this.selectedDocType?.fields.some((f) => f.key == 'imagine') &&
+      this.form.get('imagine').value
     ) {
       return {
-        image: this.form.get('Imagine').value,
+        image: this.form.get('imagine').value,
         width: 150,
         alignment: 'right',
       };
@@ -396,15 +500,15 @@ export class ExtractComponent implements OnInit {
             body: [
               [
                 { stack: ['Nume/Denumire Asigurat', 'Proprietar'] },
-                value.Nume,
+                value.nume,
                 { stack: ['Fel, Tip, Marca', 'Model Vehicul:'] },
-                value.ModelVehicul,
+                value.modelVehicul,
               ],
               [
                 'C.U.I / C.N.P Proprietar:',
                 value.CNP,
                 'Nr. inmatriculare/inregistrare:',
-                value.NumarInmatriculare,
+                value.nrInmatriculare,
               ],
               [
                 { stack: ['Nume/Denumire Asigurat', 'Utilizator'] },
@@ -412,7 +516,7 @@ export class ExtractComponent implements OnInit {
                 {
                   stack: ['NR.identificare - Serie CIV', 'Nr de inventar'],
                 },
-                { stack: [value.SerieSaşiu, value.NumarInventar] },
+                { stack: [value.serieŞasiu, value.nrInventar] },
               ],
               [
                 'C.U.I / C.N.P Utilizator:',
@@ -420,17 +524,17 @@ export class ExtractComponent implements OnInit {
                 {
                   stack: ['Capacitatea cilindrica', 'Putere'],
                 },
-                { stack: [value.CapacitateaCilindrica, value.Putere] },
+                { stack: [value.capacitateaCilindrica, value.putere] },
               ],
               [
                 {
                   stack: ['Adresa asigurat/utilizator', 'Tel:', 'E-mail:'],
                 },
-                value.Adresa,
+                value.adresa,
                 {
                   stack: ['Nr.locuri', 'Masa max. autorizata'],
                 },
-                { stack: [value.NumarLocuri, value.GreutateMaximaAdmisa] },
+                { stack: [value.numarLocuri, value.greutateMaximaAdmisa] },
               ],
             ],
           },
@@ -499,7 +603,7 @@ export class ExtractComponent implements OnInit {
                       margin: [0, 0, 5, 5],
                     },
                     {
-                      text: value.Nume,
+                      text: value.nume,
                       bold: true,
                       color: '#3a7fa7',
                     },
