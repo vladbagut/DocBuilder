@@ -30,6 +30,7 @@ export type UpFile = {
   textExtracting?: boolean;
 };
 
+//aici o sa schimb
 export const docTypes = [
   {
     key: 'asigAuto',
