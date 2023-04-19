@@ -19,21 +19,27 @@ Alte pachete instalate:
 - Angular Material - pentru controale
 - bootstrap- pentru styles
 
-3. Am pus proiectul pe GitHub (version control systems(VSC) : Github, Gitlab, Bitbucket, Mercurial, Subversion: https://disbug.io/en/blog/github-vs-gitlab-vs-bitbucket)
+3. Am pus proiectul pe GitHub
+   (alte VSC (version control systems): Github, Gitlab, Bitbucket, Mercurial, Subversion:
+   https://disbug.io/en/blog/github-vs-gitlab-vs-bitbucket)
 
    - m-am logat pe gitHub
    - am facut un git repository nou
-     (am urmarit apoi comenzile din readme-ul generat odata cu crearea repository-ului - de acolo se copiaza link-ul de git: https://github.com/....git)
+     (am urmarit apoi comenzile din readme-ul generat odata cu crearea repository-ului - de acolo se copiaza link-ul de git: https://github.com/vladbagut/DocBuilder.git)
    - am deschis proiectul cu visual code, si am facut legatura intre proiect si git:
-   - git remote add origin https://github.com/bagutirina/DocBuilder.git
+   - git remote add origin https://github.com/vladbagut/DocBuilder.git
    - git branch -M main
    - git push -u origin main
 
 4. FireBase
    https://dev.to/cristofima/deploy-an-angular-app-to-firebase-via-github-actions-3ge6
+
    npm install -g firebase-tools
    firebase login
    firebase init (doar Firebase CLI features: Hosting ) - am pastrat secret key de la sfarsit !
+
+   build aplicatie: ng build --prod
+   deploy: firebase deploy SAU firebase deploy --only hosting
 
 5. Continuous integration (build si deploy automat de pe git pe firebase)
    - in package.json: "build:prod": "ng build --prod"
