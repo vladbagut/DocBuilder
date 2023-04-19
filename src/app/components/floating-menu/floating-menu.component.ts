@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 
 @Component({
   selector: 'app-floating-menu',
@@ -6,8 +12,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./floating-menu.component.scss'],
 })
 export class FloatingMenuComponent implements OnInit {
-  toggle = false;
+  @Input() toggleObject = { toggle: false };
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.toggleObject);
+  }
 }

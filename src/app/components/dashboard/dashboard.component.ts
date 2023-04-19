@@ -16,6 +16,7 @@ export class DashboardComponent {
     { id: 6, name: 'Document 1 - asig' },
     { id: 7, name: 'Asigurare Audi 2' },
   ];
+  public toggleObject = { toggle: false };
 
   constructor(private router: Router) {}
 
@@ -24,6 +25,4 @@ export class DashboardComponent {
   newPocess() {
     this.router.navigate(['/extract']);
   }
-  download(doc?: any) {}
-  open(doc?: any) {}
 }

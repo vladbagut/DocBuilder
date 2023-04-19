@@ -1,10 +1,14 @@
 <div
   class="at-floating-navigation"
-  [class.at-floating-navigation--active]="toggle"
+  [class.at-floating-navigation--active]="toggleObject.toggle"
 >
   <button
     class="at-floating-navigation__button"
-    (click)="toggle = !toggle"
+    (click)="
+      $event.stopPropagation();
+      $event.stopPropagation();
+      toggleObject.toggle = !toggleObject.toggle
+    "
     type="button"
   >
     ?

@@ -1,8 +1,15 @@
-<div class="content" role="main">
+<div
+  class="content"
+  role="main"
+  (click)="
+    $event.stopPropagation();
+    $event.stopPropagation();
+    toggleObject.toggle = false
+  "
+>
   <!-- Highlight Card -->
-
   <div
-    class="card highlight-card card-small ps-0 pos-relative mt-5 mb-5"
+    class="card highlight-card card-small ps-0 pos-relative mt-2 mb-4"
     (click)="newPocess()"
   >
     <button mat-icon-button class="img_procesare">
@@ -11,39 +18,21 @@
     <span class="fs-5">Document nou</span>
   </div>
 
-  <!-- <h2 class="mt-5">Documente</h2>
-  <p>Ultimele documente procesate</p>
-
-  <input type="hidden" #selection />
-
-  <div class="card-container">
-    <div
-      class="card card-small d-flex justify-content-between"
-      *ngFor="let doc of documents"
-    >
-      <span class="flex-grow-1 dotdotdot pe-2">{{ doc.name }}</span>
-      <button mat-icon-button (click)="download()">
-        <mat-icon svgIcon="download"></mat-icon>
-      </button>
-      <button mat-icon-button (click)="open()">
-        <mat-icon>open_in_browser</mat-icon>
-      </button>
-    </div>
-  </div> -->
-
-  <mat-icon
-    svgIcon="drag-drop-image"
-    style="width: 600px; height: auto"
-  ></mat-icon>
+  <div style="overflow: hidden">
+    <mat-icon
+      svgIcon="drag-drop-image"
+      style="width: 700px; height: auto"
+    ></mat-icon>
+  </div>
 
   <!-- Footer -->
-  <footer>
+  <!-- <footer>
     <a title="About me" [routerLink]="'/about'">
       Lucrare de licenta
       <mat-icon class="mx-2">star</mat-icon>
       <span [style.color]="'black'">Bagut Vlad Serban</span>
     </a>
-  </footer>
+  </footer> -->
 
-  <app-floating-menu></app-floating-menu>
+  <app-floating-menu [toggleObject]="toggleObject"></app-floating-menu>
 </div>
