@@ -7,9 +7,9 @@
    - cu angular client(ng) am creat o aplicatie angular
      ng new nume_app
    - cd nume_app - te muta in folderul radacina a aplicatiei create;
-   - npm install - (optional, se reinstaleaza pachetele)
+   - npm install
    - run aplicatie:
-     ng serve -o
+     ng serve -o SAU
      ng serve + F5 ( pt F5 trebuie editat in vscode->launch.json: http://localhost:4200 )
 
 Alte pachete instalate:
