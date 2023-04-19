@@ -1,16 +1,18 @@
 1. Am instalat nodejs (contine npm = package manager and installer)
    si cu npm am instalat angular client (npm install -g @angular/cli)
 
-2. Am creat un director, l-am deschis cu Visual Code
-   am deschis un terminal cmd
-   cu o comanda angular client(ng) am creat o aplicatie angular
-   ng new licenta
-   cd licenta - te muta in folderul radacina a aplicatiei create
-   npm install - (optional, se reinstaleaza pachetele)
-   ng serve + F5 ( ng serveste aplicatia, F5 incarca in browser linkul unde e hostuita(LOCAL) aplicatia: http://localhost:4200 )
-   ng serve -o (acelasi lucru: ng serveste aplicatia si o deschide automat in browser)
+2. Am creat proiectul angular:
+   - am deschis cu Visual Code un director nou unde va fi proiectul
+   - am deschis un terminal cmd
+   - cu angular client(ng) am creat o aplicatie angular
+     ng new nume_app
+   - cd nume_app - te muta in folderul radacina a aplicatiei create;
+   - npm install - (optional, se reinstaleaza pachetele)
+   - run aplicatie:
+     ng serve -o
+     ng serve + F5 ( pt F5 trebuie editat in vscode->launch.json: http://localhost:4200 )
 
-Am instalat:
+Alte pachete instalate:
 
 - tesseract : extragere text dintr-o imagine
 - pdfmake: generare pdf dintr-un template
@@ -18,17 +20,25 @@ Am instalat:
 - bootstrap- pentru styles
 
 3. Am pus proiectul pe GitHub (version control systems(VSC) : Github, Gitlab, Bitbucket, Mercurial, Subversion: https://disbug.io/en/blog/github-vs-gitlab-vs-bitbucket)
-   m-am logat pe gitHub
-   am facut un git repository nou
-   (am urmarit apoi comenzile din readme-ul generat odata cu crearea repository-ului)
 
-   am deschis proiectul cu visual code, si intr-un terminal cmd am dat comenzile:
-   git remote add origin https://github.com/bagutirina/DocBuilder.git
-   git branch -M main
-   git push -u origin main
+   - m-am logat pe gitHub
+   - am facut un git repository nou
+     (am urmarit apoi comenzile din readme-ul generat odata cu crearea repository-ului - de acolo se copiaza link-ul de git: https://github.com/....git)
+   - am deschis proiectul cu visual code, si am facut legatura intre proiect si git:
+   - git remote add origin https://github.com/bagutirina/DocBuilder.git
+   - git branch -M main
+   - git push -u origin main
 
 4. FireBase
-   https://www.c-sharpcorner.com/article/how-to-deploy-and-host-an-angular-application-on-firebase/
+   https://dev.to/cristofima/deploy-an-angular-app-to-firebase-via-github-actions-3ge6
+   npm install -g firebase-tools
+   firebase login
+   firebase init (doar Firebase CLI features: Hosting ) - am pastrat secret key de la sfarsit !
+
+5. Continuous integration (build si deploy automat de pe git pe firebase)
+   - in package.json: "build:prod": "ng build --prod"
+   - pe gitHub am updatat la secret - key
+   - in .github\workflows am configurat ...yml pt continuous integration
 
 Cum functioneaza aplicatia:
 
