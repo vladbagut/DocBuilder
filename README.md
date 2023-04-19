@@ -34,12 +34,12 @@ Alte pachete instalate:
 4. FireBase
    https://dev.to/cristofima/deploy-an-angular-app-to-firebase-via-github-actions-3ge6
 
-   npm install -g firebase-tools
-   firebase login
-   firebase init (doar Firebase CLI features: Hosting ) - am pastrat secret key de la sfarsit !
+   - npm install -g firebase-tools
+   - firebase login
+   - firebase init (doar Firebase CLI features: Hosting ) - am pastrat secret key de la sfarsit !
 
-   build aplicatie: ng build --prod
-   deploy: firebase deploy SAU firebase deploy --only hosting
+   - build aplicatie: ng build --prod (genereaza dist/DocBuilder sau ce este seatat ca output in angular.json)
+   - deploy: firebase deploy SAU firebase deploy --only hosting
 
 5. Continuous integration (build si deploy automat de pe git pe firebase)
    - in package.json: "build:prod": "ng build --prod"
@@ -76,33 +76,3 @@ base64 - intreaga imagine => base64 - o bucata de imagine
 - textul extras este impins in controalele din sablon sau in consola
   daca campul selectat era "Image", se sare peste pasul 4 (nu se mai extrage text) si ramane base64 si se incarca in zona de imagine
 - Pdfmake ia valorile din variabile, le pune intr-un sablon si genereaza un pdf
-
----
-
-# Licenta
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.0.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
