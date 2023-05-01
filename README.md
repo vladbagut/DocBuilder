@@ -1,3 +1,5 @@
+## Instalare:
+
 1. Am instalat nodejs (contine npm = package manager and installer)
    si cu npm am instalat angular client (npm install -g @angular/cli)
 
@@ -16,6 +18,7 @@ Alte pachete instalate:
 
 - tesseract : extragere text dintr-o imagine
 - pdfmake: generare pdf dintr-un template
+- ngx-resizable: pentru resizable panels (https://github.com/mng/ngx-resizable)
 - Angular Material - pentru controale
 - bootstrap- pentru styles
 
@@ -36,43 +39,54 @@ Alte pachete instalate:
 
    - npm install -g firebase-tools
    - firebase login
-   - firebase init (doar Firebase CLI features: Hosting ) - am pastrat secret key de la sfarsit !
-
+   - firebase init (doar Firebase CLI features: Hosting ) - !!! la sfarsit se genereaza un token,
+     care trebuie pastrat, va fi nevoie de el pe github pt. continuous integration
    - build aplicatie: ng build --prod (genereaza dist/DocBuilder sau ce este seatat ca output in angular.json)
    - deploy: firebase deploy SAU firebase deploy --only hosting
 
-5. Continuous integration (build si deploy automat de pe git pe firebase)
+5. Continuous integration (build si deploy automat: cand se face commit pe git, se face automat deploy pe firebase)
    - in package.json: "build:prod": "ng build --prod"
-   - pe gitHub am updatat la secret - key
-   - in .github\workflows am configurat ...yml pt continuous integration
+   - pe gitHub am updatat la settings -> secret -> FIREBASE_TOKEN
+   - in proiect, in .github\workflows am configurat firebase-hosting-merge.yml pt continuous integration
 
-Cum functioneaza aplicatia:
+## Cum functioneaza aplicatia:
 
-1. un file (imagine) e uploadat folosind:
-   - <input  type="file" > - picker de selectie a unui fisier
-     sau
-   - drag & drop al elementelor html( am facut o directiva angular 'appDragDrop' care prinde un eveniment de drag&drop si preia fisierul dropp-uit)
+Am definit 2 directive angular, care se ataseaza la niste elemente html si le dau o functionalitate aparte. Cele doua directive stau la baza intregului flow de executie.
 
-in urma upload-ului se obtine un File (sau Blob = un fel de obiect 'File' care poate fi citit ca text sau binary data )
+- drag-drop - directiva care se ocupa de drag/drop-ul unei imagini
+- crop-image - directiva care se ocupa de crop o bucata de imagine dintr-una mai mare
 
-2.  din File se citeste continutul cu un FileReader si se transforma intr-un string (base64)
+1. drag-drop (appDragDrop)
 
-             FileReader(File) => string-base64
+- se ataseaza de elemente in care se poate face drop: containerul(div) in care se incarca imagini (partea stanga), input/img din formular (din partea dreapta)
+- functionalitatea: capteaza evenimentele 'dragOver', 'drop' ale elementului html
+- pe evenimentul 'dragOver': schimba background-ul elementului (alb) - ca sa sugereze ca acolo se poate face drop
+- pe evenimentul 'drop' : capteaza imaginea trasa de user (poate fi o imagine din afara, sau o imagine crop-uita)
+  si emite un eveniment cu imaginea (File-BLOB)
 
-3.  stringul este incarcat si afisat intr-un element img, si se decupeaza din el o portiune - toate cu ajutorul unei directive CropImageDirective care face:
-    - se ataseaza de elementul img in care este imaginea uploadata (base64)
-    - creaza un element html canvas si il suprapune peste imagine
-    - pe evenimentele de mose down,move,up se deseneaza un rectangle
-    - pe mouse up, decupeaza din imaginea initiala bucata de la coordonatele rectangle-ului desenat deasupra
-    - transforma totul intr-un string base64
+  File(BLOB): un obiect de tipul "File", din care se poate citi continutul (binary data) cu un reader
 
-pasul 3 de fapt face:
-base64 - intreaga imagine => base64 - o bucata de imagine
+In continuare intra in actiune elementul de care a fost atasata directiva:  
+ Elementul prinde evenimentul emis (care contine File-BLOB-ul) si pe handler executa:
 
-4.  bucata de imagine(base64) este preluata de tesseract.js (se apeleaza metoda worker.recognize(stringul_base64)) care extrage textul pe care il gaseste din imagine
+- containerul : transforma File(BLOB) -> in Base64 string, si il da ca sursa la un img
+- un element input : transforma File(BLOB) -> in Base64 string -> se apeleaza metoda tesseract.worker.recognize(base64String) (metoda primeste o imagine base64 si returneaza textul din ea) -> string-ul rezultat il adauga la text-ul din input
+- un element img: transforma File(BLOB) -> in Base64 string, si il incarca ca sursa in img
 
-           base64  =>  text extras (string)
+  FILE (BLOB) -> Base64 string -> tesseract:( base64=>string) -> <input value=" ...string obtinut din imagine">
+  FILE (BLOB) -> Base64 string -> <img src="...base64 string" >
 
-- textul extras este impins in controalele din sablon sau in consola
-  daca campul selectat era "Image", se sare peste pasul 4 (nu se mai extrage text) si ramane base64 si se incarca in zona de imagine
-- Pdfmake ia valorile din variabile, le pune intr-un sablon si genereaza un pdf
+2. crop-image (appCropImage)
+
+- se ataseaza de un <img> in care este o imagine (<img src="...base64 string" appCropImage >)
+- creaza un element html canvas de aceeasi dimensiune cu imaginea si il suprapune peste imagine
+- canvas-ul fiind deasupra, capteaza toate evenimentele de "mose down", "mouse move" , "mouse up" si pe handlerele lor se deseneaza in contextul canvas-ului un rectangle
+- pe "mouse up", se decupeaza din imaginea de sub canvas o zona de la coordonatele rectangle-ului desenat in canvas
+- se creaza un element img cu imaginea crop-uita si se aseaza exact peste rectangle
+- noul img fiind deasupra capteaza evenimentele de drag/drop, si va putea fi tras (ca orice element web img) -> si apoi intra directiva 1 in functiune
+  (elementele care au appDragDrop vor reactiona cand se face dragOver peste ele si vor capta imaginea trasa la "drop")
+- img mai are si context menu: cand se apasa pe o optiune din meniu, imaginea (base64 string) poate fi trimisa la un field sau la consola
+
+## Pdfmake:
+
+pe baza unui sablon care este completat cu valorile din formular, genereaza un pdf

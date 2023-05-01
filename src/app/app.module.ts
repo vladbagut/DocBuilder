@@ -26,14 +26,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HttpClientModule } from '@angular/common/http';
 import { FloatingMenuComponent } from './components/floating-menu/floating-menu.component';
 import { ExtractComponent } from './components/extract/extract.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropDirective } from './directives/drag-drop.directive';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ScrollVisibleDirective } from './directives/scroll-visible.directive';
-import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
 import { CamelToSpacePipe } from './directives/camel-to-space.pipe';
 import { TemplateDirective } from './directives/template.directive';
 import { CropImageDirective } from './directives/crop-image.directive';
+import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
 
 @NgModule({
   declarations: [
@@ -73,7 +72,6 @@ import { CropImageDirective } from './directives/crop-image.directive';
     ReactiveFormsModule,
     MatCheckboxModule,
     HttpClientModule,
-    ImageCropperModule,
     BrowserAnimationsModule,
     MatExpansionModule,
     NgxResizableModule,

@@ -152,6 +152,9 @@ export class CropImageDirective implements OnInit {
       this.rect.h = currentMousePos.y - this.rect.y;
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.drawRect();
+      this.canvas.style.backgroundColor = this.isValidRectangle()
+        ? '#5a5a5a45'
+        : 'transparent';
     } else if (this.action == 'resize') {
       if (this.actionDirection == 'corner-bottom-right') {
         this.rect.h = this.rect.h + currentMousePos.y - this.lastMousePos.y;
@@ -206,9 +209,8 @@ export class CropImageDirective implements OnInit {
       this.action = 'none';
       this.canvas.style.cursor = 'default';
 
-      if (this.isRectValid()) {
+      if (this.isValidRectangle()) {
         this.croppImage();
-        this.canvas.style.backgroundColor = '#5a5a5a45';
         this.imageCropped.emit({
           base64: this.croppedCanvasBase64,
           width: this.rect.w,
@@ -224,8 +226,8 @@ export class CropImageDirective implements OnInit {
     //draw rectangle
     this.context.strokeStyle = 'white';
 
-    this.context.lineWidth = this.isSmallRectangle() ? 1 : 2;
-    this.context.setLineDash([this.isSmallRectangle() ? 0 : 6]);
+    this.context.lineWidth = this.isSmallRectangle() ? 2 : 2;
+    this.context.setLineDash([this.isSmallRectangle() ? 3 : 6]);
     this.context.strokeRect(this.rect.x, this.rect.y, this.rect.w, this.rect.h);
 
     //draw resize markers
@@ -264,7 +266,7 @@ export class CropImageDirective implements OnInit {
 
     //draw cropped image inside rectangle
     var borderWidth = this.context.lineWidth;
-    if (this.isRectValid()) {
+    if (this.isValidRectangle()) {
       const cropImageData = this.sourceContext.getImageData(
         this.rect.x + borderWidth,
         this.rect.y + borderWidth,
@@ -282,6 +284,9 @@ export class CropImageDirective implements OnInit {
   isSmallRectangle() {
     return this.rect.w < 100 || this.rect.h < 100;
   }
+  isValidRectangle() {
+    return this.rect.w && this.rect.h && this.rect.w > 15 && this.rect.h > 15;
+  }
 
   getMousePos(evt) {
     var rect = this.canvas.getBoundingClientRect(),
@@ -296,6 +301,8 @@ export class CropImageDirective implements OnInit {
 
   croppImage() {
     this.clearCroppedImage();
+
+    this.canvas.style.backgroundColor = '#5a5a5a45';
 
     //crop image data
     var borderWidth = this.context.lineWidth;
@@ -427,14 +434,5 @@ export class CropImageDirective implements OnInit {
       this.parent.removeChild(this.croppedImg);
       this.croppedImg = null;
     }
-  }
-
-  isRectValid() {
-    return (
-      this.rect.w &&
-      this.rect.h &&
-      this.rect.w - this.context.lineWidth * 2 > 0 &&
-      this.rect.h - this.context.lineWidth * 2 > 0
-    );
   }
 }

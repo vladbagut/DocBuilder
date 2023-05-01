@@ -186,7 +186,8 @@
                 </mat-form-field>
 
                 <!-- formular -->
-                <ng-container *ngTemplateOutlet="pdfTemplate"> </ng-container>
+                <ng-container *ngTemplateOutlet="formularTemplate">
+                </ng-container>
               </div>
 
               <!-- butoane - actiuni pdf  -->
@@ -311,7 +312,11 @@
 </mat-menu>
 
 <!-- Formulare -->
-<ng-template appTemplateDirective #pdfTemplate templateName="pdfTemplate">
+<ng-template
+  appTemplateDirective
+  #formularTemplate
+  templateName="formularTemplate"
+>
   <form
     autocomplete="off"
     class="w-100 h-100 d-flex flex-row"
@@ -362,7 +367,7 @@
           </mat-icon>
         </mat-form-field>
 
-        <!-- imagine formular-->
+        <!-- imagine-->
         <div
           class="w-100"
           *ngIf="field.key == 'imagine'"

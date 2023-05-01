@@ -5,7 +5,6 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 import { FileService } from 'src/app/services/file.service';
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -17,8 +16,10 @@ import { TemplateDirective } from 'src/app/directives/template.directive';
 import { ChangeBackgroundAnimation, FadingAnimation } from 'src/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
 import * as Tesseract from 'tesseract.js';
-
 import { createWorker } from 'tesseract.js';
+
+import { docTypes } from 'src/app/configs/docTypes';
+import * as PDFTemplates from 'src/app/configs/pdfTemplates';
 
 export type UpFile = {
   file: File;
@@ -29,165 +30,6 @@ export type UpFile = {
   expanded: boolean;
   textExtracting?: boolean;
 };
-
-export const docTypes = [
-  {
-    key: 'asigAuto',
-    name: 'Asigurare AUTO RCA',
-    fields: [
-      {
-        key: 'nume',
-        name: 'Nume',
-      },
-      {
-        key: 'CNP',
-        name: 'CNP',
-      },
-      {
-        key: 'adresa',
-        name: 'Adresa',
-        big: true,
-      },
-      {
-        key: 'nrInmatriculare',
-        name: 'Numar inmatriculare',
-        column: 2,
-      },
-      {
-        key: 'modelVehicul',
-        name: 'Model vehicul',
-        column: 2,
-      },
-      {
-        key: 'serieŞasiu',
-        name: 'Serie şasiu',
-        shortName: 'E',
-        column: 2,
-      },
-      {
-        key: 'nrInventar',
-        name: 'Numar inventar',
-        shortName: 'X',
-        column: 2,
-      },
-      {
-        key: 'capacitateaCilindrica',
-        name: 'Capacitatea cilindrica',
-        shortName: 'P.1',
-        column: 2,
-      },
-      {
-        key: 'putere',
-        name: 'Putere',
-        shortName: 'P.2',
-        column: 2,
-      },
-      {
-        key: 'numarLocuri',
-        name: 'Numar locuri',
-        shortName: 'S.1',
-        column: 2,
-      },
-      {
-        key: 'greutateMaximaAdmisa',
-        name: 'Greutate maxima admisa',
-        shortName: 'F.1',
-        column: 2,
-      },
-    ],
-  },
-  {
-    key: 'contractVC',
-    name: 'Contract vanzare Auto',
-    fields: [
-      {
-        key: 'nume',
-        name: 'Nume',
-      },
-      {
-        key: 'CNP',
-        name: 'CNP',
-      },
-      {
-        key: 'adresa',
-        name: 'Adresa',
-        big: true,
-      },
-      {
-        key: 'nrInmatriculare',
-        name: 'Numar inmatriculare',
-        column: 2,
-      },
-      {
-        key: 'modelVehicul',
-        name: 'Model vehicul',
-        column: 2,
-      },
-    ],
-  },
-  {
-    key: 'cererePasaport',
-    name: 'Cerere pasapoarte',
-    fields: [
-      {
-        key: 'nume',
-        name: 'Nume',
-      },
-      {
-        key: 'CNP',
-        name: 'CNP',
-      },
-      {
-        key: 'adresa',
-        name: 'Adresa',
-        big: true,
-      },
-      {
-        key: 'imagine',
-        name: 'Imagine',
-        column: 2,
-      },
-    ],
-  },
-  {
-    key: 'cerereVisa',
-    name: 'Cerere viza',
-    fields: [
-      {
-        key: 'nume',
-        name: 'Nume',
-      },
-      {
-        key: 'CNP',
-        name: 'CNP',
-      },
-    ],
-  },
-  {
-    key: 'contractMunca',
-    name: 'Contract de munca',
-    fields: [
-      {
-        key: 'nume',
-        name: 'Nume',
-      },
-      {
-        key: 'CNP',
-        name: 'CNP',
-      },
-      {
-        key: 'adresa',
-        name: 'Adresa',
-        big: true,
-      },
-      {
-        key: 'imagine',
-        name: 'Imagine',
-        column: 2,
-      },
-    ],
-  },
-];
 
 @Component({
   selector: 'app-extract',
@@ -208,7 +50,6 @@ export class ExtractComponent implements OnInit {
   openedTrigger = null;
   textExtracting: boolean;
   textExtractingFor;
-  nrSerie;
 
   @ViewChildren(TemplateDirective)
   public templates: QueryList<TemplateDirective>;
@@ -267,7 +108,7 @@ export class ExtractComponent implements OnInit {
   }
 
   //  2. crop imagine ----------
-  cropImg(e: ImageCroppedEvent, upFile: UpFile): void {
+  cropImg(e, upFile: UpFile): void {
     upFile.croppedFileBase64 = e?.base64 || null;
     upFile.croppedFile = e
       ? this.fileService.base64ToFile(e.base64, 'picture')
@@ -406,8 +247,11 @@ export class ExtractComponent implements OnInit {
     }
   }
   getPdfDefinition() {
-    return this[this.selectedDocType.key + 'PdfTemplate']
-      ? this[this.selectedDocType.key + 'PdfTemplate']()
+    return PDFTemplates[this.selectedDocType.key + 'Template']
+      ? PDFTemplates[this.selectedDocType.key + 'Template'](
+          this.form.value,
+          this.getImagine()
+        )
       : {};
   }
   getImagine() {
@@ -422,215 +266,5 @@ export class ExtractComponent implements OnInit {
       };
     }
     return null;
-  }
-
-  // ---------PDF TEMPLATES --------------
-  asigAutoPdfTemplate() {
-    const value = this.form.value;
-    this.nrSerie = localStorage.getItem('NrSerie') || 1000000;
-    this.nrSerie++;
-    localStorage.setItem('NrSerie', this.nrSerie);
-
-    return {
-      pageSize: 'A4',
-      pageMargins: [20, 40, 20, 40],
-      content: [
-        {
-          columns: [
-            {
-              width: '65%',
-              fontSize: 11,
-              stack: [
-                {
-                  text: 'CONTRACT DE ASIGURARE DE RASPUNDERE CIVILA AUTO RCA',
-                  bold: true,
-                },
-                'GROUPAMA ASIGURARI S.A.                   Tel.: 0740085442',
-                {
-                  text: 'Brocker / Agent ___________________________',
-                  fontSize: 10,
-                  margin: [0, 5, 0, 0],
-                },
-                {
-                  text: 'Sucursala / Agentia ___________________________',
-                  fontSize: 10,
-                },
-              ],
-            },
-            {
-              width: '*',
-              fontSize: 10,
-              stack: [
-                {
-                  columns: [
-                    {
-                      text: 'Seria',
-                      bold: true,
-                      width: 'auto',
-                      margin: [0, 0, 5, 0],
-                    },
-                    {
-                      text: 'RO/XX/YYY/SS',
-                      color: 'red',
-                    },
-                    {
-                      text: 'Nr. ',
-                      bold: true,
-                      width: 'auto',
-                      margin: [0, 0, 5, 0],
-                    },
-                    this.nrSerie,
-                  ],
-                },
-                {
-                  columns: ['R.C.', 'C.U.I.'],
-                  margin: [0, 0, 0, 20],
-                },
-                'Cod Broker/Agent ______________________',
-              ],
-            },
-          ],
-        },
-        {
-          fontSize: 10,
-          margin: [0, 5, 0, 0],
-          table: {
-            headerRows: 0,
-            widths: ['25%', '*', '25%', '25%'],
-            body: [
-              [
-                { stack: ['Nume/Denumire Asigurat', 'Proprietar'] },
-                value.nume,
-                { stack: ['Fel, Tip, Marca', 'Model Vehicul:'] },
-                value.modelVehicul,
-              ],
-              [
-                'C.U.I / C.N.P Proprietar:',
-                value.CNP,
-                'Nr. inmatriculare/inregistrare:',
-                value.nrInmatriculare,
-              ],
-              [
-                { stack: ['Nume/Denumire Asigurat', 'Utilizator'] },
-                '',
-                {
-                  stack: ['NR.identificare - Serie CIV', 'Nr de inventar'],
-                },
-                { stack: [value.serieŞasiu, value.nrInventar] },
-              ],
-              [
-                'C.U.I / C.N.P Utilizator:',
-                '',
-                {
-                  stack: ['Capacitatea cilindrica', 'Putere'],
-                },
-                { stack: [value.capacitateaCilindrica, value.putere] },
-              ],
-              [
-                {
-                  stack: ['Adresa asigurat/utilizator', 'Tel:', 'E-mail:'],
-                },
-                value.adresa,
-                {
-                  stack: ['Nr.locuri', 'Masa max. autorizata'],
-                },
-                { stack: [value.numarLocuri, value.greutateMaximaAdmisa] },
-              ],
-            ],
-          },
-        },
-        {
-          text:
-            'Valabilitate contract de la: ' +
-            '______________ ' +
-            ' pana la: ' +
-            ' ______________ ' +
-            'emisa in data de :' +
-            ' _______________',
-          margin: [0, 10, 0, 0],
-        },
-        {
-          text:
-            'Prima de asigurare de: ' +
-            ' _____________ ' +
-            'RON, incasata cu: ' +
-            ' ______________ ' +
-            'din data de :' +
-            ' _______________',
-          margin: [0, 10, 0, 0],
-        },
-        {
-          fontSize: 10,
-          margin: [0, 10, 0, 0],
-          table: {
-            headerRows: 0,
-            widths: ['50%', '*'],
-            body: [
-              ['Limita de despagubire pentru vatamari corporale si deces:', ''],
-              ['Limita de despagubire pentru pagube materiale:', ''],
-            ],
-          },
-        },
-        {
-          fontSize: 9,
-          text: 'Comisa de Supraveghere a Asigurăriar primeste si raspunde la toate sesizările şi reciamațiie privind activitatea asigurăbrior, easigurdorior s ntemedarlorn asigurn sisau reasigurăi Bucureşti str. Amiral Constantin Balescu nr.18, sector 1, telefon: 021.316.78.81, 21.31678.88; fax: 021.316.78.54 Condițte conractuale sunt prevăzut in Normale prind asigurarea obigetore de răspundere ivilă pntru rejudi produse prin accidente de vehicule aprobate prin Ordinul preşedintaui Comisiei de Supraveghere a Asigurarior rr. 00 0/2007.',
-          margin: [0, 10, 0, 0],
-        },
-      ],
-    };
-  }
-
-  cererePasaportPdfTemplate() {
-    const value = this.form.value;
-    return {
-      content: [
-        {
-          text: 'Cerere pasaport',
-          bold: true,
-          fontSize: 16,
-          alignment: 'center',
-          margin: [0, 0, 0, 20],
-        },
-        {
-          columns: [
-            {
-              stack: [
-                {
-                  columns: [
-                    {
-                      text: 'Nume: ',
-                      width: 'auto',
-                      margin: [0, 0, 5, 5],
-                    },
-                    {
-                      text: value.nume,
-                      bold: true,
-                      color: '#3a7fa7',
-                    },
-                  ],
-                },
-                {
-                  columns: [
-                    {
-                      text: 'CNP: ',
-                      width: 'auto',
-                      margin: [0, 0, 5, 0],
-                    },
-                    value.CNP,
-                  ],
-                },
-              ],
-            },
-            [this.getImagine()],
-          ],
-        },
-      ],
-      styles: {
-        bold16: {
-          fontSize: 16,
-          bold: true,
-        },
-      },
-    };
   }
 }
