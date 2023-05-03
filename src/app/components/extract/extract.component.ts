@@ -1,17 +1,19 @@
 import {
   Component,
   ElementRef,
+  HostListener,
   OnInit,
   QueryList,
+  Renderer2,
+  ViewChild,
   ViewChildren,
 } from '@angular/core';
 
 import { FileService } from 'src/app/services/file.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import { uniqBy } from 'lodash';
 import { TemplateDirective } from 'src/app/directives/template.directive';
 import { ChangeBackgroundAnimation, FadingAnimation } from 'src/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -31,6 +33,12 @@ export type UpFile = {
   textExtracting?: boolean;
 };
 
+const Errors = {
+  required: 'Câmpul este obligatoriu',
+  InvalidCNP: 'CNP invalid',
+  pattern: 'Câmpul este numeric',
+};
+
 @Component({
   selector: 'app-extract',
   templateUrl: './extract.component.html',
@@ -43,13 +51,22 @@ export class ExtractComponent implements OnInit {
   CERTIFICATE_UPLOAD_FILE_FORMATS = '.jpeg,.jpg,.png';
   private worker;
   selectedDocType;
-  form = new FormGroup({});
+
+  formGroup = new FormGroup({});
   public files: UpFile[] = [];
   textConsola = '';
   contextMenuPosition = { x: 0, y: 0 };
   openedTrigger = null;
   textExtracting: boolean;
   textExtractingFor;
+  docTypesList = [];
+
+  signatureBase64 = null;
+  signOpenState;
+  signaturePadOptions: Object = {
+    minWidth: 1,
+    penColor: '#3a7fa7',
+  };
 
   @ViewChildren(TemplateDirective)
   public templates: QueryList<TemplateDirective>;
@@ -57,13 +74,38 @@ export class ExtractComponent implements OnInit {
   @ViewChildren(MatMenuTrigger)
   public menuTriggers: QueryList<MatMenuTrigger>;
 
+  @ViewChild(SignaturePad) signaturePad: SignaturePad;
+
   constructor(public fileService: FileService, private elRef: ElementRef) {
-    uniqBy(
-      docTypes
-        ?.filter((item) => item['fields'])
-        .map((item) => item['fields'].map((f) => f.key))
-        .flat() || []
-    ).map((field) => this.form.addControl(field, new FormControl()));
+    this.docTypesList = Object.keys(docTypes).map((key) => ({
+      key,
+      ...docTypes[key],
+      fieldsList: Object.keys(docTypes[key].fields).map((fk) => ({
+        key: fk,
+        ...docTypes[key].fields[fk],
+      })),
+    }));
+
+    this.formGroup = new FormGroup(
+      Object.keys(docTypes).reduce((obj, key) => {
+        obj[key] = this.getFormSubGroup(key);
+        return obj;
+      }, {})
+    );
+  }
+
+  getFormSubGroup(docKey) {
+    return new FormGroup(
+      Object.keys(docTypes[docKey].fields).reduce((_obj, _key) => {
+        _obj[_key] = new FormControl(null, []);
+        const field = docTypes[docKey].fields[_key];
+        if (field.isRequired) _obj[_key].addValidators([Validators.required]);
+        if (field.isNumber)
+          _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
+        if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
+        return _obj;
+      }, {})
+    );
   }
 
   async ngOnInit() {
@@ -118,31 +160,50 @@ export class ExtractComponent implements OnInit {
 
   // 3. extract text din imagine ----------
   sendTextInField(text, field) {
-    this.form
+    this.formGroup
+      .get(this.selectedDocType.key)
       .get(field)
-      .setValue((this.form.get(field).value || '') + ' ' + text);
+      .setValue(
+        (this.formGroup.get(this.selectedDocType.key).get(field).value || '') +
+          text
+      );
   }
 
   async sendFileInFiled(source?: { file?: File; fileBase64?: string }, field?) {
     if (field !== 'imagine') {
       //text
       this.extractText(source.file).then((text) => {
-        if (field)
-          this.form
+        if (field) {
+          text = this.processedText(text, field);
+          this.formGroup
+            .get(this.selectedDocType.key)
             .get(field)
-            .setValue((this.form.get(field).value || '') + ' ' + text);
-        else {
+            .setValue(
+              (this.formGroup.get(this.selectedDocType.key).get(field).value ||
+                '') + text
+            );
+        } else {
           this.textConsola = text;
         }
       });
     } else {
       // imagine
-      this.form
+      this.formGroup
+        .get(this.selectedDocType.key)
         .get('imagine')
         .setValue(
           source.fileBase64 || (await this.fileService.getBase64(source.file))
         );
     }
+  }
+
+  processedText(text, field) {
+    text = text.trim().trimStart().trimEnd();
+    if (field == 'CNP' && text.endsWith('-')) {
+      text = text.replace('-', '');
+      text = text.trim().trimStart().trimEnd();
+    }
+    return text;
   }
 
   extractText(imageToProcess: File) {
@@ -191,6 +252,17 @@ export class ExtractComponent implements OnInit {
     });
   }
 
+  getSelectedDocTypeFields(column?) {
+    if (column == 1)
+      return this.selectedDocType.fieldsList.filter(
+        (f) => !f.column || f.column == 1
+      );
+    else
+      return this.selectedDocType.fieldsList.filter(
+        (f) => f.column && f.column == 2
+      );
+  }
+
   getFormularTemplate() {
     var key = this.selectedDocType?.key;
     if (!key) return null;
@@ -210,26 +282,30 @@ export class ExtractComponent implements OnInit {
     this.openedTrigger = trigger;
   }
 
-  getFormularFields(column) {
-    if (this.selectedDocType) {
-      const list = this.selectedDocType?.fields || [];
-      if (column == 1) return list.filter((f) => !f.column || f.column == 1);
-      else return list.filter((f) => f.column && f.column == 2);
-    }
-    return [];
-  }
-
-  get docTypes() {
-    return docTypes;
+  getErrorMessage(field) {
+    return Errors[
+      Object.keys(
+        this.formGroup.get(this.selectedDocType.key).get(field.key).errors
+      )[0]
+    ];
   }
 
   // 5. Generare PDF  ----------
   resetForm() {
-    Object.keys(this.form.controls).forEach((field) => {
-      this.form.get(field).setValue('');
+    const form = this.formGroup.get(this.selectedDocType.key);
+    form.reset();
+    Object.keys(form['controls']).forEach((key) => {
+      form.get(key).markAsPending();
     });
   }
+
   generarePdf(actiune = 'open') {
+    const form = this.formGroup.get(this.selectedDocType.key);
+    Object.keys(form['controls']).forEach((key) => {
+      form.get(key).updateValueAndValidity();
+    });
+
+    if (!this.formGroup.get(this.selectedDocType.key).valid) return;
     const documentDefinition = this.getPdfDefinition();
     switch (actiune) {
       case 'open':
@@ -249,22 +325,110 @@ export class ExtractComponent implements OnInit {
   getPdfDefinition() {
     return PDFTemplates[this.selectedDocType.key + 'Template']
       ? PDFTemplates[this.selectedDocType.key + 'Template'](
-          this.form.value,
+          this.formGroup.get(this.selectedDocType.key).value,
           this.getImagine()
         )
       : {};
   }
   getImagine() {
     if (
-      this.selectedDocType?.fields.some((f) => f.key == 'imagine') &&
-      this.form.get('imagine').value
+      this.selectedDocType?.fieldsList.some((f) => f.key == 'imagine') &&
+      this.formGroup.get(this.selectedDocType.key).get('imagine').value
     ) {
       return {
-        image: this.form.get('imagine').value,
+        image: this.formGroup.get(this.selectedDocType.key).get('imagine')
+          .value,
         width: 150,
         alignment: 'right',
       };
     }
     return null;
   }
+
+  // 6. Signature
+  drawComplete() {
+    this.signatureBase64 = this.signaturePad.toDataURL();
+  }
+  clearSign() {
+    this.signatureBase64 = null;
+    this.signaturePad.clear();
+  }
+}
+
+//-----------------------------------
+//  CNP validator
+//-----------------------------------
+import { ValidatorFn, AbstractControl } from '@angular/forms';
+import { settings } from 'cluster';
+import { SignaturePad } from 'angular2-signaturepad';
+
+export function CNPValidator(): ValidatorFn {
+  let isValidCNP = (text) => {
+    var i = 0,
+      year = 0,
+      hashResult = 0,
+      cnp = [],
+      hashTable = [2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9];
+    if (text.length !== 13) {
+      return false;
+    }
+    for (i = 0; i < 13; i++) {
+      cnp[i] = parseInt(text.charAt(i), 10);
+      if (isNaN(cnp[i])) {
+        return false;
+      }
+      if (i < 12) {
+        hashResult = hashResult + cnp[i] * hashTable[i];
+      }
+    }
+    hashResult = hashResult % 11;
+    if (hashResult === 10) {
+      hashResult = 1;
+    }
+    year = cnp[1] * 10 + cnp[2];
+    switch (cnp[0]) {
+      case 1:
+      case 2:
+        {
+          year += 1900;
+        }
+        break;
+      case 3:
+      case 4:
+        {
+          year += 1800;
+        }
+        break;
+      case 5:
+      case 6:
+        {
+          year += 2000;
+        }
+        break;
+      case 7:
+      case 8:
+      case 9:
+        {
+          year += 2000;
+          if (year > new Date().getFullYear() - 14) {
+            year -= 100;
+          }
+        }
+        break;
+      default: {
+        return false;
+      }
+    }
+    if (year < 1800 || year > 2099) {
+      return false;
+    }
+
+    return cnp[12] === hashResult;
+  };
+
+  return (control: AbstractControl): { [key: string]: boolean } | null => {
+    let p_cnp = control.value;
+    if (!p_cnp) return null;
+    return !isValidCNP(p_cnp) ? { InvalidCNP: true } : null;
+  };
 }

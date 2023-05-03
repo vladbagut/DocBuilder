@@ -19,6 +19,7 @@ Alte pachete instalate:
 - tesseract : extragere text dintr-o imagine
 - pdfmake: generare pdf dintr-un template
 - ngx-resizable: pentru resizable panels (https://github.com/mng/ngx-resizable)
+- angular2-signaturepad: pentru semnatura
 - Angular Material - pentru controale
 - bootstrap- pentru styles
 

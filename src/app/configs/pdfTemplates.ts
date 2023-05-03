@@ -154,7 +154,7 @@ export function asigAutoTemplate(value) {
   };
 }
 
-export function cererePasaportTemplate(value, imagine) {
+export function fisaInscriereTemplate(value, imagine) {
   return {
     content: [
       {

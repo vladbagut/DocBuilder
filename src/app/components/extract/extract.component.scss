@@ -61,7 +61,7 @@
   }
 }
 .pdfActionsWrapper {
-  padding-top: 76px;
+  padding-top: 10px;
   transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
   transform: translate(10px) scaleY(0);
   transform-origin: top left;
@@ -181,6 +181,7 @@
 
   .mat-icon {
     font-weight: 500;
+    font-size: 21px;
   }
 
   &.close-button {
@@ -326,5 +327,28 @@ mat-form-field:hover .mat-icon.mat-accent {
   input,
   textarea {
     padding-right: 22px !important;
+  }
+}
+
+::ng-deep .mat-select-panel-wrap {
+  margin-left: 15px;
+}
+
+.sign-mat-expansion {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  background: #e4f1f5;
+  .exp-wrapper {
+    height: 150px;
+    width: 250px;
+    background-color: white;
+
+    button {
+      position: absolute;
+      right: 5px;
+      bottom: 5px;
+      background-color: transparent;
+    }
   }
 }

@@ -33,6 +33,7 @@ import { CamelToSpacePipe } from './directives/camel-to-space.pipe';
 import { TemplateDirective } from './directives/template.directive';
 import { CropImageDirective } from './directives/crop-image.directive';
 import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
+import { SignaturePadModule } from 'angular2-signaturepad';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
     BrowserAnimationsModule,
     MatExpansionModule,
     NgxResizableModule,
+    SignaturePadModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
