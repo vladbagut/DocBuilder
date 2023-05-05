@@ -222,6 +222,52 @@
         </rsz-layout>
       </div>
     </div>
+
+    <!-- Signature-->
+    <button
+      *ngIf="selectedDocType"
+      type="button"
+      (click)="signOpenState = signOpenState ? false : true"
+      color="primary"
+      mat-icon-button
+      class="action-button me-2 signature-button"
+    >
+      <mat-icon>draw</mat-icon>
+    </button>
+
+    <mat-expansion-panel
+      class="sign-mat-expansion"
+      [(expanded)]="signOpenState"
+      hideToggle="true"
+    >
+      <div class="exp-wrapper position-relative">
+        <button
+          [class.opacity-50]="!signatureBase64"
+          type="button"
+          (click)="clearSign()"
+          color="primary"
+          mat-icon-button
+          class="action-button me-2"
+        >
+          Clear
+        </button>
+        <signature-pad
+          [options]="signaturePadOptions"
+          (onEndEvent)="drawComplete()"
+        ></signature-pad>
+      </div>
+    </mat-expansion-panel>
+
+    <!-- Reset PDF-->
+    <button
+      *ngIf="selectedDocType"
+      (click)="resetForm()"
+      color="primary"
+      mat-icon-button
+      class="action-button me-2 reset-button"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
   </rsz-layout>
 </rsz-layout>
 
@@ -366,40 +412,6 @@
       class="d-flex flex-row align-items-end pdfActionsWrapper"
       [class.active]="selectedDocType"
     >
-      <!-- Signature-->
-      <button
-        type="button"
-        (click)="signOpenState = signOpenState ? false : true"
-        color="primary"
-        mat-icon-button
-        class="action-button me-2"
-      >
-        <mat-icon [style.color]="'#a363bd'">draw</mat-icon>
-      </button>
-
-      <mat-expansion-panel
-        class="sign-mat-expansion"
-        [(expanded)]="signOpenState"
-        hideToggle="true"
-      >
-        <div class="exp-wrapper position-relative">
-          <button
-            [class.opacity-50]="!signatureBase64"
-            type="button"
-            (click)="clearSign()"
-            color="primary"
-            mat-icon-button
-            class="action-button me-2"
-          >
-            Clear
-          </button>
-          <signature-pad
-            [options]="signaturePadOptions"
-            (onEndEvent)="drawComplete()"
-          ></signature-pad>
-        </div>
-      </mat-expansion-panel>
-
       <!-- Open PDF-->
       <button
         (click)="generarePdf('open')"
@@ -428,16 +440,6 @@
         class="action-button me-2"
       >
         <mat-icon>print</mat-icon>
-      </button>
-
-      <!-- Reset PDF-->
-      <button
-        (click)="resetForm()"
-        color="primary"
-        mat-icon-button
-        class="action-button me-2"
-      >
-        <mat-icon>delete</mat-icon>
       </button>
     </div>
   </form>
