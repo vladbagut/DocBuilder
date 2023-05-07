@@ -1,6 +1,6 @@
 // ---------PDF TEMPLATES --------------
 
-export function asigAutoTemplate(value) {
+export function asigAutoTemplate(value, imagine, semnatura) {
   let nrSerie: any = localStorage.getItem('NrSerie') || 1000000;
   nrSerie++;
   localStorage.setItem('NrSerie', nrSerie);
@@ -150,15 +150,51 @@ export function asigAutoTemplate(value) {
         text: 'Comisa de Supraveghere a Asigurăriar primeste si raspunde la toate sesizările şi reciamațiie privind activitatea asigurăbrior, easigurdorior s ntemedarlorn asigurn sisau reasigurăi Bucureşti str. Amiral Constantin Balescu nr.18, sector 1, telefon: 021.316.78.81, 21.31678.88; fax: 021.316.78.54 Condițte conractuale sunt prevăzut in Normale prind asigurarea obigetore de răspundere ivilă pntru rejudi produse prin accidente de vehicule aprobate prin Ordinul preşedintaui Comisiei de Supraveghere a Asigurarior rr. 00 0/2007.',
         margin: [0, 10, 0, 0],
       },
+      {
+        margin: [0, 50, 0, 0],
+        columns: [
+          {
+            stack: [
+              {
+                text: 'Semnatura asigurat: ',
+                width: 'auto',
+              },
+              {
+                text: '- - - - - - - - - - - - - - - - - - - - - -',
+                width: 'auto',
+                color: 'gray',
+                margin: [0, 50, 0, 0],
+              },
+            ],
+          },
+          {
+            stack: [
+              {
+                text: 'Semnatura agent asigurare: ',
+                width: 'auto',
+                alignment: 'center',
+              },
+              [semnatura],
+              {
+                text: '- - - - - - - - - - - - - - - - - - - - - -',
+                width: 'auto',
+                alignment: 'center',
+                color: 'gray',
+                margin: [0, semnatura ? 0 : 50, 0, 0],
+              },
+            ],
+          },
+        ],
+      },
     ],
   };
 }
 
-export function fisaInscriereTemplate(value, imagine) {
+export function fisaInscriereTemplate(value, imagine, semnatura) {
   return {
     content: [
       {
-        text: 'Cerere pasaport',
+        text: 'Fisa de inscriere',
         bold: true,
         fontSize: 16,
         alignment: 'center',
@@ -198,11 +234,5 @@ export function fisaInscriereTemplate(value, imagine) {
         ],
       },
     ],
-    styles: {
-      bold16: {
-        fontSize: 16,
-        bold: true,
-      },
-    },
   };
 }

@@ -103,6 +103,7 @@ export class ExtractComponent implements OnInit {
         if (field.isNumber)
           _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
         if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
+        if (field.isEmail) _obj[_key].addValidators([Validators.email]);
         return _obj;
       }, {})
     );
@@ -283,11 +284,16 @@ export class ExtractComponent implements OnInit {
   }
 
   getErrorMessage(field) {
-    return Errors[
-      Object.keys(
-        this.formGroup.get(this.selectedDocType.key).get(field.key).errors
-      )[0]
-    ];
+    if (
+      this.selectedDocType &&
+      this.formGroup.get(this.selectedDocType.key).get(field.key).invalid
+    ) {
+      const fieldErrors = this.formGroup
+        .get(this.selectedDocType.key)
+        .get(field.key).errors;
+      const msgKey = Object.keys(fieldErrors)[0];
+      return Errors[msgKey];
+    } else return null;
   }
 
   // 5. Generare PDF  ----------
@@ -326,23 +332,30 @@ export class ExtractComponent implements OnInit {
     return PDFTemplates[this.selectedDocType.key + 'Template']
       ? PDFTemplates[this.selectedDocType.key + 'Template'](
           this.formGroup.get(this.selectedDocType.key).value,
-          this.getImagine()
+          this.getImagine(),
+          this.getSignature()
         )
       : {};
   }
   getImagine() {
-    if (
-      this.selectedDocType?.fieldsList.some((f) => f.key == 'imagine') &&
+    return this.selectedDocType?.fieldsList.some((f) => f.key == 'imagine') &&
       this.formGroup.get(this.selectedDocType.key).get('imagine').value
-    ) {
-      return {
-        image: this.formGroup.get(this.selectedDocType.key).get('imagine')
-          .value,
-        width: 150,
-        alignment: 'right',
-      };
-    }
-    return null;
+      ? {
+          image: this.formGroup.get(this.selectedDocType.key).get('imagine')
+            .value,
+          width: 150,
+          alignment: 'right',
+        }
+      : null;
+  }
+  getSignature() {
+    return this.signatureBase64
+      ? {
+          image: this.signatureBase64,
+          width: 100,
+          alignment: 'center',
+        }
+      : null;
   }
 
   // 6. Signature

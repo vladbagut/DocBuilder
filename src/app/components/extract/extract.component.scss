@@ -60,15 +60,7 @@
     height: calc(100vh - 120px);
   }
 }
-.pdfActionsWrapper {
-  padding-top: 10px;
-  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
-  transform: translate(10px) scaleY(0);
-  transform-origin: top left;
-  &.active {
-    transform: translate(0px) scaleY(1);
-  }
-}
+
 .consola-wrapper {
   background-color: #e1eff3;
   .consola-titlu {
@@ -158,6 +150,22 @@
   }
 }
 
+.pdfActionsWrapper {
+  position: fixed;
+  bottom: 30px;
+  right: 15px;
+  padding-top: 10px;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transform: translate(10px) scaleY(0);
+  transform-origin: top left;
+  background: #add8e673;
+  padding: 10px;
+  border-radius: 50px;
+  &.active {
+    transform: translate(0px) scaleY(1);
+  }
+}
+
 .action-button {
   padding: 0;
   min-width: 0;
@@ -168,12 +176,6 @@
   border-radius: 50%;
   background-color: rgb(lightblue, 0.7);
   color: #3a7fa7;
-
-  &.big {
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-  }
 
   &:hover {
     background-color: lightblue;
@@ -208,29 +210,23 @@
       margin-top: -10px;
     }
   }
-  &.reset-button,
-  &.signature-button {
-    width: 52px;
-    height: 52px;
-    z-index: 999999;
-    position: fixed;
-    right: 10px;
-    bottom: 30px;
-    // background-color: #a5d1df61;
+
+  &.big {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(107deg, #a6c6d1 0%, #4aa0bd 40%, #3f7586 100%);
+    color: white;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     &:hover {
-      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: none;
     }
     .mat-icon {
-      font-size: 27px;
-      width: 27px;
-      height: 27px;
-      line-height: 27px;
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
       // color: red;
     }
-  }
-  &.signature-button {
-    bottom: 95px;
   }
 }
 
@@ -353,19 +349,52 @@ mat-form-field:hover .mat-icon.mat-accent {
 
 .sign-mat-expansion {
   position: fixed;
-  right: 40px;
-  bottom: 113px;
-  background: #e4f1f5;
-  .exp-wrapper {
-    height: 210px;
-    width: 400px;
-    background-color: white;
+  right: 70px;
+  bottom: 0px;
+  background: transparent;
+  box-shadow: none !important;
 
-    button {
-      position: absolute;
-      right: 5px;
-      bottom: 5px;
-      background-color: transparent;
+  .sign-wrapper {
+    background-color: #e1eff3;
+    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0px 2px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    padding: 30px;
+
+    .sign-titlu {
+      z-index: 100;
+      top: -15px;
+      left: 22px;
+      background-color: #e1eff3;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-top: 9px;
+      color: #3a7fa7;
+      font-weight: 500;
+      border-bottom: none;
+      border: none;
+      border-radius: 6px;
+    }
+    .action-button.close-button {
+      z-index: 100;
+      top: 1px;
+      right: 1px;
+    }
+    .sign {
+      overflow: auto;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      border: 2px dashed lightblue;
+    }
+    .sign + button {
+      border-radius: 0px;
+      height: 22px;
+      line-height: 22px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      /* padding: 10px; */
+      background: transparent;
     }
   }
 }

@@ -46,5 +46,19 @@ export class AppComponent {
         `../assets/icons/drag-drop.svg`
       )
     );
+
+    this.matIconRegistry.addSvgIcon(
+      `signature`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        `../assets/icons/signature.svg`
+      )
+    );
+
+    this.matIconRegistry.addSvgIcon(
+      `pdf`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        `../assets/icons/pdf.svg`
+      )
+    );
   }
 }

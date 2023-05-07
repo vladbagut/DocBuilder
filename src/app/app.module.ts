@@ -34,6 +34,7 @@ import { TemplateDirective } from './directives/template.directive';
 import { CropImageDirective } from './directives/crop-image.directive';
 import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
 import { SignaturePadModule } from 'angular2-signaturepad';
+import { FunctionPipe } from './directives/function.pipe';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     CamelToSpacePipe,
     TemplateDirective,
     CropImageDirective,
+    FunctionPipe,
   ],
   imports: [
     BrowserModule,
@@ -78,7 +80,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
     NgxResizableModule,
     SignaturePadModule,
   ],
-  providers: [],
+  providers: [FunctionPipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

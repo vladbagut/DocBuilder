@@ -7,6 +7,10 @@ key: {
         big: boolean (default false) - extinde campul pe mai multe linii (adresa)
         column: 2, (default 1)
         shortLabel: 'nume scurt (cod) ca o informatie aditionala'
+        isRequired: true,
+        isEmail
+        isCNP
+        isNumber
       }
     }
   }
@@ -74,9 +78,11 @@ export const docTypes = {
     fields: {
       nume: {
         label: 'Nume',
+        isRequired: true,
       },
       CNP: {
         label: 'CNP',
+        isCNP: true,
       },
       adresa: {
         label: 'Adresa',
@@ -84,6 +90,7 @@ export const docTypes = {
       },
       email: {
         label: 'E-mail',
+        isEmail: true,
       },
       imagine: {
         label: 'Imagine',

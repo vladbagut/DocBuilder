@@ -151,7 +151,7 @@
 
   <!-- RIGHT: FORMULAR SI CONSOLA -->
   <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
-    <div class="asig-wrapper asig-wrapper-right w-100 px-3 pe-1">
+    <div class="asig-wrapper asig-wrapper-right w-100 px-3 pe-4">
       <div class="content cols h-100 w-100">
         <rsz-layout
           class="row"
@@ -162,7 +162,7 @@
           <!-- FORMULAR -->
           <rsz-layout
             class="cell"
-            [directions]="['bottom']"
+            [directions]="['none']"
             [rFlex]="true"
             [class.flex-90]="textConsola"
             [class.flex-100]="!textConsola"
@@ -222,52 +222,6 @@
         </rsz-layout>
       </div>
     </div>
-
-    <!-- Signature-->
-    <button
-      *ngIf="selectedDocType"
-      type="button"
-      (click)="signOpenState = signOpenState ? false : true"
-      color="primary"
-      mat-icon-button
-      class="action-button me-2 signature-button"
-    >
-      <mat-icon>draw</mat-icon>
-    </button>
-
-    <mat-expansion-panel
-      class="sign-mat-expansion"
-      [(expanded)]="signOpenState"
-      hideToggle="true"
-    >
-      <div class="exp-wrapper position-relative">
-        <button
-          [class.opacity-50]="!signatureBase64"
-          type="button"
-          (click)="clearSign()"
-          color="primary"
-          mat-icon-button
-          class="action-button me-2"
-        >
-          Clear
-        </button>
-        <signature-pad
-          [options]="signaturePadOptions"
-          (onEndEvent)="drawComplete()"
-        ></signature-pad>
-      </div>
-    </mat-expansion-panel>
-
-    <!-- Reset PDF-->
-    <button
-      *ngIf="selectedDocType"
-      (click)="resetForm()"
-      color="primary"
-      mat-icon-button
-      class="action-button me-2 reset-button"
-    >
-      <mat-icon>delete</mat-icon>
-    </button>
   </rsz-layout>
 </rsz-layout>
 
@@ -276,7 +230,7 @@
   <ng-template matMenuContent let-upFile="upFile">
     <button
       [class.image-menu-button]="field.key == 'imagine'"
-      *ngFor="let field of selectedDocType.fieldsList"
+      *ngFor="let field of selectedDocType?.fieldsList"
       mat-menu-item
       (click)="
         sendFileInFiled(
@@ -319,97 +273,97 @@
   templateName="formularTemplate"
 >
   <form
-    *ngIf="selectedDocType"
     autocomplete="off"
     class="w-100 h-100 d-flex flex-row position-relative mt-2"
-    [formGroup]="formGroup.get(selectedDocType.key)"
+    [formGroup]="
+      selectedDocType ? formGroup.get(selectedDocType.key) : formGroup
+    "
   >
-    <!-- col 1 si 2 -->
-    <div
-      class="h-100 d-flex flex-column flex-grow-0 w-50 px-5"
-      *ngFor="let column of [1, 2]"
-    >
-      <div *ngFor="let field of getSelectedDocTypeFields(column)">
-        <mat-form-field
-          class="w-100 mb-2"
-          *ngIf="field.key != 'imagine'"
-          appearance="outline"
-          color="primary"
-          appDragDrop
-          (textDropped)="sendTextInField($event, field.key)"
-          (filesDropped)="sendFileInFiled({ file: $event }, field.key)"
-        >
-          <mat-label>{{
-            field.label +
-              (field.shortLabel ? " (" + field.shortLabel + ") " : "")
-          }}</mat-label>
-          <input
-            [required]="field.isRequired"
-            *ngIf="!field.big"
-            type="text"
-            matInput
-            [formControlName]="field.key"
-          />
-          <textarea
-            [required]="field.isRequired"
-            *ngIf="field.big"
-            type="text"
-            spellcheck="false"
-            rows="1"
-            matInput
-            [formControlName]="field.key"
-          ></textarea>
-          <mat-icon
-            (click)="
-              formGroup.get(selectedDocType.key).get(field.key).setValue('')
-            "
-            *ngIf="formGroup?.get(selectedDocType.key).get(field.key)?.value"
-            [@fadingAnimation]="{
-              value: formGroup?.get(selectedDocType.key).get(field.key)?.value
-                ? true
-                : false
-            }"
-            color="accent"
-            matSuffix
-            >close
-          </mat-icon>
-
-          <mat-error
-            *ngIf="formGroup.get(selectedDocType.key).get(field.key).invalid"
+    <!-- Controls: col 1 si 2 -->
+    <ng-container *ngIf="selectedDocType">
+      <div
+        class="h-100 d-flex flex-column flex-grow-0 w-50 px-5"
+        *ngFor="let column of [1, 2]"
+      >
+        <div *ngFor="let field of getSelectedDocTypeFields(column)">
+          <mat-form-field
+            class="w-100 mb-2"
+            *ngIf="field.key != 'imagine'"
+            appearance="outline"
+            color="primary"
+            appDragDrop
+            (textDropped)="sendTextInField($event, field.key)"
+            (filesDropped)="sendFileInFiled({ file: $event }, field.key)"
           >
-            {{ getErrorMessage(field) }}
-          </mat-error>
-        </mat-form-field>
+            <mat-label>{{
+              field.label +
+                (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+            }}</mat-label>
+            <input
+              [required]="field.isRequired"
+              *ngIf="!field.big"
+              type="text"
+              matInput
+              [formControlName]="field.key"
+            />
+            <textarea
+              [required]="field.isRequired"
+              *ngIf="field.big"
+              type="text"
+              spellcheck="false"
+              rows="1"
+              matInput
+              [formControlName]="field.key"
+            ></textarea>
+            <mat-icon
+              (click)="
+                formGroup.get(selectedDocType.key).get(field.key).setValue('')
+              "
+              *ngIf="formGroup?.get(selectedDocType.key).get(field.key)?.value"
+              [@fadingAnimation]="{
+                value: formGroup?.get(selectedDocType.key).get(field.key)?.value
+                  ? true
+                  : false
+              }"
+              color="accent"
+              matSuffix
+              >close
+            </mat-icon>
 
-        <!-- imagine-->
-        <div
-          class="w-100"
-          *ngIf="field.key == 'imagine'"
-          [class.hasImage]="
-            formGroup.get(selectedDocType.key).get('imagine').value
-          "
-          class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
-          appDragDrop
-          (filesDropped)="sendFileInFiled({ file: $event }, 'imagine')"
-        >
-          <img
-            *ngIf="
-              formGroup.get(selectedDocType.key).get('imagine').value;
-              else noIcon
+            <mat-error>
+              {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- imagine-->
+          <div
+            class="w-100"
+            *ngIf="field.key == 'imagine'"
+            [class.hasImage]="
+              formGroup.get(selectedDocType.key).get('imagine').value
             "
-            [src]="formGroup.get(selectedDocType.key).get('imagine').value"
-          />
-          <ng-template #noIcon>
-            <mat-icon svgIcon="image"></mat-icon>
-          </ng-template>
+            class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
+            appDragDrop
+            (filesDropped)="sendFileInFiled({ file: $event }, 'imagine')"
+          >
+            <img
+              *ngIf="
+                formGroup.get(selectedDocType.key).get('imagine').value;
+                else noIcon
+              "
+              [src]="formGroup.get(selectedDocType.key).get('imagine').value"
+            />
+            <ng-template #noIcon>
+              <mat-icon svgIcon="image"></mat-icon>
+            </ng-template>
+          </div>
         </div>
       </div>
-    </div>
+    </ng-container>
 
-    <!-- submit buttons  -->
+    <!-- Action buttons  -->
     <div
-      style="position: absolute; top: -95px; right: 35px"
-      class="d-flex flex-row align-items-end pdfActionsWrapper"
+      class="d-flex flex-column align-items-end pdfActionsWrapper"
       [class.active]="selectedDocType"
     >
       <!-- Open PDF-->
@@ -417,9 +371,9 @@
         (click)="generarePdf('open')"
         color="primary"
         mat-icon-button
-        class="action-button me-2"
+        class="action-button big mb-2"
       >
-        <mat-icon>picture_as_pdf</mat-icon>
+        <mat-icon svgIcon="pdf"></mat-icon>
       </button>
 
       <!-- Download PDF-->
@@ -427,7 +381,7 @@
         (click)="generarePdf('download')"
         color="primary"
         mat-icon-button
-        class="action-button me-2"
+        class="action-button big mb-2"
       >
         <mat-icon>cloud_download</mat-icon>
       </button>
@@ -437,9 +391,67 @@
         (click)="generarePdf('print')"
         color="primary"
         mat-icon-button
-        class="action-button me-2"
+        class="action-button big mb-5"
       >
         <mat-icon>print</mat-icon>
+      </button>
+
+      <!-- Signature-->
+      <button
+        *ngIf="selectedDocType"
+        type="button"
+        (click)="signOpenState = signOpenState ? false : true"
+        color="primary"
+        mat-icon-button
+        class="action-button big mb-2 signature-button"
+      >
+        <mat-icon svgIcon="signature"></mat-icon>
+      </button>
+
+      <mat-expansion-panel
+        class="sign-mat-expansion"
+        [(expanded)]="signOpenState"
+        hideToggle="true"
+      >
+        <div class="h-100 w-100 position-relative sign-wrapper mt-4">
+          <span class="sign-titlu position-absolute">Semnatura</span>
+          <button
+            class="action-button close-button position-absolute"
+            (click)="signOpenState = false"
+            mat-icon-button
+            color="primary"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+          <div class="h-100 sign w-100">
+            <signature-pad
+              class="flex-grow-1"
+              [options]="signaturePadOptions"
+              (onEndEvent)="drawComplete()"
+            ></signature-pad>
+          </div>
+          <button
+            [class.opacity-0]="!signatureBase64"
+            type="button"
+            (click)="clearSign()"
+            color="primary"
+            mat-icon-button
+            class="action-button opacity-0 me-2 float-end"
+          >
+            Clear
+          </button>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Reset PDF-->
+      <button
+        *ngIf="selectedDocType"
+        (click)="resetForm()"
+        color="primary"
+        mat-icon-button
+        class="action-button big reset-button"
+      >
+        <mat-icon>delete</mat-icon>
       </button>
     </div>
   </form>
