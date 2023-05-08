@@ -161,8 +161,9 @@
         >
           <!-- FORMULAR -->
           <rsz-layout
+            [class.console-closed]="!textConsola"
             class="cell"
-            [directions]="['none']"
+            [directions]="['bottom']"
             [rFlex]="true"
             [class.flex-90]="textConsola"
             [class.flex-100]="!textConsola"
@@ -199,7 +200,12 @@
           </rsz-layout>
 
           <!-- CONSOLA -->
-          <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
+          <rsz-layout
+            class="cell"
+            [directions]="['none']"
+            [rFlex]="false"
+            [style.margin-bottom]="'5px'"
+          >
             <!-- consola -->
             <div
               class="h-100 w-100 position-relative consola-wrapper"
@@ -398,6 +404,38 @@
         </button>
       </div>
       <div class="d-flex flex-column">
+        <!-- Config-->
+        <button
+          *ngIf="selectedDocType"
+          type="button"
+          (click)="configOpenState = configOpenState ? false : true"
+          color="primary"
+          mat-icon-button
+          class="action-button big mb-3 signature-button"
+        >
+          <mat-icon style="margin-top: -3px" svgIcon="settings"></mat-icon>
+        </button>
+        <mat-expansion-panel
+          class="sign-mat-expansion"
+          [(expanded)]="configOpenState"
+          hideToggle="true"
+        >
+          <div class="h-100 w-100 position-relative sign-wrapper mt-4">
+            <span class="sign-titlu position-absolute"> Setari generale</span>
+            <button
+              class="action-button close-button position-absolute"
+              (click)="configOpenState = false"
+              mat-icon-button
+              color="primary"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <div class="h-100 w-100">
+              <ng-container *ngTemplateOutlet="configTemplate"> </ng-container>
+            </div>
+          </div>
+        </mat-expansion-panel>
+
         <!-- Signature-->
         <button
           *ngIf="selectedDocType"
@@ -409,7 +447,6 @@
         >
           <mat-icon svgIcon="signature"></mat-icon>
         </button>
-
         <mat-expansion-panel
           class="sign-mat-expansion"
           [(expanded)]="signOpenState"
@@ -458,4 +495,29 @@
       </div>
     </div>
   </form>
+</ng-template>
+
+<ng-template appTemplateDirective #configTemplate templateName="configTemplate">
+  <div>
+    <form
+      *ngIf="selectedDocType"
+      autocomplete="off"
+      class="d-flex flex-column flex-wrap"
+      style="max-height: 450px; width: 600px; column-gap: 30px"
+      [formGroup]="
+        selectedDocType
+          ? configFormGroup.get(selectedDocType.key)
+          : configFormGroup
+      "
+    >
+      <mat-form-field
+        appearance="outline"
+        color="primary"
+        *ngFor="let field of getSelectedDocTypeConfigFields()"
+      >
+        <mat-label>{{ field.label }}</mat-label>
+        <input type="text" matInput [formControlName]="field.key" />
+      </mat-form-field>
+    </form>
+  </div>
 </ng-template>

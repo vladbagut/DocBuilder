@@ -64,18 +64,23 @@
 
 .consola-wrapper {
   background-color: #e1eff3;
+  box-shadow: 2px 1px 16px -1px rgb(62 129 167 / 43%);
   .consola-titlu {
     z-index: 100;
-    top: -22px;
+    top: -27px;
     left: 22px;
     background-color: #e1eff3;
     padding-left: 15px;
     padding-right: 15px;
-    padding-top: 2px;
-    color: #3a7fa7;
+    padding-top: 7px;
+    color: black;
     font-weight: 500;
-    border: 2px dashed lightblue;
+    border: 2px solid #b6d8e3;
+    border-radius: 6px 6px 0px 0px;
     border-bottom: none;
+    box-shadow: 0px -9px 12px -9px rgb(62 129 167 / 43%);
+    font-size: 15px;
+    user-select: none;
   }
   .action-button.close-button {
     z-index: 100;
@@ -83,11 +88,13 @@
     right: 2px;
   }
   .consola {
-    border: 2px dashed lightblue;
+    border: 2px solid #b6d8e3;
+    border-radius: 6px 6px 0px 0px;
     overflow: auto;
     position: relative;
     width: 100%;
     height: 100%;
+    padding: 15px;
   }
 }
 
@@ -349,6 +356,10 @@ mat-form-field:hover .mat-icon.mat-accent {
   margin-left: 15px;
 }
 
+::ng-deep .mat-form-field-label {
+  user-select: none;
+}
+
 .sign-mat-expansion {
   position: fixed;
   right: 70px;
@@ -358,23 +369,26 @@ mat-form-field:hover .mat-icon.mat-accent {
 
   .sign-wrapper {
     background-color: #e1eff3;
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-      0px 2px 8px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 1px 15px -1px rgba(62, 129, 167, 0.43);
     padding: 30px;
+    border: 2px solid #b6d8e3;
 
     .sign-titlu {
       z-index: 100;
-      top: -15px;
+      top: -27px;
       left: 22px;
       background-color: #e1eff3;
       padding-left: 15px;
       padding-right: 15px;
-      padding-top: 9px;
-      color: #3a7fa7;
+      padding-top: 5px;
+      color: black;
       font-weight: 500;
+      border-radius: 6px 6px 0px 0px;
+      box-shadow: 0px -9px 12px -9px rgb(62 129 167 / 43%);
+      font-size: 15px;
+      border: 2px solid #b6d8e3;
       border-bottom: none;
-      border: none;
-      border-radius: 6px;
+      user-select: none;
     }
     .action-button.close-button {
       z-index: 100;
@@ -387,7 +401,7 @@ mat-form-field:hover .mat-icon.mat-accent {
       width: 100%;
       height: 100%;
       padding: 3px;
-      border: 2px dashed lightblue;
+      border: 1px dashed #b6d8e3;
     }
     .sign + button {
       border-radius: 0px;
@@ -398,5 +412,21 @@ mat-form-field:hover .mat-icon.mat-accent {
       /* padding: 10px; */
       background: transparent;
     }
+
+    .mat-form-field-can-float.mat-form-field-should-float ::ng-deep {
+      .mat-form-field-label {
+        mat-label {
+          background-color: #e1eff3;
+        }
+      }
+    }
   }
+}
+
+::ng-deep .console-closed .rg-bottom {
+  display: none;
+}
+::ng-deep .rg-right {
+  z-index: unset !important;
+  margin-right: -6px !important;
 }

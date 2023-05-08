@@ -1,10 +1,6 @@
 // ---------PDF TEMPLATES --------------
 
-export function asigAutoTemplate(value, imagine, semnatura) {
-  let nrSerie: any = localStorage.getItem('NrSerie') || 1000000;
-  nrSerie++;
-  localStorage.setItem('NrSerie', nrSerie);
-
+export function asigAutoTemplate(value, config, imagine, semnatura) {
   return {
     pageSize: 'A4',
     pageMargins: [20, 40, 20, 40],
@@ -19,14 +15,20 @@ export function asigAutoTemplate(value, imagine, semnatura) {
                 text: 'CONTRACT DE ASIGURARE DE RASPUNDERE CIVILA AUTO RCA',
                 bold: true,
               },
-              'GROUPAMA ASIGURARI S.A.                   Tel.: 0740085442',
               {
-                text: 'Brocker / Agent ___________________________',
-                fontSize: 10,
-                margin: [0, 5, 0, 0],
+                text:
+                  config.companie +
+                  '                   Tel.: ' +
+                  config.telefon,
+                margin: [0, 3, 0, 0],
               },
               {
-                text: 'Sucursala / Agentia ___________________________',
+                text: 'Brocker / Agent : ' + config.agent,
+                fontSize: 10,
+                margin: [0, 15, 0, 0],
+              },
+              {
+                text: 'Sucursala / Agentia: ' + config.sucursala,
                 fontSize: 10,
               },
             ],
@@ -38,14 +40,13 @@ export function asigAutoTemplate(value, imagine, semnatura) {
               {
                 columns: [
                   {
-                    text: 'Seria',
+                    text: 'Seria:',
                     bold: true,
                     width: 'auto',
                     margin: [0, 0, 5, 0],
                   },
                   {
-                    text: 'RO/XX/YYY/SS',
-                    color: 'red',
+                    text: config.serie,
                   },
                   {
                     text: 'Nr. ',
@@ -53,14 +54,34 @@ export function asigAutoTemplate(value, imagine, semnatura) {
                     width: 'auto',
                     margin: [0, 0, 5, 0],
                   },
-                  nrSerie,
+                  config.numarSerie,
                 ],
               },
               {
-                columns: ['R.C.', 'C.U.I.'],
-                margin: [0, 0, 0, 20],
+                columns: [
+                  {
+                    text: 'R.C.  ',
+                    bold: true,
+                    width: 'auto',
+                    margin: [0, 3, 3, 20],
+                  },
+                  {
+                    text: config.RC,
+                    margin: [0, 3, 0, 20],
+                  },
+                  {
+                    text: 'C.U.I.  ',
+                    bold: true,
+                    width: 'auto',
+                    margin: [17, 3, 3, 20],
+                  },
+                  {
+                    text: config.CUI,
+                    margin: [0, 3, 0, 20],
+                  },
+                ],
               },
-              'Cod Broker/Agent ______________________',
+              'Cod Broker/Agent: ' + config.codAgent,
             ],
           },
         ],
@@ -190,7 +211,7 @@ export function asigAutoTemplate(value, imagine, semnatura) {
   };
 }
 
-export function fisaInscriereTemplate(value, imagine, semnatura) {
+export function fisaInscriereTemplate(value, config, imagine, semnatura) {
   return {
     content: [
       {

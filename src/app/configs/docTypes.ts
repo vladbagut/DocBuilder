@@ -73,6 +73,35 @@ export const docTypes = {
         column: 2,
       },
     },
+    configFields: {
+      companie: {
+        label: 'Compania de asigurari',
+      },
+      sucursala: {
+        label: 'Sucursala / Agentia',
+      },
+      telefon: {
+        label: 'Telefon',
+      },
+      agent: {
+        label: 'Brocker / Agent',
+      },
+      codAgent: {
+        label: 'Cod Brocker / Agent',
+      },
+      serie: {
+        label: 'Serie contract',
+      },
+      numarSerie: {
+        label: 'Numar',
+      },
+      RC: {
+        label: 'R.C',
+      },
+      CUI: {
+        label: 'C.U.I.',
+      },
+    },
   },
   fisaInscriere: {
     label: 'Fisa inscriere facultate',
@@ -96,6 +125,11 @@ export const docTypes = {
       imagine: {
         label: 'Imagine',
         column: 2,
+      },
+    },
+    configFields: {
+      facultatea: {
+        label: 'Facultatea',
       },
     },
   },

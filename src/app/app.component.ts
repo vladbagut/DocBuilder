@@ -60,5 +60,12 @@ export class AppComponent {
         `../assets/icons/pdf.svg`
       )
     );
+
+    this.matIconRegistry.addSvgIcon(
+      `settings`,
+      this.domSanitizer.bypassSecurityTrustResourceUrl(
+        `../assets/icons/settings.svg`
+      )
+    );
   }
 }

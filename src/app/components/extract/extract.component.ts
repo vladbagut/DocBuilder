@@ -53,6 +53,7 @@ export class ExtractComponent implements OnInit {
   selectedDocType;
 
   formGroup = new FormGroup({});
+  configFormGroup = new FormGroup({});
   public files: UpFile[] = [];
   textConsola = '';
   contextMenuPosition = { x: 0, y: 0 };
@@ -67,6 +68,7 @@ export class ExtractComponent implements OnInit {
     minWidth: 1,
     penColor: '#3a7fa7',
   };
+  configOpenState;
 
   @ViewChildren(TemplateDirective)
   public templates: QueryList<TemplateDirective>;
@@ -84,6 +86,10 @@ export class ExtractComponent implements OnInit {
         key: fk,
         ...docTypes[key].fields[fk],
       })),
+      configFieldsList: Object.keys(docTypes[key].configFields).map((fk) => ({
+        key: fk,
+        ...docTypes[key].configFields[fk],
+      })),
     }));
 
     this.formGroup = new FormGroup(
@@ -92,13 +98,33 @@ export class ExtractComponent implements OnInit {
         return obj;
       }, {})
     );
+
+    //config
+    this.configFormGroup = new FormGroup(
+      Object.keys(docTypes).reduce((obj, key) => {
+        obj[key] = this.getFormSubGroup(key, 'configFields');
+        return obj;
+      }, {})
+    );
+
+    if (localStorage.getItem('config'))
+      this.configFormGroup.patchValue(
+        JSON.parse(localStorage.getItem('config'))
+      );
+
+    this.configFormGroup.valueChanges.subscribe(() => {
+      localStorage.setItem(
+        'config',
+        JSON.stringify(this.configFormGroup.value)
+      );
+    });
   }
 
-  getFormSubGroup(docKey) {
+  getFormSubGroup(docKey, fields = 'fields') {
     return new FormGroup(
-      Object.keys(docTypes[docKey].fields).reduce((_obj, _key) => {
+      Object.keys(docTypes[docKey][fields]).reduce((_obj, _key) => {
         _obj[_key] = new FormControl(null, []);
-        const field = docTypes[docKey].fields[_key];
+        const field = docTypes[docKey][fields][_key];
         if (field.isRequired) _obj[_key].addValidators([Validators.required]);
         if (field.isNumber)
           _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
@@ -264,6 +290,10 @@ export class ExtractComponent implements OnInit {
       );
   }
 
+  getSelectedDocTypeConfigFields() {
+    return this.selectedDocType.configFieldsList;
+  }
+
   getFormularTemplate() {
     var key = this.selectedDocType?.key;
     if (!key) return null;
@@ -332,6 +362,7 @@ export class ExtractComponent implements OnInit {
     return PDFTemplates[this.selectedDocType.key + 'Template']
       ? PDFTemplates[this.selectedDocType.key + 'Template'](
           this.formGroup.get(this.selectedDocType.key).value,
+          this.configFormGroup.get(this.selectedDocType.key).value,
           this.getImagine(),
           this.getSignature()
         )
