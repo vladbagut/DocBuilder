@@ -145,7 +145,7 @@ export function asigAutoTemplate(value, config, imagine, semnatura) {
         margin: [0, 10, 0, 0],
       },
       {
-        text: 'Prima de asigurare de: ' + ' _____________ ',
+        text: 'Prima de asigurare de: ' + value.primaAsigurare,
         margin: [0, 10, 0, 0],
       },
       {
@@ -155,8 +155,14 @@ export function asigAutoTemplate(value, config, imagine, semnatura) {
           headerRows: 0,
           widths: ['50%', '*'],
           body: [
-            ['Limita de despagubire pentru vatamari corporale si deces:', ''],
-            ['Limita de despagubire pentru pagube materiale:', ''],
+            [
+              'Limita de despagubire pentru vatamari corporale si deces:',
+              value.limitaDespagubireVatamari,
+            ],
+            [
+              'Limita de despagubire pentru pagube materiale:',
+              value.limitaDespagubirePagube,
+            ],
           ],
         },
       },

@@ -294,7 +294,7 @@
         <div *ngFor="let field of getSelectedDocTypeFields(column)">
           <mat-form-field
             class="w-100 mb-2"
-            *ngIf="field.key != 'imagine'"
+            *ngIf="field.key != 'imagine' && !field.isSeparator"
             appearance="outline"
             color="primary"
             appDragDrop
@@ -340,6 +340,14 @@
               {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
             </mat-error>
           </mat-form-field>
+
+          <div
+            [style.margin]="field.margin || '0px'"
+            *ngIf="field.isSeparator"
+            class="field-separator"
+          >
+            {{ field.label }}
+          </div>
 
           <!-- imagine-->
           <div

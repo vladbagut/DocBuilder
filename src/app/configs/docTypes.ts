@@ -8,10 +8,12 @@ documentKey: {
         big: extinde campul pe mai multe linii (de ex. adresa)
         column: 2, (default 1)
         shortLabel: 'nume scurt (cod) ca o informatie aditionala'
+        margin: "20px 0px 5px 10px"
         isRequired: validare de field required,
         isEmail:  validare de field e-mail,
         isCNP: validare CNP
         isNumber: validare camp numeric
+        isSeparator,
       }
     }
   }
@@ -21,6 +23,11 @@ export const docTypes = {
   asigAuto: {
     label: 'Asigurare AUTO RCA',
     fields: {
+      separator1: {
+        label: 'Date asigurat:',
+        isSeparator: true,
+        margin: '5px 0px 20px 0px',
+      },
       nume: {
         label: 'Nume',
         isRequired: true,
@@ -32,6 +39,30 @@ export const docTypes = {
       adresa: {
         label: 'Adresa',
         big: true,
+      },
+      separator2: {
+        label: 'Valori asigurare:',
+        isSeparator: true,
+        margin: '17px 0px 20px 0px',
+      },
+      primaAsigurare: {
+        label: 'Prima de despagubire',
+      },
+      limitaDespagubireVatamari: {
+        label: 'Limita despagubire vatamari / deces',
+      },
+      limitaDespagubirePagube: {
+        label: 'Limita despagubire pagube materiale',
+      },
+      data: {
+        label: 'Valabilitate contract de la:',
+        isDate: true,
+      },
+      separator3: {
+        label: 'Date autovehicul:',
+        isSeparator: true,
+        column: 2,
+        margin: '5px 0px 20px 0px',
       },
       nrInmatriculare: {
         label: 'Numar inmatriculare',
