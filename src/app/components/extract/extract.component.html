@@ -151,7 +151,7 @@
 
   <!-- RIGHT: FORMULAR SI CONSOLA -->
   <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
-    <div class="asig-wrapper asig-wrapper-right w-100 px-3 pe-4">
+    <div class="asig-wrapper asig-wrapper-right w-100 px-3">
       <div class="content cols h-100 w-100">
         <rsz-layout
           class="row"
@@ -363,96 +363,99 @@
 
     <!-- Action buttons  -->
     <div
-      class="d-flex flex-column align-items-end pdfActionsWrapper"
+      class="d-flex flex-column justify-content-between pdfActionsWrapper"
       [class.active]="selectedDocType"
     >
-      <!-- Open PDF-->
-      <button
-        (click)="generarePdf('open')"
-        color="primary"
-        mat-icon-button
-        class="action-button big mb-2"
-      >
-        <mat-icon svgIcon="pdf"></mat-icon>
-      </button>
+      <div class="d-flex flex-column">
+        <!-- Open PDF-->
+        <button
+          (click)="generarePdf('open')"
+          color="primary"
+          mat-icon-button
+          class="action-button big mb-3 mt-3"
+        >
+          <mat-icon svgIcon="pdf"></mat-icon>
+        </button>
 
-      <!-- Download PDF-->
-      <button
-        (click)="generarePdf('download')"
-        color="primary"
-        mat-icon-button
-        class="action-button big mb-2"
-      >
-        <mat-icon>cloud_download</mat-icon>
-      </button>
+        <!-- Download PDF-->
+        <button
+          (click)="generarePdf('download')"
+          color="primary"
+          mat-icon-button
+          class="action-button big mb-3"
+        >
+          <mat-icon>cloud_download</mat-icon>
+        </button>
 
-      <!-- Print PDF-->
-      <button
-        (click)="generarePdf('print')"
-        color="primary"
-        mat-icon-button
-        class="action-button big mb-5"
-      >
-        <mat-icon>print</mat-icon>
-      </button>
+        <!-- Print PDF-->
+        <button
+          (click)="generarePdf('print')"
+          color="primary"
+          mat-icon-button
+          class="action-button big"
+        >
+          <mat-icon>print</mat-icon>
+        </button>
+      </div>
+      <div class="d-flex flex-column">
+        <!-- Signature-->
+        <button
+          *ngIf="selectedDocType"
+          type="button"
+          (click)="signOpenState = signOpenState ? false : true"
+          color="primary"
+          mat-icon-button
+          class="action-button big mb-3 signature-button"
+        >
+          <mat-icon svgIcon="signature"></mat-icon>
+        </button>
 
-      <!-- Signature-->
-      <button
-        *ngIf="selectedDocType"
-        type="button"
-        (click)="signOpenState = signOpenState ? false : true"
-        color="primary"
-        mat-icon-button
-        class="action-button big mb-2 signature-button"
-      >
-        <mat-icon svgIcon="signature"></mat-icon>
-      </button>
-
-      <mat-expansion-panel
-        class="sign-mat-expansion"
-        [(expanded)]="signOpenState"
-        hideToggle="true"
-      >
-        <div class="h-100 w-100 position-relative sign-wrapper mt-4">
-          <span class="sign-titlu position-absolute">Semnatura</span>
-          <button
-            class="action-button close-button position-absolute"
-            (click)="signOpenState = false"
-            mat-icon-button
-            color="primary"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-          <div class="h-100 sign w-100">
-            <signature-pad
-              class="flex-grow-1"
-              [options]="signaturePadOptions"
-              (onEndEvent)="drawComplete()"
-            ></signature-pad>
+        <mat-expansion-panel
+          class="sign-mat-expansion"
+          [(expanded)]="signOpenState"
+          hideToggle="true"
+        >
+          <div class="h-100 w-100 position-relative sign-wrapper mt-4">
+            <span class="sign-titlu position-absolute">Semnatura</span>
+            <button
+              class="action-button close-button position-absolute"
+              (click)="signOpenState = false"
+              mat-icon-button
+              color="primary"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <div class="h-100 sign w-100">
+              <signature-pad
+                class="flex-grow-1"
+                [options]="signaturePadOptions"
+                (onEndEvent)="drawComplete()"
+              ></signature-pad>
+            </div>
+            <button
+              [class.opacity-0]="!signatureBase64"
+              type="button"
+              (click)="clearSign()"
+              color="primary"
+              mat-icon-button
+              class="action-button opacity-0 me-2 float-end"
+            >
+              Clear
+            </button>
           </div>
-          <button
-            [class.opacity-0]="!signatureBase64"
-            type="button"
-            (click)="clearSign()"
-            color="primary"
-            mat-icon-button
-            class="action-button opacity-0 me-2 float-end"
-          >
-            Clear
-          </button>
-        </div>
-      </mat-expansion-panel>
+        </mat-expansion-panel>
 
-      <!-- Reset PDF-->
-      <button
-        *ngIf="selectedDocType"
-        (click)="resetForm()"
-        color="primary"
-        mat-icon-button
-        class="action-button big reset-button"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
+        <!-- Reset PDF-->
+        <button
+          *ngIf="selectedDocType"
+          (click)="resetForm()"
+          color="primary"
+          mat-icon-button
+          class="action-button big reset-button mb-3"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
     </div>
   </form>
 </ng-template>
