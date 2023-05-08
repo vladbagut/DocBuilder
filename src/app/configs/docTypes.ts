@@ -90,7 +90,7 @@ export const docTypes = {
         label: 'Cod Brocker / Agent',
       },
       serie: {
-        label: 'Serie contract',
+        label: 'Serie',
       },
       numarSerie: {
         label: 'Numar',

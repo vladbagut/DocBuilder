@@ -342,6 +342,14 @@ export class ExtractComponent implements OnInit {
     });
 
     if (!this.formGroup.get(this.selectedDocType.key).valid) return;
+
+    let nrSerie;
+    if (this.selectedDocType.key == 'asigAuto') {
+      nrSerie =
+        +this.configFormGroup.get(this.selectedDocType.key).get('numarSerie')
+          .value || 100000001;
+    }
+
     const documentDefinition = this.getPdfDefinition();
     switch (actiune) {
       case 'open':
@@ -356,6 +364,13 @@ export class ExtractComponent implements OnInit {
       default:
         pdfMake.createPdf(documentDefinition).open();
         break;
+    }
+
+    if (this.selectedDocType.key == 'asigAuto') {
+      this.configFormGroup
+        .get(this.selectedDocType.key)
+        .get('numarSerie')
+        .setValue(nrSerie + 1);
     }
   }
   getPdfDefinition() {

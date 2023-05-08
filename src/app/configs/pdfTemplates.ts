@@ -145,13 +145,7 @@ export function asigAutoTemplate(value, config, imagine, semnatura) {
         margin: [0, 10, 0, 0],
       },
       {
-        text:
-          'Prima de asigurare de: ' +
-          ' _____________ ' +
-          'RON, incasata cu: ' +
-          ' ______________ ' +
-          'din data de :' +
-          ' _______________',
+        text: 'Prima de asigurare de: ' + ' _____________ ',
         margin: [0, 10, 0, 0],
       },
       {
