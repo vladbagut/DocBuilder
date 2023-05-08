@@ -1,20 +1,21 @@
-/*
-key: {
+/*  ---------  STRUCTURA: -----------
+
+documentKey: {
   label: nume document
   fields: {
-      key: {
-        label: nume camp,
-        big: boolean (default false) - extinde campul pe mai multe linii (adresa)
+      fieldKey: {
+        label: nume field,
+        big: extinde campul pe mai multe linii (de ex. adresa)
         column: 2, (default 1)
         shortLabel: 'nume scurt (cod) ca o informatie aditionala'
-        isRequired: true,
-        isEmail
-        isCNP
-        isNumber
+        isRequired: validare de field required,
+        isEmail:  validare de field e-mail,
+        isCNP: validare CNP
+        isNumber: validare camp numeric
       }
     }
   }
-*/
+--------------------------------------*/
 
 export const docTypes = {
   asigAuto: {
