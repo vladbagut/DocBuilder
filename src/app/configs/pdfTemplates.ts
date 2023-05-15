@@ -213,57 +213,128 @@ export function asigAutoTemplate(value, config, semnatura) {
 
 export function fisaInscriereTemplate(value, config, semnatura) {
   return {
+    pageSize: 'A4',
+    pageMargins: [20, 40, 20, 40],
     content: [
-      {
-        text: 'Fisa de inscriere',
-        bold: true,
-        fontSize: 16,
-        alignment: 'center',
-        margin: [0, 0, 0, 20],
-      },
       {
         columns: [
           {
-            stack: [
-              {
-                columns: [
-                  {
-                    text: 'Nume: ',
-                    width: 'auto',
-                    margin: [0, 0, 5, 5],
-                  },
-                  {
-                    text: value.nume,
-                    bold: true,
-                    color: '#3a7fa7',
-                  },
-                ],
-              },
-              {
-                columns: [
-                  {
-                    text: 'CNP: ',
-                    width: 'auto',
-                    margin: [0, 0, 5, 0],
-                  },
-                  value.CNP,
-                ],
-              },
-            ],
+            width: 'auto',
+            fontSize: 9,
+            stack: [getImagine(config.logo, 100)],
+            margin: [0, 0, 10, 0],
           },
-          [getImagine(value.imagine)],
+          {
+            width: '*',
+            fontSize: 9,
+            stack: [config.adresa, 'Tel: ' + config.telefon, config.website],
+          },
         ],
+      },
+      {
+        margin: [0, 10, 0, 30],
+        fontSize: 8,
+        text: config.facultatea,
+        width: 50,
+      },
+      {
+        with: '*',
+        alignment: 'center',
+        text: 'FIŞĂ DE ÎNSCRIERE',
+      },
+      {
+        with: '*',
+        alignment: 'center',
+        fontSize: 10,
+        text: 'la concursul de admitere în învăţământul universitar de licenţă (ciclul I de studii universitare)',
+      },
+      {
+        margin: [0, 20, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '1. Numele şi prenumele candidatului (cu inițiala prenumelui tatălui): ',
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '2. Cod numeric personal:  ' + value.CNP,
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '3. Sexul:  ' + extrageDateDinCNP(value.CNP).sex,
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '4. Naționalitatea:  ',
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '5. Data naşterii:  ' + extrageDateDinCNP(value.CNP).dataNasterii,
       },
     ],
   };
 }
 
-function getImagine(img) {
+function getImagine(img, width) {
   return img
     ? {
         image: img,
-        width: 150,
+        width: width,
         alignment: 'right',
       }
     : null;
+}
+
+function extrageDateDinCNP(CNP) {
+  const s = CNP.substring(0, 1);
+  let sex, aa, an, zi, luna;
+  switch (s) {
+    case '1':
+      sex = 'Masculin';
+      aa = '19';
+      break;
+    case '2':
+      sex = 'Feminin';
+      aa = '19';
+      break;
+    case '3':
+      sex = 'Masculin';
+      aa = '18';
+      break;
+    case '4':
+      sex = 'Feminin';
+      aa = '18';
+      break;
+    case '5':
+      sex = 'Masculin';
+      aa = '20';
+      break;
+    case '6':
+      sex = 'Feminin';
+      aa = '20';
+      break;
+    case '7':
+      sex = 'Masculin';
+      aa = '19';
+      break;
+    case '8':
+      sex = 'Feminin';
+      aa = '19';
+      break;
+  }
+  an = aa + CNP.substring(1, 3);
+  luna = CNP.substring(3, 5);
+  zi = CNP.substring(5, 7);
+
+  return {
+    sex,
+    dataNasterii: `ziua:  ${zi},    luna:  ${luna},     anul:  ${an}`,
+  };
 }

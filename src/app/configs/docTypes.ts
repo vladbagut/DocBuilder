@@ -112,8 +112,7 @@ export const docTypes = {
         isCNP: true,
       },
       adresa: {
-        label: 'Adresa',
-        big: true,
+        label: 'Naționalitatea',
       },
       email: {
         label: 'E-mail',
