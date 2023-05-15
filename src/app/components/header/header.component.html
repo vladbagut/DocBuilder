@@ -1,10 +1,46 @@
 <!-- Toolbar -->
-<div class="toolbar" role="banner">
+<div class="toolbar d-flex gap-4" role="banner">
   <div
     class="d-flex flex-row align-items-baseline ps-3 cursor-pointer"
     (click)="gotoHome()"
   >
     <span class="pe-1 red-text">D</span>
     <span class="white-text">oc Builder</span>
+  </div>
+
+  <div class="d-flex ms-5">
+    <!-- Home -->
+    <div (click)="goTo('')">
+      <button
+        mat-icon-button
+        class="me-3 button-go"
+        matTooltip="Home"
+        matTooltipShowDelay="400"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
+    <!-- Asig auto -->
+    <div (click)="goTo('asigurare')">
+      <button
+        mat-icon-button
+        class="me-3 button-go"
+        matTooltip="Asigurare auto RCA"
+        matTooltipShowDelay="400"
+      >
+        <mat-icon>directions_car</mat-icon>
+      </button>
+    </div>
+    <!-- Inscriere facultate -->
+    <div (click)="goTo('inscriere')">
+      <button
+        mat-icon-button
+        class="me-3 button-go"
+        matTooltip="Fisa inscriere facultate"
+        matTooltipShowDelay="400"
+      >
+        <mat-icon>school</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

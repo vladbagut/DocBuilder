@@ -339,3 +339,12 @@ $dark-text: black;
   white-space: break-spaces;
   word-break: break-all;
 }
+
+::ng-deep .mat-tooltip {
+  font-size: small;
+  background-color: #ffffff;
+  color: #000000 !important;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+  border-radius: 0.5rem;
+  padding: 0.5rem !important;
+}

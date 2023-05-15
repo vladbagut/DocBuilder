@@ -8,7 +8,16 @@ const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'about', component: AboutComponent },
-  { path: 'extract', component: ExtractComponent },
+  {
+    path: 'asigurare',
+    component: ExtractComponent,
+    data: { docTypeKey: 'asigAuto' },
+  },
+  {
+    path: 'inscriere',
+    component: ExtractComponent,
+    data: { docTypeKey: 'fisaInscriere' },
+  },
 ];
 
 @NgModule({

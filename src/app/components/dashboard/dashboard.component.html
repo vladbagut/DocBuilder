@@ -7,21 +7,34 @@
     toggleObject.toggle = false
   "
 >
-  <!-- Highlight Card -->
-  <div
-    class="card highlight-card card-small ps-0 pos-relative mt-2 mb-4"
-    (click)="newPocess()"
-  >
-    <button mat-icon-button class="img_procesare">
-      <mat-icon svgIcon="textImage"></mat-icon>
-    </button>
-    <span class="fs-5">Document nou</span>
+  <div class="d-flex">
+    <!-- Asig auto -->
+    <div
+      class="card highlight-card card-small pos-relative mt-2 mb-4 m-4"
+      (click)="goTo('asigurare')"
+    >
+      <button mat-icon-button class="me-3">
+        <mat-icon style="font-size: 34px">directions_car</mat-icon>
+      </button>
+      <span class="fs-5">Asigurare auto RCA</span>
+    </div>
+
+    <!-- Inscriere facultate -->
+    <div
+      class="card highlight-card card-small pos-relative mt-2 mb-4 ms-4"
+      (click)="goTo('inscriere')"
+    >
+      <button mat-icon-button class="me-3">
+        <mat-icon style="font-size: 34px">school</mat-icon>
+      </button>
+      <span class="fs-5">Fişă înscriere facultate</span>
+    </div>
   </div>
 
   <div style="overflow: hidden">
     <mat-icon
       svgIcon="drag-drop-image"
-      style="width: 700px; height: auto"
+      style="width: 850px; height: auto; margin-left: 50px"
     ></mat-icon>
   </div>
 

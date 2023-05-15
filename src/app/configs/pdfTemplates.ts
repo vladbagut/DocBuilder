@@ -1,6 +1,6 @@
 // ---------PDF TEMPLATES --------------
 
-export function asigAutoTemplate(value, config, imagine, semnatura) {
+export function asigAutoTemplate(value, config, semnatura) {
   return {
     pageSize: 'A4',
     pageMargins: [20, 40, 20, 40],
@@ -211,7 +211,7 @@ export function asigAutoTemplate(value, config, imagine, semnatura) {
   };
 }
 
-export function fisaInscriereTemplate(value, config, imagine, semnatura) {
+export function fisaInscriereTemplate(value, config, semnatura) {
   return {
     content: [
       {
@@ -251,9 +251,19 @@ export function fisaInscriereTemplate(value, config, imagine, semnatura) {
               },
             ],
           },
-          [imagine],
+          [getImagine(value.imagine)],
         ],
       },
     ],
   };
+}
+
+function getImagine(img) {
+  return img
+    ? {
+        image: img,
+        width: 150,
+        alignment: 'right',
+      }
+    : null;
 }

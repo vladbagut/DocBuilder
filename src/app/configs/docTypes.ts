@@ -1,9 +1,6 @@
-/*  ---------  STRUCTURA: -----------
+/*  ---------  LEGENDA -----------
 
-documentKey: {
-  label: nume document
-  fields: {
-      fieldKey: {
+  fields:
         label: nume field,
         big: extinde campul pe mai multe linii (de ex. adresa)
         column: 2, (default 1)
@@ -12,11 +9,9 @@ documentKey: {
         isRequired: validare de field required,
         isEmail:  validare de field e-mail,
         isCNP: validare CNP
-        isNumber: validare camp numeric
-        isSeparator,
-      }
-    }
-  }
+        isNumber: validare camp numeric,
+        isImage: imagine
+        isSeparator
 --------------------------------------*/
 
 export const docTypes = {
@@ -104,38 +99,9 @@ export const docTypes = {
         column: 2,
       },
     },
-    configFields: {
-      companie: {
-        label: 'Compania de asigurari',
-      },
-      sucursala: {
-        label: 'Sucursala / Agentia',
-      },
-      telefon: {
-        label: 'Telefon',
-      },
-      agent: {
-        label: 'Brocker / Agent',
-      },
-      codAgent: {
-        label: 'Cod Brocker / Agent',
-      },
-      serie: {
-        label: 'Serie',
-      },
-      numarSerie: {
-        label: 'Numar',
-      },
-      RC: {
-        label: 'R.C',
-      },
-      CUI: {
-        label: 'C.U.I.',
-      },
-    },
   },
   fisaInscriere: {
-    label: 'Fisa inscriere facultate',
+    label: 'Fişă înscriere facultate',
     fields: {
       nume: {
         label: 'Nume',
@@ -156,11 +122,7 @@ export const docTypes = {
       imagine: {
         label: 'Imagine',
         column: 2,
-      },
-    },
-    configFields: {
-      facultatea: {
-        label: 'Facultatea',
+        isImage: true,
       },
     },
   },

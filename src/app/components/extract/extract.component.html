@@ -170,27 +170,13 @@
           >
             <div class="d-flex flex-row h-100 pt-2 pe-4">
               <div class="h-100 d-flex flex-column flex-grow-1">
-                <!-- select tip formular -->
-                <mat-form-field
-                  class="mb-3 px-5"
-                  [class.w-100]="selectedDocType"
-                  [class.w-50]="!selectedDocType"
+                <div
+                  class="w-100 d-flex flex-column justify-content-center px-5 pb-3"
                 >
-                  <mat-label>Tipul documentului</mat-label>
-                  <mat-select
-                    [class]="selectedDocType ? 'w-auto' : 'w-100'"
-                    style="min-width: 150px"
-                    disableOptionCentering
-                    (selectionChange)="selectedDocType = $event.value"
-                  >
-                    <mat-option
-                      *ngFor="let docType of docTypesList"
-                      [value]="docType"
-                    >
-                      {{ docType.label }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
+                  <span class="doc-title pt-2">
+                    {{ selectedDocType.label }}
+                  </span>
+                </div>
 
                 <!-- formular -->
                 <ng-container *ngTemplateOutlet="formularTemplate">
@@ -241,7 +227,7 @@
       (click)="
         sendFileInFiled(
           { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
-          field.key
+          field
         )
       "
     >
@@ -294,12 +280,12 @@
         <div *ngFor="let field of getSelectedDocTypeFields(column)">
           <mat-form-field
             class="w-100 mb-2"
-            *ngIf="field.key != 'imagine' && !field.isSeparator"
+            *ngIf="!field.isImage && !field.isSeparator"
             appearance="outline"
             color="primary"
             appDragDrop
             (textDropped)="sendTextInField($event, field.key)"
-            (filesDropped)="sendFileInFiled({ file: $event }, field.key)"
+            (filesDropped)="sendFileInFiled({ file: $event }, field)"
           >
             <mat-label>{{
               field.label +
@@ -352,20 +338,20 @@
           <!-- imagine-->
           <div
             class="w-100"
-            *ngIf="field.key == 'imagine'"
+            *ngIf="field.isImage"
             [class.hasImage]="
-              formGroup.get(selectedDocType.key).get('imagine').value
+              formGroup.get(selectedDocType.key).get(field.key).value
             "
             class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
             appDragDrop
-            (filesDropped)="sendFileInFiled({ file: $event }, 'imagine')"
+            (filesDropped)="sendFileInFiled({ file: $event }, field)"
           >
             <img
               *ngIf="
-                formGroup.get(selectedDocType.key).get('imagine').value;
+                formGroup.get(selectedDocType.key).get(field.key).value;
                 else noIcon
               "
-              [src]="formGroup.get(selectedDocType.key).get('imagine').value"
+              [src]="formGroup.get(selectedDocType.key).get(field.key).value"
             />
             <ng-template #noIcon>
               <mat-icon svgIcon="image"></mat-icon>
@@ -387,6 +373,9 @@
           color="primary"
           mat-icon-button
           class="action-button big mb-3 mt-3"
+          matTooltip="Generare PDF"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
         >
           <mat-icon svgIcon="pdf"></mat-icon>
         </button>
@@ -397,6 +386,9 @@
           color="primary"
           mat-icon-button
           class="action-button big mb-3"
+          matTooltip="Download PDF"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
         >
           <mat-icon>cloud_download</mat-icon>
         </button>
@@ -406,6 +398,9 @@
           (click)="generarePdf('print')"
           color="primary"
           mat-icon-button
+          matTooltip="Print PDF"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
           class="action-button big"
         >
           <mat-icon>print</mat-icon>
@@ -419,6 +414,9 @@
           (click)="configOpenState = configOpenState ? false : true"
           color="primary"
           mat-icon-button
+          matTooltip="Configurari"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
           class="action-button big mb-3 signature-button"
         >
           <mat-icon style="margin-top: -3px" svgIcon="settings"></mat-icon>
@@ -429,7 +427,7 @@
           hideToggle="true"
         >
           <div class="h-100 w-100 position-relative sign-wrapper mt-4">
-            <span class="sign-titlu position-absolute"> Setari document</span>
+            <span class="sign-titlu position-absolute">Configurari</span>
             <button
               class="action-button close-button position-absolute"
               (click)="configOpenState = false"
@@ -452,6 +450,9 @@
           color="primary"
           mat-icon-button
           class="action-button big mb-3 signature-button"
+          matTooltip="Semnatura"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
         >
           <mat-icon svgIcon="signature"></mat-icon>
         </button>
@@ -497,6 +498,9 @@
           color="primary"
           mat-icon-button
           class="action-button big reset-button mb-3"
+          matTooltip="Clear"
+          matTooltipShowDelay="400"
+          matTooltipPosition="left"
         >
           <mat-icon>delete</mat-icon>
         </button>
@@ -518,14 +522,32 @@
           : configFormGroup
       "
     >
-      <mat-form-field
-        appearance="outline"
-        color="primary"
-        *ngFor="let field of getSelectedDocTypeConfigFields()"
-      >
-        <mat-label>{{ field.label }}</mat-label>
-        <input type="text" matInput [formControlName]="field.key" />
-      </mat-form-field>
+      <ng-container *ngFor="let field of getSelectedDocTypeConfigFields()">
+        <mat-form-field
+          appearance="outline"
+          color="primary"
+          *ngIf="!field.isImage"
+        >
+          <mat-label>{{ field.label }}</mat-label>
+          <input type="text" matInput [formControlName]="field.key" />
+        </mat-form-field>
+
+        <div
+          *ngIf="field.isImage"
+          class="config-image-wrapper d-flex justify-content-center align-items-center mt-2 position-relative"
+          appDragDrop
+          (filesDropped)="sendFileInConfigField($event, field)"
+        >
+          <mat-label class="position-absolute config-image-label">{{
+            field.label
+          }}</mat-label>
+          <img
+            [src]="
+              configFormGroup.get(selectedDocType.key).get(field.key).value
+            "
+          />
+        </div>
+      </ng-container>
     </form>
   </div>
 </ng-template>

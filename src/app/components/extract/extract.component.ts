@@ -1,4 +1,6 @@
 import {
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -45,7 +47,7 @@ const Errors = {
   styleUrls: ['./extract.component.scss'],
   animations: [ChangeBackgroundAnimation, FadingAnimation],
 })
-export class ExtractComponent implements OnInit {
+export class ExtractComponent implements OnInit, AfterViewInit {
   errorMessage: string;
   CERTIFICATE_UPLOAD_FILE_MAX_SIZE = 5242880;
   CERTIFICATE_UPLOAD_FILE_FORMATS = '.jpeg,.jpg,.png';
@@ -61,6 +63,7 @@ export class ExtractComponent implements OnInit {
   textExtracting: boolean;
   textExtractingFor;
   docTypesList = [];
+  configList = [];
 
   signatureBase64 = null;
   signOpenState;
@@ -78,64 +81,24 @@ export class ExtractComponent implements OnInit {
 
   @ViewChild(SignaturePad) signaturePad: SignaturePad;
 
-  constructor(public fileService: FileService, private elRef: ElementRef) {
-    this.docTypesList = Object.keys(docTypes).map((key) => ({
-      key,
-      ...docTypes[key],
-      fieldsList: Object.keys(docTypes[key].fields).map((fk) => ({
-        key: fk,
-        ...docTypes[key].fields[fk],
-      })),
-      configFieldsList: Object.keys(docTypes[key].configFields).map((fk) => ({
-        key: fk,
-        ...docTypes[key].configFields[fk],
-      })),
-    }));
-
-    this.formGroup = new FormGroup(
-      Object.keys(docTypes).reduce((obj, key) => {
-        obj[key] = this.getFormSubGroup(key);
-        return obj;
-      }, {})
-    );
-
-    //config
-    this.configFormGroup = new FormGroup(
-      Object.keys(docTypes).reduce((obj, key) => {
-        obj[key] = this.getFormSubGroup(key, 'configFields');
-        return obj;
-      }, {})
-    );
-
-    if (localStorage.getItem('config'))
-      this.configFormGroup.patchValue(
-        JSON.parse(localStorage.getItem('config'))
-      );
-
-    this.configFormGroup.valueChanges.subscribe(() => {
-      localStorage.setItem(
-        'config',
-        JSON.stringify(this.configFormGroup.value)
-      );
-    });
-  }
-
-  getFormSubGroup(docKey, fields = 'fields') {
-    return new FormGroup(
-      Object.keys(docTypes[docKey][fields]).reduce((_obj, _key) => {
-        _obj[_key] = new FormControl(null, []);
-        const field = docTypes[docKey][fields][_key];
-        if (field.isRequired) _obj[_key].addValidators([Validators.required]);
-        if (field.isNumber)
-          _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
-        if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
-        if (field.isEmail) _obj[_key].addValidators([Validators.email]);
-        return _obj;
-      }, {})
-    );
+  constructor(
+    public fileService: FileService,
+    private elRef: ElementRef,
+    public route: ActivatedRoute,
+    private cd: ChangeDetectorRef
+  ) {
+    this.initFormGroup();
+    this.initConfigFormGroup();
   }
 
   async ngOnInit() {
+    this.route.data.subscribe((routerData) => {
+      const doc = this.docTypesList.find(
+        (dt) => dt.key == routerData.docTypeKey
+      );
+      this.selectedDocType = doc;
+    });
+
     try {
       this.worker = await createWorker();
       await this.worker.loadLanguage('ron+eng');
@@ -148,6 +111,86 @@ export class ExtractComponent implements OnInit {
         event.stopPropagation();
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.initSignature();
+  }
+
+  initFormGroup() {
+    this.docTypesList = Object.keys(docTypes).map((key) => ({
+      key,
+      ...docTypes[key],
+      fieldsList: Object.keys(docTypes[key].fields).map((fk) => ({
+        key: fk,
+        ...docTypes[key].fields[fk],
+      })),
+    }));
+
+    this.configList = Object.keys(config).map((key) => ({
+      key,
+      ...config[key],
+      fieldsList: Object.keys(config[key].fields).map((fk) => ({
+        key: fk,
+        ...config[key].fields[fk],
+      })),
+    }));
+
+    this.formGroup = new FormGroup(
+      Object.keys(docTypes).reduce((obj, key) => {
+        obj[key] = this.getFormSubGroup(docTypes, key);
+        return obj;
+      }, {})
+    );
+  }
+
+  initConfigFormGroup() {
+    //config
+    this.configFormGroup = new FormGroup(
+      Object.keys(config).reduce((obj, key) => {
+        obj[key] = this.getFormSubGroup(config, key);
+        return obj;
+      }, {})
+    );
+
+    //setare valori initiale
+    const configObj = localStorage.getItem('config')
+      ? JSON.parse(localStorage.getItem('config'))
+      : initialConfig;
+
+    this.configFormGroup.patchValue(configObj);
+
+    this.configFormGroup.valueChanges.subscribe(() => {
+      localStorage.setItem(
+        'config',
+        JSON.stringify(this.configFormGroup.value)
+      );
+    });
+  }
+
+  initSignature() {
+    if (localStorage.getItem('signature')) {
+      this.signatureBase64 = JSON.parse(localStorage.getItem('signature'));
+      if (this.signatureBase64) {
+        this.signaturePad.fromDataURL(this.signatureBase64);
+        this.cd.detectChanges();
+      }
+    }
+  }
+
+  getFormSubGroup(dic, dicKey) {
+    return new FormGroup(
+      Object.keys(dic[dicKey].fields).reduce((_obj, _key) => {
+        _obj[_key] = new FormControl(null, []);
+        const field = dic[dicKey].fields[_key];
+        if (field.isRequired) _obj[_key].addValidators([Validators.required]);
+        if (field.isNumber)
+          _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
+        if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
+        if (field.isEmail) _obj[_key].addValidators([Validators.email]);
+        return _obj;
+      }, {})
+    );
   }
 
   //  1. upload file ---------
@@ -197,23 +240,7 @@ export class ExtractComponent implements OnInit {
   }
 
   async sendFileInFiled(source?: { file?: File; fileBase64?: string }, field?) {
-    if (field !== 'imagine') {
-      //text
-      this.extractText(source.file).then((text) => {
-        if (field) {
-          text = this.processedText(text, field);
-          this.formGroup
-            .get(this.selectedDocType.key)
-            .get(field)
-            .setValue(
-              (this.formGroup.get(this.selectedDocType.key).get(field).value ||
-                '') + text
-            );
-        } else {
-          this.textConsola = text;
-        }
-      });
-    } else {
+    if (field?.isImage) {
       // imagine
       this.formGroup
         .get(this.selectedDocType.key)
@@ -221,7 +248,30 @@ export class ExtractComponent implements OnInit {
         .setValue(
           source.fileBase64 || (await this.fileService.getBase64(source.file))
         );
+    } else {
+      //text
+      this.extractText(source.file).then((text) => {
+        if (field) {
+          text = this.processedText(text, field.key);
+          this.formGroup
+            .get(this.selectedDocType.key)
+            .get(field.key)
+            .setValue(
+              (this.formGroup.get(this.selectedDocType.key).get(field.key)
+                .value || '') + text
+            );
+        } else {
+          this.textConsola = text;
+        }
+      });
     }
+  }
+
+  async sendFileInConfigField(file?: File, field?) {
+    this.configFormGroup
+      .get(this.selectedDocType.key)
+      .get(field.key)
+      .setValue(await this.fileService.getBase64(file));
   }
 
   processedText(text, field) {
@@ -291,7 +341,10 @@ export class ExtractComponent implements OnInit {
   }
 
   getSelectedDocTypeConfigFields() {
-    return this.selectedDocType.configFieldsList;
+    return (
+      this.configList.find((c) => c.key == this.selectedDocType.key)
+        ?.fieldsList || []
+    );
   }
 
   getFormularTemplate() {
@@ -378,22 +431,11 @@ export class ExtractComponent implements OnInit {
       ? PDFTemplates[this.selectedDocType.key + 'Template'](
           this.formGroup.get(this.selectedDocType.key).value,
           this.configFormGroup.get(this.selectedDocType.key).value,
-          this.getImagine(),
           this.getSignature()
         )
       : {};
   }
-  getImagine() {
-    return this.selectedDocType?.fieldsList.some((f) => f.key == 'imagine') &&
-      this.formGroup.get(this.selectedDocType.key).get('imagine').value
-      ? {
-          image: this.formGroup.get(this.selectedDocType.key).get('imagine')
-            .value,
-          width: 150,
-          alignment: 'right',
-        }
-      : null;
-  }
+
   getSignature() {
     return this.signatureBase64
       ? {
@@ -407,9 +449,11 @@ export class ExtractComponent implements OnInit {
   // 6. Signature
   drawComplete() {
     this.signatureBase64 = this.signaturePad.toDataURL();
+    localStorage.setItem('signature', JSON.stringify(this.signatureBase64));
   }
   clearSign() {
     this.signatureBase64 = null;
+    localStorage.setItem('signature', null);
     this.signaturePad.clear();
   }
 }
@@ -418,8 +462,9 @@ export class ExtractComponent implements OnInit {
 //  CNP validator
 //-----------------------------------
 import { ValidatorFn, AbstractControl } from '@angular/forms';
-import { settings } from 'cluster';
 import { SignaturePad } from 'angular2-signaturepad';
+import { ActivatedRoute } from '@angular/router';
+import { config, initialConfig } from 'src/app/configs/config';
 
 export function CNPValidator(): ValidatorFn {
   let isValidCNP = (text) => {

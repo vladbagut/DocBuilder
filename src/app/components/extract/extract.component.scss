@@ -51,6 +51,24 @@
     opacity: 0.5;
   }
 }
+.config-image-wrapper {
+  background-color: transparent;
+  height: 100px;
+  border-radius: 10px;
+  border: 1px solid lightblue;
+
+  &.drag-over {
+    background-color: white;
+  }
+
+  img {
+    width: auto;
+    object-fit: scale-down !important;
+    max-height: 90%;
+    max-width: 90%;
+  }
+}
+
 .asig-wrapper {
   //border: 2px solid lightblue;
   height: calc(100vh - 138px);
@@ -437,4 +455,24 @@ mat-form-field:hover .mat-icon.mat-accent {
   border-bottom: 2px solid #79b0c194;
   /* background: rgba(156, 210, 227, 0.1); */
   color: #337b93;
+}
+
+.doc-title {
+  display: inline-block;
+  margin-left: -6px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  margin-top: -5px;
+  border-bottom: 1px solid #79b0c194;
+  padding: 3px 5px;
+  margin: 0px;
+}
+
+.config-image-label {
+  color: #548daf;
+  transform: scale(0.9);
+  top: -11px;
+  left: 1px;
+  background: #e1eff3;
+  padding: 0px 7px;
 }

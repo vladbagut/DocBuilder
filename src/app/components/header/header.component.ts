@@ -14,4 +14,7 @@ export class HeaderComponent implements OnInit {
   gotoHome() {
     this.router.navigate(['/']);
   }
+  goTo(path) {
+    this.router.navigate([`/${path}`]);
+  }
 }

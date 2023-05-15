@@ -22,7 +22,7 @@ export class DashboardComponent {
 
   ngOnInit(): void {}
 
-  newPocess() {
-    this.router.navigate(['/extract']);
+  goTo(path) {
+    this.router.navigate([`/${path}`]);
   }
 }
