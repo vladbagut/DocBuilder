@@ -244,7 +244,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       // imagine
       this.formGroup
         .get(this.selectedDocType.key)
-        .get('imagine')
+        .get(field.key)
         .setValue(
           source.fileBase64 || (await this.fileService.getBase64(source.file))
         );

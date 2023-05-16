@@ -219,25 +219,43 @@ export function fisaInscriereTemplate(value, config, semnatura) {
       {
         columns: [
           {
-            width: 'auto',
-            fontSize: 9,
-            stack: [getImagine(config.logo, 100)],
-            margin: [0, 0, 10, 0],
+            width: '*',
+            stack: [
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    stack: [getImagine(config.logo, 110)],
+                    margin: [0, 0, 10, 0],
+                  },
+                  {
+                    width: '*',
+                    fontSize: 9,
+                    stack: [
+                      config.adresa,
+                      'Tel: ' + config.telefon,
+                      config.website,
+                    ],
+                  },
+                ],
+              },
+              {
+                margin: [0, 10, 0, 30],
+                fontSize: 8,
+                text: config.facultatea,
+                width: 50,
+              },
+            ],
           },
           {
-            width: '*',
-            fontSize: 9,
-            stack: [config.adresa, 'Tel: ' + config.telefon, config.website],
+            width: 'auto',
+            stack: [getImagine(value.foto, 100)],
           },
         ],
       },
+
       {
-        margin: [0, 10, 0, 30],
-        fontSize: 8,
-        text: config.facultatea,
-        width: 50,
-      },
-      {
+        margin: [0, 10, 0, 0],
         with: '*',
         alignment: 'center',
         text: 'FIŞĂ DE ÎNSCRIERE',
@@ -252,13 +270,15 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         margin: [0, 20, 0, 0],
         with: '*',
         fontSize: 10,
-        text: '1. Numele şi prenumele candidatului (cu inițiala prenumelui tatălui): ',
+        text: '1. Numele şi prenumele candidatului: ' + value.nume,
       },
       {
         margin: [0, 7, 0, 0],
         with: '*',
         fontSize: 10,
-        text: '2. Cod numeric personal:  ' + value.CNP,
+        text:
+          '2. Cod numeric personal:  ' +
+          (value.CNP ? value.CNP : '__ __ __ __ __ __ __ __ __ __ __ __ __'),
       },
       {
         margin: [0, 7, 0, 0],
@@ -270,7 +290,9 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         margin: [0, 7, 0, 0],
         with: '*',
         fontSize: 10,
-        text: '4. Naționalitatea:  ',
+        text:
+          '4. Naționalitatea:  ' +
+          (value.nationalitatea || '_________________'),
       },
       {
         margin: [0, 7, 0, 0],
@@ -293,6 +315,12 @@ function getImagine(img, width) {
 }
 
 function extrageDateDinCNP(CNP) {
+  if (!CNP)
+    return {
+      sex: ' _____',
+      dataNasterii: `ziua: __________ ,  luna: __________ ,  anul: __________`,
+    };
+
   const s = CNP.substring(0, 1);
   let sex, aa, an, zi, luna;
   switch (s) {

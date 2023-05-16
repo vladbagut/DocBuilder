@@ -221,7 +221,7 @@
 <mat-menu #myMenu="matMenu">
   <ng-template matMenuContent let-upFile="upFile">
     <button
-      [class.image-menu-button]="field.key == 'imagine'"
+      [class.image-menu-button]="field.isImage"
       *ngFor="let field of selectedDocType?.fieldsList"
       mat-menu-item
       (click)="
@@ -231,7 +231,7 @@
         )
       "
     >
-      <mat-icon *ngIf="field.key != 'imagine'; else imageImg"> </mat-icon>
+      <mat-icon *ngIf="!field.key.isImage; else imageImg"> </mat-icon>
       <ng-template #imageImg>
         <mat-icon>assignment_ind</mat-icon>
       </ng-template>

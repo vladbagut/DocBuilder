@@ -61,10 +61,12 @@ export const docTypes = {
       },
       nrInmatriculare: {
         label: 'Numar inmatriculare',
+        shortLabel: 'A',
         column: 2,
       },
       modelVehicul: {
         label: 'Model vehicul',
+        shortLabel: 'D1-D3',
         column: 2,
       },
       serieŞasiu: {
@@ -111,15 +113,15 @@ export const docTypes = {
         label: 'CNP',
         isCNP: true,
       },
-      adresa: {
+      nationalitatea: {
         label: 'Naționalitatea',
       },
       email: {
         label: 'E-mail',
         isEmail: true,
       },
-      imagine: {
-        label: 'Imagine',
+      foto: {
+        label: 'Fotografie',
         column: 2,
         isImage: true,
       },
