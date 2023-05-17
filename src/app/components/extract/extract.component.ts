@@ -34,11 +34,25 @@ export type UpFile = {
   expanded: boolean;
   textExtracting?: boolean;
 };
+export const DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD.MM.YYYY',
+  },
+  display: {
+    dateInput: 'DD.MM.YYYY',
+    customDateInput: 'DD.MM.YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 const Errors = {
   required: 'Câmpul este obligatoriu',
   InvalidCNP: 'CNP invalid',
   pattern: 'Câmpul este numeric',
+  matDatepickerParse: 'Introduceti o data in formatul: "dd.mm.yyyy"',
+  InvalidDate: 'Introduceti o data in formatul: "dd.mm.yyyy"',
 };
 
 @Component({
@@ -46,6 +60,7 @@ const Errors = {
   templateUrl: './extract.component.html',
   styleUrls: ['./extract.component.scss'],
   animations: [ChangeBackgroundAnimation, FadingAnimation],
+  providers: [{ provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS }],
 })
 export class ExtractComponent implements OnInit, AfterViewInit {
   errorMessage: string;
@@ -127,15 +142,6 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       })),
     }));
 
-    this.configList = Object.keys(config).map((key) => ({
-      key,
-      ...config[key],
-      fieldsList: Object.keys(config[key].fields).map((fk) => ({
-        key: fk,
-        ...config[key].fields[fk],
-      })),
-    }));
-
     this.formGroup = new FormGroup(
       Object.keys(docTypes).reduce((obj, key) => {
         obj[key] = this.getFormSubGroup(docTypes, key);
@@ -145,6 +151,15 @@ export class ExtractComponent implements OnInit, AfterViewInit {
   }
 
   initConfigFormGroup() {
+    this.configList = Object.keys(config).map((key) => ({
+      key,
+      ...config[key],
+      fieldsList: Object.keys(config[key].fields).map((fk) => ({
+        key: fk,
+        ...config[key].fields[fk],
+      })),
+    }));
+
     //config
     this.configFormGroup = new FormGroup(
       Object.keys(config).reduce((obj, key) => {
@@ -188,6 +203,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
           _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
         if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
         if (field.isEmail) _obj[_key].addValidators([Validators.email]);
+        if (field.isDate) _obj[_key].addValidators([dateValidator()]);
         return _obj;
       }, {})
     );
@@ -230,13 +246,20 @@ export class ExtractComponent implements OnInit, AfterViewInit {
 
   // 3. extract text din imagine ----------
   sendTextInField(text, field) {
-    this.formGroup
-      .get(this.selectedDocType.key)
-      .get(field)
-      .setValue(
-        (this.formGroup.get(this.selectedDocType.key).get(field).value || '') +
-          text
-      );
+    if (field?.isImage)
+      this.formGroup
+        .get(this.selectedDocType.key)
+        .get(field)
+        .setValue(
+          (this.formGroup.get(this.selectedDocType.key).get(field).value ||
+            '') + text
+        );
+    else {
+      this.formGroup
+        .get(this.selectedDocType.key)
+        .get(field)
+        .setValue(moment(text, 'DD.MM.YYYY'));
+    }
   }
 
   async sendFileInFiled(source?: { file?: File; fileBase64?: string }, field?) {
@@ -253,13 +276,20 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       this.extractText(source.file).then((text) => {
         if (field) {
           text = this.processedText(text, field.key);
-          this.formGroup
-            .get(this.selectedDocType.key)
-            .get(field.key)
-            .setValue(
-              (this.formGroup.get(this.selectedDocType.key).get(field.key)
-                .value || '') + text
-            );
+          if (!field.isDate)
+            this.formGroup
+              .get(this.selectedDocType.key)
+              .get(field.key)
+              .setValue(
+                (this.formGroup.get(this.selectedDocType.key).get(field.key)
+                  .value || '') + text
+              );
+          else {
+            this.formGroup
+              .get(this.selectedDocType.key)
+              .get(field.key)
+              .setValue(moment(text, 'DD.MM.YYYY'));
+          }
         } else {
           this.textConsola = text;
         }
@@ -465,6 +495,7 @@ import { ValidatorFn, AbstractControl } from '@angular/forms';
 import { SignaturePad } from 'angular2-signaturepad';
 import { ActivatedRoute } from '@angular/router';
 import { config, initialConfig } from 'src/app/configs/config';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 export function CNPValidator(): ValidatorFn {
   let isValidCNP = (text) => {
@@ -534,5 +565,22 @@ export function CNPValidator(): ValidatorFn {
     let p_cnp = control.value;
     if (!p_cnp) return null;
     return !isValidCNP(p_cnp) ? { InvalidCNP: true } : null;
+  };
+}
+
+//-----------------------------------
+//  Date validator
+
+import * as moment from 'moment';
+export function dateValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: boolean } | null => {
+    const yearValid =
+      moment(control.value, 'YYY').format('L') !== 'Invalid date';
+    const monthValid =
+      moment(control.value, 'MMM').format('L') !== 'Invalid date' ||
+      moment(control.value, 'MM').format('L') !== 'Invalid date';
+
+    const forbidden = !control.value ? false : !(yearValid && monthValid);
+    return forbidden ? { InvalidDate: true } : null;
   };
 }

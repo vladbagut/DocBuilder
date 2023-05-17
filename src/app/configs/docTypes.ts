@@ -50,7 +50,7 @@ export const docTypes = {
         label: 'Limita despagubire pagube materiale',
       },
       data: {
-        label: 'Valabilitate contract de la:',
+        label: 'Data de la care incepe contractul',
         isDate: true,
       },
       separator3: {

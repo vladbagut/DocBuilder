@@ -1,5 +1,7 @@
 // ---------PDF TEMPLATES --------------
 
+import * as moment from 'moment';
+
 export function asigAutoTemplate(value, config, semnatura) {
   return {
     pageSize: 'A4',
@@ -137,15 +139,17 @@ export function asigAutoTemplate(value, config, semnatura) {
       {
         text:
           'Valabilitate contract de la: ' +
-          '______________ ' +
+          getDateFromMoment(value.data) +
           ' pana la: ' +
-          ' ______________ ' +
-          'emisa in data de :' +
-          ' _______________',
+          getDateFromMoment(value.data, true) +
+          ' emisa in data de: ' +
+          moment().format('DD.MM.YYYY'),
         margin: [0, 10, 0, 0],
       },
       {
-        text: 'Prima de asigurare de: ' + value.primaAsigurare,
+        text:
+          'Prima de asigurare de: ' +
+          (value.primaAsigurare || '_____________________'),
         margin: [0, 10, 0, 0],
       },
       {
@@ -365,4 +369,12 @@ function extrageDateDinCNP(CNP) {
     sex,
     dataNasterii: `ziua:  ${zi},    luna:  ${luna},     anul:  ${an}`,
   };
+}
+
+function getDateFromMoment(data, addYear?) {
+  if (!data) return '___ /___ /________ ';
+
+  return addYear
+    ? data.add(1, 'years').format('DD.MM.YYYY')
+    : data.format('DD.MM.YYYY');
 }

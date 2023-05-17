@@ -278,9 +278,10 @@
         *ngFor="let column of [1, 2]"
       >
         <div *ngFor="let field of getSelectedDocTypeFields(column)">
+          <!-- field: input, textarea-->
           <mat-form-field
             class="w-100 mb-2"
-            *ngIf="!field.isImage && !field.isSeparator"
+            *ngIf="!field.isImage && !field.isSeparator && !field.isDate"
             appearance="outline"
             color="primary"
             appDragDrop
@@ -291,16 +292,18 @@
               field.label +
                 (field.shortLabel ? " (" + field.shortLabel + ") " : "")
             }}</mat-label>
+
             <input
               [required]="field.isRequired"
-              *ngIf="!field.big"
+              *ngIf="!field.big && !field.isDate"
               type="text"
               matInput
               [formControlName]="field.key"
             />
+
             <textarea
               [required]="field.isRequired"
-              *ngIf="field.big"
+              *ngIf="field.big && !field.isDate"
               type="text"
               spellcheck="false"
               rows="1"
@@ -327,6 +330,40 @@
             </mat-error>
           </mat-form-field>
 
+          <mat-form-field
+            class="w-100 mb-2"
+            *ngIf="field.isDate"
+            appearance="outline"
+            color="primary"
+            appDragDrop
+            (textDropped)="sendTextInField($event, field.key)"
+            (filesDropped)="sendFileInFiled({ file: $event }, field)"
+          >
+            <mat-label>{{
+              field.label +
+                (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+            }}</mat-label>
+
+            <input
+              [formControlName]="field.key"
+              name="start"
+              matInput
+              [matDatepicker]="dpstart"
+              (click)="dpstart.open()"
+              [required]="field.isRequired"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="dpstart"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #dpstart disabled="false"></mat-datepicker>
+
+            <mat-error>
+              {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- separator-->
           <div
             [style.margin]="field.margin || '0px'"
             *ngIf="field.isSeparator"

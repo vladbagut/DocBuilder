@@ -35,6 +35,8 @@ import { CropImageDirective } from './directives/crop-image.directive';
 import { NgxResizableModule } from '@3dgenomes/ngx-resizable';
 import { SignaturePadModule } from 'angular2-signaturepad';
 import { FunctionPipe } from './directives/function.pipe';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [
@@ -79,6 +81,8 @@ import { FunctionPipe } from './directives/function.pipe';
     MatExpansionModule,
     NgxResizableModule,
     SignaturePadModule,
+    MatDatepickerModule,
+     MatMomentDateModule
   ],
   providers: [FunctionPipe],
   bootstrap: [AppComponent],
