@@ -277,123 +277,420 @@
         class="h-100 d-flex flex-column flex-grow-0 w-50 px-5"
         *ngFor="let column of [1, 2]"
       >
-        <div *ngFor="let field of getSelectedDocTypeFields(column)">
-          <!-- field: input, textarea-->
-          <mat-form-field
-            class="w-100 mb-2"
-            *ngIf="!field.isImage && !field.isSeparator && !field.isDate"
-            appearance="outline"
-            color="primary"
-            appDragDrop
-            (textDropped)="sendTextInField($event, field.key)"
-            (filesDropped)="sendFileInFiled({ file: $event }, field)"
-          >
-            <mat-label>{{
-              field.label +
-                (field.shortLabel ? " (" + field.shortLabel + ") " : "")
-            }}</mat-label>
-
-            <input
-              [required]="field.isRequired"
-              *ngIf="!field.big && !field.isDate"
-              type="text"
-              matInput
-              [formControlName]="field.key"
-            />
-
-            <textarea
-              [required]="field.isRequired"
-              *ngIf="field.big && !field.isDate"
-              type="text"
-              spellcheck="false"
-              rows="1"
-              matInput
-              [formControlName]="field.key"
-            ></textarea>
-            <mat-icon
-              (click)="
-                formGroup.get(selectedDocType.key).get(field.key).setValue('')
-              "
-              *ngIf="formGroup?.get(selectedDocType.key).get(field.key)?.value"
-              [@fadingAnimation]="{
-                value: formGroup?.get(selectedDocType.key).get(field.key)?.value
-                  ? true
-                  : false
-              }"
-              color="accent"
-              matSuffix
-              >close
-            </mat-icon>
-
-            <mat-error>
-              {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field
-            class="w-100 mb-2"
-            *ngIf="field.isDate"
-            appearance="outline"
-            color="primary"
-            appDragDrop
-            (textDropped)="sendTextInField($event, field.key)"
-            (filesDropped)="sendFileInFiled({ file: $event }, field)"
-          >
-            <mat-label>{{
-              field.label +
-                (field.shortLabel ? " (" + field.shortLabel + ") " : "")
-            }}</mat-label>
-
-            <input
-              [formControlName]="field.key"
-              name="start"
-              matInput
-              [matDatepicker]="dpstart"
-              (click)="dpstart.open()"
-              [required]="field.isRequired"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="dpstart"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #dpstart disabled="false"></mat-datepicker>
-
-            <mat-error>
-              {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
-            </mat-error>
-          </mat-form-field>
-
+        <div
+          *ngFor="let field of getSelectedDocTypeFields(column); let i = index"
+        >
           <!-- separator-->
           <div
             [style.margin]="field.margin || '0px'"
             *ngIf="field.isSeparator"
             class="field-separator"
+            [class.expanded]="
+              formGroup.get(selectedDocType.key).get(field.key).value
+            "
+            (click)="
+              formGroup
+                .get(selectedDocType.key)
+                .get(field.key)
+                .setValue(
+                  !formGroup.get(selectedDocType.key).get(field.key).value
+                )
+            "
           >
+            <span class="mat-expansion-indicator float-end"></span>
             {{ field.label }}
           </div>
 
-          <!-- imagine-->
-          <div
-            class="w-100"
-            *ngIf="field.isImage"
-            [class.hasImage]="
-              formGroup.get(selectedDocType.key).get(field.key).value
-            "
-            class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
-            appDragDrop
-            (filesDropped)="sendFileInFiled({ file: $event }, field)"
-          >
-            <img
-              *ngIf="
-                formGroup.get(selectedDocType.key).get(field.key).value;
-                else noIcon
-              "
-              [src]="formGroup.get(selectedDocType.key).get(field.key).value"
-            />
-            <ng-template #noIcon>
-              <mat-icon svgIcon="image"></mat-icon>
-            </ng-template>
-          </div>
+          <ng-container *ngIf="!field.isSeparator">
+            <!--  field normal( nu linie) -->
+            <ng-container *ngIf="!field.line && !field.inLine">
+              <!-- field: nu data, nu imagine (input, text area)-->
+              <ng-container *ngIf="!field.isImage && !field.isDate">
+                <mat-form-field
+                  class="w-100 mb-2"
+                  appearance="outline"
+                  color="primary"
+                  appDragDrop
+                  (textDropped)="sendTextInField($event, field.key)"
+                  (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                >
+                  <mat-label>{{
+                    field.label +
+                      (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+                  }}</mat-label>
+
+                  <input
+                    [required]="field.isRequired"
+                    *ngIf="!field.big"
+                    type="text"
+                    matInput
+                    [formControlName]="field.key"
+                  />
+
+                  <textarea
+                    [required]="field.isRequired"
+                    *ngIf="field.big"
+                    type="text"
+                    spellcheck="false"
+                    rows="1"
+                    matInput
+                    [formControlName]="field.key"
+                  ></textarea>
+                  <mat-icon
+                    (click)="
+                      formGroup
+                        .get(selectedDocType.key)
+                        .get(field.key)
+                        .setValue('')
+                    "
+                    *ngIf="
+                      formGroup?.get(selectedDocType.key).get(field.key)?.value
+                    "
+                    [@fadingAnimation]="{
+                      value: formGroup?.get(selectedDocType.key).get(field.key)
+                        ?.value
+                        ? true
+                        : false
+                    }"
+                    color="accent"
+                    matSuffix
+                    >close
+                  </mat-icon>
+
+                  <mat-error>
+                    {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                  </mat-error>
+                </mat-form-field>
+              </ng-container>
+
+              <!-- date -->
+              <mat-form-field
+                class="w-100 mb-2"
+                *ngIf="field.isDate"
+                appearance="outline"
+                color="primary"
+                appDragDrop
+                (textDropped)="sendTextInField($event, field.key)"
+                (filesDropped)="sendFileInFiled({ file: $event }, field)"
+              >
+                <mat-label>{{
+                  field.label +
+                    (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+                }}</mat-label>
+
+                <input
+                  [formControlName]="field.key"
+                  name="start"
+                  matInput
+                  [matDatepicker]="dpstart"
+                  (click)="dpstart.open()"
+                  [required]="field.isRequired"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="dpstart"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #dpstart disabled="false"></mat-datepicker>
+
+                <mat-error>
+                  {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                </mat-error>
+              </mat-form-field>
+
+              <!-- imagine-->
+              <div
+                class="w-100"
+                *ngIf="field.isImage"
+                [class.hasImage]="
+                  formGroup.get(selectedDocType.key).get(field.key).value
+                "
+                class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
+                appDragDrop
+                (filesDropped)="sendFileInFiled({ file: $event }, field)"
+              >
+                <img
+                  *ngIf="
+                    formGroup.get(selectedDocType.key).get(field.key).value;
+                    else noIcon
+                  "
+                  [src]="
+                    formGroup.get(selectedDocType.key).get(field.key).value
+                  "
+                />
+                <ng-template #noIcon>
+                  <mat-icon svgIcon="image"></mat-icon>
+                </ng-template>
+              </div>
+            </ng-container>
+
+            <!-- primul field dintr-o linie, urmat de restul de pe linie -->
+            <ng-container *ngIf="field.line">
+              <div
+                class="d-flex flex-row w-100 justify-content-between gap-2"
+                *ngIf="field.line"
+              >
+                <!-- field: nu data, nu imagine (input, text area)-->
+                <ng-container *ngIf="!field.isImage && !field.isDate">
+                  <mat-form-field
+                    class="w-100 mb-2 line-item"
+                    appearance="outline"
+                    color="primary"
+                    appDragDrop
+                    (textDropped)="sendTextInField($event, field.key)"
+                    (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                  >
+                    <mat-label>{{
+                      field.label +
+                        (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+                    }}</mat-label>
+
+                    <input
+                      [required]="field.isRequired"
+                      *ngIf="!field.big"
+                      type="text"
+                      matInput
+                      [formControlName]="field.key"
+                    />
+
+                    <textarea
+                      [required]="field.isRequired"
+                      *ngIf="field.big"
+                      type="text"
+                      spellcheck="false"
+                      rows="1"
+                      matInput
+                      [formControlName]="field.key"
+                    ></textarea>
+                    <mat-icon
+                      (click)="
+                        formGroup
+                          .get(selectedDocType.key)
+                          .get(field.key)
+                          .setValue('')
+                      "
+                      *ngIf="
+                        formGroup?.get(selectedDocType.key).get(field.key)
+                          ?.value
+                      "
+                      [@fadingAnimation]="{
+                        value: formGroup
+                          ?.get(selectedDocType.key)
+                          .get(field.key)?.value
+                          ? true
+                          : false
+                      }"
+                      color="accent"
+                      matSuffix
+                      >close
+                    </mat-icon>
+
+                    <mat-error>
+                      {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                    </mat-error>
+                  </mat-form-field>
+                </ng-container>
+
+                <!-- date -->
+                <mat-form-field
+                  class="w-100 mb-2 line-item"
+                  *ngIf="field.isDate"
+                  appearance="outline"
+                  color="primary"
+                  appDragDrop
+                  (textDropped)="sendTextInField($event, field.key)"
+                  (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                >
+                  <mat-label>{{
+                    field.label +
+                      (field.shortLabel ? " (" + field.shortLabel + ") " : "")
+                  }}</mat-label>
+
+                  <input
+                    [formControlName]="field.key"
+                    name="start"
+                    matInput
+                    [matDatepicker]="dpstart"
+                    (click)="dpstart.open()"
+                    [required]="field.isRequired"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="dpstart"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #dpstart disabled="false"></mat-datepicker>
+
+                  <mat-error>
+                    {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                  </mat-error>
+                </mat-form-field>
+
+                <!-- imagine-->
+                <div
+                  class="w-100 line-item"
+                  *ngIf="field.isImage"
+                  [class.hasImage]="
+                    formGroup.get(selectedDocType.key).get(field.key).value
+                  "
+                  class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
+                  appDragDrop
+                  (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                >
+                  <img
+                    *ngIf="
+                      formGroup.get(selectedDocType.key).get(field.key).value;
+                      else noIcon
+                    "
+                    [src]="
+                      formGroup.get(selectedDocType.key).get(field.key).value
+                    "
+                  />
+                  <ng-template #noIcon>
+                    <mat-icon svgIcon="image"></mat-icon>
+                  </ng-template>
+                </div>
+
+                <ng-container *ngFor="let nextField of getGroup(field)">
+                  <!-- field: nu data, nu imagine (input, text area)-->
+                  <ng-container *ngIf="!nextField.isImage && !nextField.isDate">
+                    <mat-form-field
+                      class="w-100 mb-2 line-item"
+                      appearance="outline"
+                      color="primary"
+                      appDragDrop
+                      (textDropped)="sendTextInField($event, nextField.key)"
+                      (filesDropped)="
+                        sendFileInFiled({ file: $event }, nextField)
+                      "
+                    >
+                      <mat-label>{{
+                        nextField.label +
+                          (nextField.shortLabel
+                            ? " (" + nextField.shortLabel + ") "
+                            : "")
+                      }}</mat-label>
+
+                      <input
+                        [required]="nextField.isRequired"
+                        *ngIf="!nextField.big"
+                        type="text"
+                        matInput
+                        [formControlName]="nextField.key"
+                      />
+
+                      <textarea
+                        [required]="nextField.isRequired"
+                        *ngIf="nextField.big"
+                        type="text"
+                        spellcheck="false"
+                        rows="1"
+                        matInput
+                        [formControlName]="nextField.key"
+                      ></textarea>
+                      <mat-icon
+                        (click)="
+                          formGroup
+                            .get(selectedDocType.key)
+                            .get(nextField.key)
+                            .setValue('')
+                        "
+                        *ngIf="
+                          formGroup?.get(selectedDocType.key).get(nextField.key)
+                            ?.value
+                        "
+                        [@fadingAnimation]="{
+                          value: formGroup
+                            ?.get(selectedDocType.key)
+                            .get(nextField.key)?.value
+                            ? true
+                            : false
+                        }"
+                        color="accent"
+                        matSuffix
+                        >close
+                      </mat-icon>
+
+                      <mat-error>
+                        {{
+                          nextField
+                            | appFunctionPipe : getErrorMessage.bind(this)
+                        }}
+                      </mat-error>
+                    </mat-form-field>
+                  </ng-container>
+
+                  <!-- date -->
+                  <mat-form-field
+                    class="w-100 mb-2 line-item"
+                    *ngIf="nextField.isDate"
+                    appearance="outline"
+                    color="primary"
+                    appDragDrop
+                    (textDropped)="sendTextInField($event, nextField.key)"
+                    (filesDropped)="
+                      sendFileInFiled({ file: $event }, nextField)
+                    "
+                  >
+                    <mat-label>{{
+                      nextField.label +
+                        (nextField.shortLabel
+                          ? " (" + nextField.shortLabel + ") "
+                          : "")
+                    }}</mat-label>
+
+                    <input
+                      [formControlName]="nextField.key"
+                      name="start"
+                      matInput
+                      [matDatepicker]="dpstart"
+                      (click)="dpstart.open()"
+                      [required]="nextField.isRequired"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="dpstart"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #dpstart disabled="false"></mat-datepicker>
+
+                    <mat-error>
+                      {{
+                        nextField | appFunctionPipe : getErrorMessage.bind(this)
+                      }}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <!-- imagine-->
+                  <div
+                    class="w-100 line-item"
+                    *ngIf="nextField.isImage"
+                    [class.hasImage]="
+                      formGroup.get(selectedDocType.key).get(nextField.key)
+                        .value
+                    "
+                    class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
+                    appDragDrop
+                    (filesDropped)="
+                      sendFileInFiled({ file: $event }, nextField)
+                    "
+                  >
+                    <img
+                      *ngIf="
+                        formGroup.get(selectedDocType.key).get(nextField.key)
+                          .value;
+                        else noIcon
+                      "
+                      [src]="
+                        formGroup.get(selectedDocType.key).get(nextField.key)
+                          .value
+                      "
+                    />
+                    <ng-template #noIcon>
+                      <mat-icon svgIcon="image"></mat-icon>
+                    </ng-template>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
         </div>
       </div>
     </ng-container>

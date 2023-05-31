@@ -201,6 +201,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
         if (field.isRequired) _obj[_key].addValidators([Validators.required]);
         if (field.isNumber)
           _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
+        if (field.isSeparator) _obj[_key].setValue(true);
         if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
         if (field.isEmail) _obj[_key].addValidators([Validators.email]);
         if (field.isDate) _obj[_key].addValidators([dateValidator()]);
@@ -360,14 +361,35 @@ export class ExtractComponent implements OnInit, AfterViewInit {
   }
 
   getSelectedDocTypeFields(column?) {
-    if (column == 1)
-      return this.selectedDocType.fieldsList.filter(
-        (f) => !f.column || f.column == 1
-      );
-    else
-      return this.selectedDocType.fieldsList.filter(
-        (f) => f.column && f.column == 2
-      );
+    let list =
+      column == 1
+        ? this.selectedDocType.fieldsList.filter(
+            (f) => !f.column || f.column == 1
+          )
+        : this.selectedDocType.fieldsList.filter(
+            (f) => f.column && f.column == 2
+          );
+
+    const filteredList = [];
+    let prevSeparatorValue = true;
+    for (let i = 0; i < list.length; i++) {
+      const field = list[i];
+      if (field.isSeparator) {
+        filteredList.push(field);
+        prevSeparatorValue = this.formGroup
+          .get(this.selectedDocType.key)
+          .get(field.key).value;
+      } else if (prevSeparatorValue) {
+        filteredList.push(field);
+      }
+    }
+    return filteredList;
+  }
+
+  getGroup(field) {
+    return this.selectedDocType.fieldsList.filter(
+      (f) => f.inLine === field.line
+    );
   }
 
   getSelectedDocTypeConfigFields() {

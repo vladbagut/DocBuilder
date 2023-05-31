@@ -304,6 +304,49 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         fontSize: 10,
         text: '5. Data naşterii:  ' + extrageDateDinCNP(value.CNP).dataNasterii,
       },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '5. Locul naşterii:  ' +
+          'localitatea: ' +
+          (value.localitate || '_________________') +
+          ',  judetul: ' +
+          (value.judet || '_________________'),
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '6. Carte identitate:  ' +
+          'seria: ' +
+          (value.buletinSerie || '______') +
+          ' ,  nr.: ' +
+          (value.buletinNo || '____________') +
+          ' ,  eliberat: ' +
+          (value.buletinEliberatDe || '______________________') +
+          ' ,  la data: ' +
+          (value.buletinEliberatLaData || '_______________'),
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '7. Domiciliul stabil:  ' +
+          (value.adresa ||
+            '___________________________________________________________________________________'),
+      },
+      value.adresa
+        ? ''
+        : {
+            margin: [10, 7, 0, 0],
+            with: '*',
+            fontSize: 10,
+            text: '   _____________________________________________________________________________________________________',
+          },
     ],
   };
 }

@@ -11,7 +11,7 @@
         isCNP: validare CNP
         isNumber: validare camp numeric,
         isImage: imagine
-        isSeparator
+        isGroup
 --------------------------------------*/
 
 export const docTypes = {
@@ -105,6 +105,12 @@ export const docTypes = {
   fisaInscriere: {
     label: 'Fişă înscriere facultate',
     fields: {
+      separator1: {
+        label: 'Date Personale:',
+        isSeparator: true,
+        column: 1,
+        margin: '5px 0px 20px 0px',
+      },
       nume: {
         label: 'Nume',
         isRequired: true,
@@ -116,10 +122,44 @@ export const docTypes = {
       nationalitatea: {
         label: 'Naționalitatea',
       },
-      email: {
-        label: 'E-mail',
-        isEmail: true,
+      localitate: {
+        label: 'Localitate',
+        shortLabel: 'nastere',
+        line: 1,
       },
+      judet: {
+        label: 'Judet',
+        inLine: 1,
+      },
+      buletinSerie: {
+        label: 'Buletin serie',
+        line: 2,
+      },
+      buletinNo: {
+        label: 'Nr',
+        inLine: 2,
+      },
+      buletinEliberatDe: {
+        label: 'Eliberat de',
+        line: 3,
+      },
+      buletinEliberatLaData: {
+        label: 'Data eliberarii',
+        isDate: true,
+        inLine: 3,
+      },
+      adresa: {
+        label: 'Adresa',
+        big: true,
+      },
+
+      separator2: {
+        label: 'Studii:',
+        isSeparator: true,
+        column: 1,
+        margin: '5px 0px 20px 0px',
+      },
+
       foto: {
         label: 'Fotografie',
         column: 2,
