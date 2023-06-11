@@ -96,7 +96,10 @@
                   [style.top]="contextMenuPosition.y + 'px'"
                   #contextMenuTrigger="matMenuTrigger"
                   [matMenuTriggerFor]="myMenu"
-                  [matMenuTriggerData]="{ upFile: upFile }"
+                  [matMenuTriggerData]="{
+                    upFile: upFile,
+                    items: menuGroupsItems
+                  }"
                   (onMenuOpen)="onMenuOpen(contextMenuTrigger)"
                   (onMenuClose)="openedTrigger = null"
                 ></div>
@@ -218,7 +221,7 @@
 </rsz-layout>
 
 <!-- Meniu-->
-<mat-menu #myMenu="matMenu">
+<!-- <mat-menu #myMenu="matMenu">
   <ng-template matMenuContent let-upFile="upFile">
     <button
       [class.image-menu-button]="field.isImage"
@@ -256,6 +259,79 @@
       <mat-icon class="float-end">arrow_downward</mat-icon>
     </button>
   </ng-template>
+</mat-menu> -->
+
+<!-- Menu & SubMenu -->
+<mat-menu #myMenu="matMenu" xPosition="after">
+  <ng-template matMenuContent let-items="items" let-upFile="upFile">
+    <ng-container *ngFor="let group of items">
+      <button
+        mat-menu-item
+        *ngIf="group.items?.length"
+        [matMenuTriggerFor]="subMenu"
+        [matMenuTriggerData]="{ items: group.items, upFile }"
+      >
+        <span class="ms-1 ps-4">{{ group.label }}</span>
+      </button>
+
+      <button
+        mat-menu-item
+        *ngIf="!group.items?.length"
+        (click)="
+          sendFileInFiled(
+            { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
+            group
+          )
+        "
+      >
+        <mat-icon *ngIf="!group.isImage; else imageImg"></mat-icon>
+        <ng-template #imageImg>
+          <mat-icon>assignment_ind</mat-icon>
+        </ng-template>
+        <span class="px-2">{{ group.label }}</span>
+        <mat-icon class="float-end">arrow_forward</mat-icon>
+      </button>
+    </ng-container>
+    <button
+      mat-menu-item
+      (click)="
+        sendFileInFiled({
+          file: upFile.croppedFile,
+          fileBase64: upFile.croppedFileBase64
+        })
+      "
+      class="show-in-console"
+    >
+      <mat-icon>view_headline</mat-icon>
+      <span class="px-2">Afisare text extras in consola</span>
+      <mat-icon class="float-end">arrow_downward</mat-icon>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #subMenu="matMenu" xPosition="after">
+  <ng-template matMenuContent let-items="items" let-upFile="upFile">
+    <button
+      [class.image-menu-button]="field.isImage"
+      *ngFor="let field of items"
+      mat-menu-item
+      (click)="
+        sendFileInFiled(
+          { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
+          field
+        )
+      "
+    >
+      <mat-icon *ngIf="!field.key.isImage; else imageImg"> </mat-icon>
+      <ng-template #imageImg>
+        <mat-icon>assignment_ind</mat-icon>
+      </ng-template>
+
+      <span class="px-2">{{ field.label }}</span>
+      <span *ngIf="field.shortName" class="px-2">({{ field.shortName }})</span>
+      <mat-icon class="float-end">arrow_forward</mat-icon>
+    </button>
+  </ng-template>
 </mat-menu>
 
 <!-- Formulare -->
@@ -279,15 +355,17 @@
       >
         <div
           *ngFor="let field of getSelectedDocTypeFields(column); let i = index"
+          [class.collapsed]="isGroupCollapsed(field)"
         >
           <!-- separator-->
           <div
             [style.margin]="field.margin || '0px'"
-            *ngIf="field.isSeparator"
+            *ngIf="field.group"
             class="field-separator"
             [class.expanded]="
-              formGroup.get(selectedDocType.key).get(field.key).value
+              !formGroup.get(selectedDocType.key).get(field.key).value
             "
+            [class.error]="groupHasError(field)"
             (click)="
               formGroup
                 .get(selectedDocType.key)
@@ -301,15 +379,15 @@
             {{ field.label }}
           </div>
 
-          <div *ngIf="!field.isSeparator" class="w-100 h-100 d-flex">
+          <div *ngIf="!field.group" class="w-100 h-100 d-flex">
             <!-- text -->
             <div
               *ngIf="field.isText"
-              class="mb-1 ms-1"
+              class="mb-3 ms-1"
               [style.padding-left]="'2px'"
               style="color: lightslategray"
             >
-              {{ field.label }}
+              <span [innerHTML]="field.label"></span>
             </div>
             <!--  field normal( nu linie) -->
             <ng-container *ngIf="!field.line && !field.inLine && !field.isText">
@@ -559,7 +637,7 @@
                   </ng-template>
                 </div>
 
-                <ng-container *ngFor="let nextField of getGroup(field)">
+                <ng-container *ngFor="let nextField of getLine(field)">
                   <!-- field: nu data, nu imagine (input, text area)-->
                   <ng-container *ngIf="!nextField.isImage && !nextField.isDate">
                     <mat-form-field

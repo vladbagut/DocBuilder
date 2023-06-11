@@ -374,7 +374,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         fontSize: 10,
         text:
           '   mama:   ' +
-          getFieldValue(value, 'mama', 47) +
+          getFieldValue(value, 'mama', 46) +
           ' ,  tata:   ' +
           getFieldValue(value, 'tata', 46),
       },
@@ -383,6 +383,73 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         with: '*',
         fontSize: 10,
         text: 'adresa:    ' + getFieldValue(value, 'adresaParinti', 99),
+      },
+      {
+        margin: [-6, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '10. Limbi străine cunoscute:',
+      },
+      {
+        margin: [10, 7, 0, 0],
+        columns: [
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Engleză: ' + getFieldValue(value, 'engleza', 21),
+          },
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Franceză: ' + getFieldValue(value, 'franceza', 21),
+          },
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Germană: ' + getFieldValue(value, 'germana', 22),
+          },
+        ],
+      },
+      {
+        margin: [10, 7, 0, 0],
+        columns: [
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Italiană: ' + getFieldValue(value, 'italiana', 21),
+          },
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Spaniolă: ' + getFieldValue(value, 'spaniloa', 21),
+          },
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'Rusă:        ' + getFieldValue(value, 'rusa', 22),
+          },
+        ],
+      },
+      {
+        margin: [-6, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '11. Certificat de competenţă lingvistică:',
+      },
+      {
+        margin: [10, 7, 0, 0],
+        columns: [
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'tip: ' + getFieldValue(value, 'engleza', 21),
+          },
+          {
+            width: '33%',
+            fontSize: 9,
+            text: 'limba: ' + getFieldValue(value, 'franceza', 21),
+          },
+        ],
       },
     ],
   };

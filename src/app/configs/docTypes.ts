@@ -12,7 +12,8 @@
         isNumber: validare camp numeric,
         length: number of char
         isImage: imagine
-        isSeparator
+        group, inGroup
+        line, inLine
         isText
 --------------------------------------*/
 
@@ -20,249 +21,291 @@ export const docTypes = {
   asigAuto: {
     label: 'Asigurare AUTO RCA',
     fields: {
-      separator1: {
+      group1: {
         label: 'Date asigurat:',
-        isSeparator: true,
+        group: 1,
         margin: '5px 0px 20px 0px',
-        value: true,
       },
       nume: {
         label: 'Nume',
         isRequired: true,
+        inGroup: 1,
       },
       CNP: {
         label: 'CNP',
         isCNP: true,
+        inGroup: 1,
       },
       adresa: {
         label: 'Adresa',
         big: true,
+        inGroup: 1,
       },
-      separator2: {
+      group2: {
         label: 'Valori asigurare:',
-        isSeparator: true,
+        group: 2,
         margin: '17px 0px 20px 0px',
-        value: true,
       },
       primaAsigurare: {
         label: 'Prima de despagubire',
+        inGroup: 2,
       },
       limitaDespagubireVatamari: {
         label: 'Limita despagubire vatamari / deces',
+        inGroup: 2,
       },
       limitaDespagubirePagube: {
         label: 'Limita despagubire pagube materiale',
+        inGroup: 2,
       },
       data: {
         label: 'Data de la care incepe contractul',
         isDate: true,
+        inGroup: 2,
       },
-      separator3: {
+      group3: {
         label: 'Date autovehicul:',
-        isSeparator: true,
+        group: 3,
         column: 2,
         margin: '5px 0px 20px 0px',
-        value: true,
       },
       nrInmatriculare: {
         label: 'Numar inmatriculare',
         shortLabel: 'A',
         column: 2,
+        inGroup: 3,
       },
       modelVehicul: {
         label: 'Model vehicul',
         shortLabel: 'D1-D3',
         column: 2,
+        inGroup: 3,
       },
       serieŞasiu: {
         label: 'Serie şasiu',
         shortLabel: 'E',
         column: 2,
+        inGroup: 3,
       },
       nrInventar: {
         label: 'Numar inventar',
         shortLabel: 'X',
         column: 2,
+        inGroup: 3,
       },
       capacitateaCilindrica: {
         label: 'Capacitatea cilindrica',
         shortLabel: 'P.1',
         column: 2,
+        inGroup: 3,
       },
       putere: {
         label: 'Putere',
         shortLabel: 'P.2',
         column: 2,
+        inGroup: 3,
       },
       numarLocuri: {
         label: 'Numar locuri',
         shortLabel: 'S.1',
         column: 2,
         isNumber: true,
+        inGroup: 3,
       },
       greutateMaximaAdmisa: {
         label: 'Greutate maxima admisa',
         shortLabel: 'F.1',
         column: 2,
+        inGroup: 3,
       },
     },
   },
   fisaInscriere: {
     label: 'Fişă înscriere facultate',
     fields: {
-      separator1: {
+      group1: {
         label: 'Date personale',
-        isSeparator: true,
+        group: 1,
         column: 1,
         margin: '5px 0px 20px 0px',
-        value: true,
       },
       nume: {
         label: 'Nume',
         isRequired: true,
+        inGroup: 1,
       },
       CNP: {
         label: 'CNP',
         isCNP: true,
+        inGroup: 1,
       },
       nationalitatea: {
         label: 'Naționalitatea',
+        inGroup: 1,
       },
       localitate: {
         label: 'Localitate',
         shortLabel: 'nastere',
         line: 1,
+        inGroup: 1,
       },
       judet: {
         label: 'Judet',
         inLine: 1,
+        inGroup: 1,
       },
       buletinSerie: {
         label: 'Buletin serie',
         line: 2,
+        inGroup: 1,
       },
       buletinNo: {
         label: 'Nr',
         inLine: 2,
+        inGroup: 1,
       },
       buletinEliberatDe: {
         label: 'Eliberat de',
         line: 3,
+        inGroup: 1,
       },
       buletinEliberatLaData: {
         label: 'Data eliberarii',
         isDate: true,
         inLine: 3,
+        inGroup: 1,
       },
       adresa: {
         label: 'Adresa',
         big: true,
+        inGroup: 1,
       },
-      separator2: {
+      group2: {
         label: 'Părinţi / suținători legali',
-        isSeparator: true,
+        group: 2,
         column: 1,
         margin: '5px 0px 20px 0px',
+        collapsed: true,
       },
       mama: {
         label: 'Mama',
         column: 1,
+        inGroup: 2,
       },
       tata: {
         label: 'Tata',
         column: 1,
+        inGroup: 2,
       },
       adresaParinti: {
         label: 'Adresa',
         big: true,
+        inGroup: 2,
       },
-      foto: {
-        label: 'Fotografie',
-        column: 2,
-        isImage: true,
-      },
-      separator3: {
+      group3: {
         label: 'Studii',
-        isSeparator: true,
+        group: 3,
         column: 1,
         margin: '5px 0px 20px 0px',
+        collapsed: true,
       },
       liceul: {
         label: 'Liceul absolvit',
         column: 1,
+        inGroup: 3,
       },
       sectia: {
         label: 'Sectia absolvită',
         line: 5,
         column: 1,
+        inGroup: 3,
       },
       anulAbsolvirii: {
         label: 'Anul absolvirii',
-        inLine: 5,
         column: 1,
         isNumber: true,
         length: 4,
+        inLine: 5,
+        inGroup: 3,
       },
       medieBac: {
         label: 'Media generală bacalaureat',
         column: 1,
         isNumber: true,
+        inGroup: 3,
       },
-      separator4: {
+      group4: {
         label: 'Limbi străine cunoscute',
-        isSeparator: true,
+        group: 4,
         column: 1,
         margin: '5px 0px 20px 0px',
+        collapsed: true,
       },
       text3: {
-        label: 'Nivel: 1-Incepator,    2-Mediu,    3-Avansat',
+        label:
+          'Nivelul:  <span class="ps-3 comment"> 1-Incepator </span><span class="ps-3 comment"> 2-Mediu </span><span class="ps-3 comment"> 3-Avansat </span>',
         isText: true,
         column: 1,
+        inGroup: 4,
       },
       engleza: {
-        label: 'Engleza',
+        label: 'Engleză',
         column: 1,
         line: 9,
+        inGroup: 4,
       },
       franceza: {
-        label: 'Franceza',
+        label: 'Franceză',
         column: 1,
         inLine: 9,
+        inGroup: 4,
       },
       germana: {
-        label: 'Germana',
+        label: 'Germană',
         column: 1,
         inLine: 9,
+        inGroup: 4,
       },
       italiana: {
-        label: 'Italiana',
+        label: 'Italiană',
         column: 1,
         line: 10,
+        inGroup: 4,
       },
       spaniloa: {
-        label: 'Spaniloa',
+        label: 'Spaniolă',
         column: 1,
         inLine: 10,
+        inGroup: 4,
       },
       rusa: {
-        label: 'Rusa',
+        label: 'Rusă',
         column: 1,
         inLine: 10,
+        inGroup: 4,
       },
       text1: {
-        label: 'Certificat de competenţă lingvistică',
+        label: 'Certificat de competenţă lingvistică:',
         isText: true,
         column: 1,
+        inGroup: 4,
       },
       certificatLingvisticTip: {
         label: 'tip',
         column: 1,
         line: 11,
+        inGroup: 4,
       },
       certificatLingvisticLimba: {
         label: 'limba',
         column: 1,
         inLine: 11,
+        inGroup: 4,
+      },
+      foto: {
+        label: 'Fotografie',
+        column: 2,
+        isImage: true,
       },
     },
   },

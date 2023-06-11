@@ -29,6 +29,7 @@ import { createWorker } from 'tesseract.js';
 
 import { docTypes } from 'src/app/configs/docTypes';
 import * as PDFTemplates from 'src/app/configs/pdfTemplates';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export type UpFile = {
   file: File;
@@ -92,6 +93,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     penColor: '#3a7fa7',
   };
   configOpenState;
+  menuGroupsItems = [];
 
   @ViewChildren(TemplateDirective)
   public templates: QueryList<TemplateDirective>;
@@ -105,7 +107,8 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     public fileService: FileService,
     private elRef: ElementRef,
     public route: ActivatedRoute,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    public snackBar: MatSnackBar
   ) {
     this.initFormGroup();
     this.initConfigFormGroup();
@@ -131,6 +134,8 @@ export class ExtractComponent implements OnInit, AfterViewInit {
         event.stopPropagation();
       }
     });
+
+    this.initMenu();
   }
 
   ngAfterViewInit(): void {
@@ -198,6 +203,18 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     }
   }
 
+  initMenu() {
+    this.menuGroupsItems = this.selectedDocType?.fieldsList
+      .filter((f) => f.group || !(f.inGroup || f.isText))
+      .map((g) => {
+        if (g.group)
+          g.items = this.selectedDocType?.fieldsList.filter(
+            (f) => f.inGroup === g.group && !f.isText
+          );
+        return g;
+      });
+  }
+
   getFormSubGroup(dic, dicKey) {
     return new FormGroup(
       Object.keys(dic[dicKey].fields).reduce((_obj, _key) => {
@@ -208,7 +225,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
           _obj[_key].addValidators([Validators.maxLength(field.length)]);
         if (field.isNumber)
           _obj[_key].addValidators([Validators.pattern(/^-?\d*[.,]?\d{0,2}$/)]);
-        if (field.isSeparator) _obj[_key].setValue(field.value);
+        if (field.group) _obj[_key].setValue(field.collapsed ? true : false);
         if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
         if (field.isEmail) _obj[_key].addValidators([Validators.email]);
         if (field.isDate) _obj[_key].addValidators([dateValidator()]);
@@ -377,26 +394,36 @@ export class ExtractComponent implements OnInit, AfterViewInit {
         : this.selectedDocType.fieldsList.filter(
             (f) => f.column && f.column == 2
           );
-
-    const filteredList = [];
-    let prevSeparatorValue = true;
-    for (let i = 0; i < list.length; i++) {
-      const field = list[i];
-      if (field.isSeparator) {
-        filteredList.push(field);
-        prevSeparatorValue = this.formGroup
-          .get(this.selectedDocType.key)
-          .get(field.key).value;
-      } else if (prevSeparatorValue) {
-        filteredList.push(field);
-      }
-    }
-    return filteredList;
+    return list;
   }
 
-  getGroup(field) {
+  getLine(field) {
     return this.selectedDocType.fieldsList.filter(
       (f) => f.inLine === field.line
+    );
+  }
+
+  isGroupCollapsed(field) {
+    if (!field.inGroup || field.group) return false;
+
+    let group = this.selectedDocType.fieldsList.find(
+      (f) => f.group === field.inGroup
+    );
+    if (group) {
+      return this.formGroup.get(this.selectedDocType.key).get(group.key)?.value;
+    }
+
+    return false;
+  }
+
+  groupHasError(field) {
+    let group = this.selectedDocType.fieldsList.filter(
+      (f) => f.inGroup === field.group
+    );
+    return group.some(
+      (f) =>
+        this.formGroup.get(this.selectedDocType.key).get(f.key).invalid &&
+        this.formSubmitted
     );
   }
 
@@ -447,13 +474,18 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     });
   }
 
+  formSubmitted = false;
   generarePdf(actiune = 'open') {
     const form = this.formGroup.get(this.selectedDocType.key);
     Object.keys(form['controls']).forEach((key) => {
       form.get(key).updateValueAndValidity();
     });
+    this.formSubmitted = true;
 
-    if (!this.formGroup.get(this.selectedDocType.key).valid) return;
+    if (!this.formGroup.get(this.selectedDocType.key).valid) {
+      this.showMessage('Formularul este invalid !');
+      return;
+    }
 
     let nrSerie;
     if (this.selectedDocType.key == 'asigAuto') {
@@ -514,6 +546,14 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     this.signatureBase64 = null;
     localStorage.setItem('signature', null);
     this.signaturePad.clear();
+  }
+
+  public showMessage(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 2000,
+      horizontalPosition: 'right',
+      panelClass: ['error-snackbar'],
+    });
   }
 }
 

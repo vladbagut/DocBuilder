@@ -348,3 +348,22 @@ $dark-text: black;
   border-radius: 0.5rem;
   padding: 0.5rem !important;
 }
+
+.error-snackbar {
+  margin-right: 200px !important;
+  background-color: #cae6ef;
+  color: black;
+  font-size: 14px;
+  font-weight: 400;
+  .mat-simple-snackbar-action {
+    color: red;
+    .mat-button {
+      text-transform: uppercase;
+    }
+  }
+}
+
+.comment {
+  color: #b7b6b6;
+  font-size: 13px;
+}

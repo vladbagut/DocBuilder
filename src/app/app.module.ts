@@ -37,6 +37,7 @@ import { SignaturePadModule } from 'angular2-signaturepad';
 import { FunctionPipe } from './directives/function.pipe';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     NgxResizableModule,
     SignaturePadModule,
     MatDatepickerModule,
-     MatMomentDateModule
+    MatMomentDateModule,
+    MatSnackBarModule,
   ],
   providers: [FunctionPipe],
   bootstrap: [AppComponent],
