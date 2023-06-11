@@ -10,8 +10,10 @@
         isEmail:  validare de field e-mail,
         isCNP: validare CNP
         isNumber: validare camp numeric,
+        length: number of char
         isImage: imagine
-        isGroup
+        isSeparator
+        isText
 --------------------------------------*/
 
 export const docTypes = {
@@ -22,6 +24,7 @@ export const docTypes = {
         label: 'Date asigurat:',
         isSeparator: true,
         margin: '5px 0px 20px 0px',
+        value: true,
       },
       nume: {
         label: 'Nume',
@@ -39,6 +42,7 @@ export const docTypes = {
         label: 'Valori asigurare:',
         isSeparator: true,
         margin: '17px 0px 20px 0px',
+        value: true,
       },
       primaAsigurare: {
         label: 'Prima de despagubire',
@@ -58,6 +62,7 @@ export const docTypes = {
         isSeparator: true,
         column: 2,
         margin: '5px 0px 20px 0px',
+        value: true,
       },
       nrInmatriculare: {
         label: 'Numar inmatriculare',
@@ -106,10 +111,11 @@ export const docTypes = {
     label: 'Fişă înscriere facultate',
     fields: {
       separator1: {
-        label: 'Date Personale:',
+        label: 'Date personale',
         isSeparator: true,
         column: 1,
         margin: '5px 0px 20px 0px',
+        value: true,
       },
       nume: {
         label: 'Nume',
@@ -152,18 +158,111 @@ export const docTypes = {
         label: 'Adresa',
         big: true,
       },
-
       separator2: {
-        label: 'Studii:',
+        label: 'Părinţi / suținători legali',
         isSeparator: true,
         column: 1,
         margin: '5px 0px 20px 0px',
       },
-
+      mama: {
+        label: 'Mama',
+        column: 1,
+      },
+      tata: {
+        label: 'Tata',
+        column: 1,
+      },
+      adresaParinti: {
+        label: 'Adresa',
+        big: true,
+      },
       foto: {
         label: 'Fotografie',
         column: 2,
         isImage: true,
+      },
+      separator3: {
+        label: 'Studii',
+        isSeparator: true,
+        column: 1,
+        margin: '5px 0px 20px 0px',
+      },
+      liceul: {
+        label: 'Liceul absolvit',
+        column: 1,
+      },
+      sectia: {
+        label: 'Sectia absolvită',
+        line: 5,
+        column: 1,
+      },
+      anulAbsolvirii: {
+        label: 'Anul absolvirii',
+        inLine: 5,
+        column: 1,
+        isNumber: true,
+        length: 4,
+      },
+      medieBac: {
+        label: 'Media generală bacalaureat',
+        column: 1,
+        isNumber: true,
+      },
+      separator4: {
+        label: 'Limbi străine cunoscute',
+        isSeparator: true,
+        column: 1,
+        margin: '5px 0px 20px 0px',
+      },
+      text3: {
+        label: 'Nivel: 1-Incepator,    2-Mediu,    3-Avansat',
+        isText: true,
+        column: 1,
+      },
+      engleza: {
+        label: 'Engleza',
+        column: 1,
+        line: 9,
+      },
+      franceza: {
+        label: 'Franceza',
+        column: 1,
+        inLine: 9,
+      },
+      germana: {
+        label: 'Germana',
+        column: 1,
+        inLine: 9,
+      },
+      italiana: {
+        label: 'Italiana',
+        column: 1,
+        line: 10,
+      },
+      spaniloa: {
+        label: 'Spaniloa',
+        column: 1,
+        inLine: 10,
+      },
+      rusa: {
+        label: 'Rusa',
+        column: 1,
+        inLine: 10,
+      },
+      text1: {
+        label: 'Certificat de competenţă lingvistică',
+        isText: true,
+        column: 1,
+      },
+      certificatLingvisticTip: {
+        label: 'tip',
+        column: 1,
+        line: 11,
+      },
+      certificatLingvisticLimba: {
+        label: 'limba',
+        column: 1,
+        inLine: 11,
       },
     },
   },

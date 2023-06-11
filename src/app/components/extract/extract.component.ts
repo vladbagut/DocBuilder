@@ -14,7 +14,12 @@ import {
 import { FileService } from 'src/app/services/file.service';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  MaxLengthValidator,
+  Validators,
+} from '@angular/forms';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import { TemplateDirective } from 'src/app/directives/template.directive';
 import { ChangeBackgroundAnimation, FadingAnimation } from 'src/animations';
@@ -50,7 +55,7 @@ export const DATE_FORMATS = {
 const Errors = {
   required: 'Câmpul este obligatoriu',
   InvalidCNP: 'CNP invalid',
-  pattern: 'Câmpul este numeric',
+  pattern: 'Valoarea introdusa este gresita',
   matDatepickerParse: 'Introduceti o data in formatul: "dd.mm.yyyy"',
   InvalidDate: 'Introduceti o data in formatul: "dd.mm.yyyy"',
 };
@@ -199,12 +204,15 @@ export class ExtractComponent implements OnInit, AfterViewInit {
         _obj[_key] = new FormControl(null, []);
         const field = dic[dicKey].fields[_key];
         if (field.isRequired) _obj[_key].addValidators([Validators.required]);
+        if (field.length)
+          _obj[_key].addValidators([Validators.maxLength(field.length)]);
         if (field.isNumber)
-          _obj[_key].addValidators([Validators.pattern(/^-?(0|[1-9]\d*)?$/)]);
-        if (field.isSeparator) _obj[_key].setValue(true);
+          _obj[_key].addValidators([Validators.pattern(/^-?\d*[.,]?\d{0,2}$/)]);
+        if (field.isSeparator) _obj[_key].setValue(field.value);
         if (field.isCNP) _obj[_key].addValidators([CNPValidator()]);
         if (field.isEmail) _obj[_key].addValidators([Validators.email]);
         if (field.isDate) _obj[_key].addValidators([dateValidator()]);
+
         return _obj;
       }, {})
     );
@@ -423,10 +431,9 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       this.selectedDocType &&
       this.formGroup.get(this.selectedDocType.key).get(field.key).invalid
     ) {
-      const fieldErrors = this.formGroup
-        .get(this.selectedDocType.key)
-        .get(field.key).errors;
-      const msgKey = Object.keys(fieldErrors)[0];
+      const f = this.formGroup.get(this.selectedDocType.key).get(field.key);
+      const fieldErrors = f.errors;
+      let msgKey = Object.keys(fieldErrors)[0];
       return Errors[msgKey];
     } else return null;
   }

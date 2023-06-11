@@ -274,7 +274,7 @@
     <!-- Controls: col 1 si 2 -->
     <ng-container *ngIf="selectedDocType">
       <div
-        class="h-100 d-flex flex-column flex-grow-0 w-50 px-5"
+        class="h-100 d-flex flex-column px-5 col-{{ column }}"
         *ngFor="let column of [1, 2]"
       >
         <div
@@ -301,9 +301,18 @@
             {{ field.label }}
           </div>
 
-          <ng-container *ngIf="!field.isSeparator">
+          <div *ngIf="!field.isSeparator" class="w-100 h-100 d-flex">
+            <!-- text -->
+            <div
+              *ngIf="field.isText"
+              class="mb-1 ms-1"
+              [style.padding-left]="'2px'"
+              style="color: lightslategray"
+            >
+              {{ field.label }}
+            </div>
             <!--  field normal( nu linie) -->
-            <ng-container *ngIf="!field.line && !field.inLine">
+            <ng-container *ngIf="!field.line && !field.inLine && !field.isText">
               <!-- field: nu data, nu imagine (input, text area)-->
               <ng-container *ngIf="!field.isImage && !field.isDate">
                 <mat-form-field
@@ -324,6 +333,7 @@
                     *ngIf="!field.big"
                     type="text"
                     matInput
+                    [maxLength]="field.length || 1000000"
                     [formControlName]="field.key"
                   />
 
@@ -334,6 +344,7 @@
                     spellcheck="false"
                     rows="1"
                     matInput
+                    [maxLength]="field.length || 1000000"
                     [formControlName]="field.key"
                   ></textarea>
                   <mat-icon
@@ -423,16 +434,13 @@
               </div>
             </ng-container>
 
-            <!-- primul field dintr-o linie, urmat de restul de pe linie -->
-            <ng-container *ngIf="field.line">
-              <div
-                class="d-flex flex-row w-100 justify-content-between gap-2"
-                *ngIf="field.line"
-              >
+            <!-- linie -->
+            <ng-container *ngIf="field.line && !field.isText">
+              <div class="d-flex flex-row w-100 gap-2">
                 <!-- field: nu data, nu imagine (input, text area)-->
                 <ng-container *ngIf="!field.isImage && !field.isDate">
                   <mat-form-field
-                    class="w-100 mb-2 line-item"
+                    class="mb-2 line-item"
                     appearance="outline"
                     color="primary"
                     appDragDrop
@@ -449,6 +457,7 @@
                       *ngIf="!field.big"
                       type="text"
                       matInput
+                      [maxLength]="field.length || 1000000"
                       [formControlName]="field.key"
                     />
 
@@ -459,6 +468,7 @@
                       spellcheck="false"
                       rows="1"
                       matInput
+                      [maxLength]="field.length || 1000000"
                       [formControlName]="field.key"
                     ></textarea>
                     <mat-icon
@@ -492,7 +502,7 @@
 
                 <!-- date -->
                 <mat-form-field
-                  class="w-100 mb-2 line-item"
+                  class="mb-2 line-item"
                   *ngIf="field.isDate"
                   appearance="outline"
                   color="primary"
@@ -526,7 +536,7 @@
 
                 <!-- imagine-->
                 <div
-                  class="w-100 line-item"
+                  class="line-item"
                   *ngIf="field.isImage"
                   [class.hasImage]="
                     formGroup.get(selectedDocType.key).get(field.key).value
@@ -553,7 +563,7 @@
                   <!-- field: nu data, nu imagine (input, text area)-->
                   <ng-container *ngIf="!nextField.isImage && !nextField.isDate">
                     <mat-form-field
-                      class="w-100 mb-2 line-item"
+                      class="mb-2 line-item"
                       appearance="outline"
                       color="primary"
                       appDragDrop
@@ -574,6 +584,7 @@
                         *ngIf="!nextField.big"
                         type="text"
                         matInput
+                        [maxLength]="nextField.length || 1000000"
                         [formControlName]="nextField.key"
                       />
 
@@ -584,6 +595,7 @@
                         spellcheck="false"
                         rows="1"
                         matInput
+                        [maxLength]="nextField.length || 1000000"
                         [formControlName]="nextField.key"
                       ></textarea>
                       <mat-icon
@@ -620,7 +632,7 @@
 
                   <!-- date -->
                   <mat-form-field
-                    class="w-100 mb-2 line-item"
+                    class="mb-2 line-item"
                     *ngIf="nextField.isDate"
                     appearance="outline"
                     color="primary"
@@ -660,7 +672,7 @@
 
                   <!-- imagine-->
                   <div
-                    class="w-100 line-item"
+                    class="line-item"
                     *ngIf="nextField.isImage"
                     [class.hasImage]="
                       formGroup.get(selectedDocType.key).get(nextField.key)
@@ -690,7 +702,7 @@
                 </ng-container>
               </div>
             </ng-container>
-          </ng-container>
+          </div>
         </div>
       </div>
     </ng-container>
@@ -796,7 +808,7 @@
           hideToggle="true"
         >
           <div class="h-100 w-100 position-relative sign-wrapper mt-4">
-            <span class="sign-titlu position-absolute">Semnatura</span>
+            <span class="sign-titlu position-absolute">Semnătura</span>
             <button
               class="action-button close-button position-absolute"
               (click)="signOpenState = false"

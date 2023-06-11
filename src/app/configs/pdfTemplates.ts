@@ -282,7 +282,9 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         fontSize: 10,
         text:
           '2. Cod numeric personal:  ' +
-          (value.CNP ? value.CNP : '__ __ __ __ __ __ __ __ __ __ __ __ __'),
+          (value.CNP
+            ? value.CNP
+            : '___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___'),
       },
       {
         margin: [0, 7, 0, 0],
@@ -312,8 +314,8 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           '5. Locul naşterii:  ' +
           'localitatea: ' +
           (value.localitate || '_________________') +
-          ',  judetul: ' +
-          (value.judet || '_________________'),
+          ' ,  judetul: ' +
+          (value.judet || '________________'),
       },
       {
         margin: [0, 7, 0, 0],
@@ -327,17 +329,14 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           (value.buletinNo || '____________') +
           ' ,  eliberat: ' +
           (value.buletinEliberatDe || '______________________') +
-          ' ,  la data: ' +
-          (value.buletinEliberatLaData || '_______________'),
+          ' ,  la data:  ' +
+          (getDateFromMoment(value.buletinEliberatLaData) || '_______________'),
       },
       {
         margin: [0, 7, 0, 0],
         with: '*',
         fontSize: 10,
-        text:
-          '7. Domiciliul stabil:  ' +
-          (value.adresa ||
-            '___________________________________________________________________________________'),
+        text: '7. Domiciliul stabil:  ' + getFieldValue(value, 'adresa', 91),
       },
       value.adresa
         ? ''
@@ -345,8 +344,46 @@ export function fisaInscriereTemplate(value, config, semnatura) {
             margin: [10, 7, 0, 0],
             with: '*',
             fontSize: 10,
-            text: '   _____________________________________________________________________________________________________',
+            text: '   ' + '_'.repeat(109),
           },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '8. Liceul absolvit:  ' + getFieldValue(value, 'liceul', 93),
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '   sectia absolvita:  ' +
+          getFieldValue(value, 'sectia', 55) +
+          ' anul absolvirii: ' +
+          getFieldValue(value, 'anulAbsolvirii', 22),
+      },
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '9. Părinţi sau sutinători legali:',
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '   mama:   ' +
+          getFieldValue(value, 'mama', 47) +
+          ' ,  tata:   ' +
+          getFieldValue(value, 'tata', 46),
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: 'adresa:    ' + getFieldValue(value, 'adresaParinti', 99),
+      },
     ],
   };
 }
@@ -365,7 +402,7 @@ function extrageDateDinCNP(CNP) {
   if (!CNP)
     return {
       sex: ' _____',
-      dataNasterii: `ziua: __________ ,  luna: __________ ,  anul: __________`,
+      dataNasterii: `ziua: ___________ ,  luna: ___________ ,  anul: _____________`,
     };
 
   const s = CNP.substring(0, 1);
@@ -415,9 +452,13 @@ function extrageDateDinCNP(CNP) {
 }
 
 function getDateFromMoment(data, addYear?) {
-  if (!data) return '___ /___ /________ ';
+  if (!data) return '____ /____ /________ ';
 
   return addYear
     ? data.add(1, 'years').format('DD.MM.YYYY')
     : data.format('DD.MM.YYYY');
+}
+
+function getFieldValue(value, field, length = 10) {
+  return value[field] || '_'.repeat(length);
 }
