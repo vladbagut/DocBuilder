@@ -1,0 +1,54 @@
+.left-container {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.resize-handle {
+  flex: 0 0 20px;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  position: relative;
+
+  & > div {
+    left: 7px;
+    right: 7px;
+    transition: all 0.5s ease;
+    & + div {
+      position: absolute;
+      box-sizing: border-box;
+      display: block;
+      border: 1px solid #ccc;
+      border-width: 0 1px;
+      top: 50%;
+      height: 20px;
+      width: 5px;
+    }
+  }
+
+  &:hover > div {
+    background-color: #f4f4f4;
+  }
+}
+
+.mat-icon {
+  color: #b5b5b5;
+  font-size: 16px;
+  &:before {
+    display: inline-block;
+    padding-top: 5px;
+    padding-left: 5px;
+  }
+}
+
+.right-container {
+  flex: 1 1 50%;
+  overflow: scroll;
+}
+
+.user-select-none {
+  user-select: none;
+}

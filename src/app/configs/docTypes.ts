@@ -202,6 +202,13 @@ export const docTypes = {
         big: true,
         inGroup: 2,
       },
+
+      foto: {
+        label: 'Fotografie',
+        column: 2,
+        isImage: true,
+      },
+
       group3: {
         label: 'Studii',
         group: 3,
@@ -228,12 +235,7 @@ export const docTypes = {
         inLine: 5,
         inGroup: 3,
       },
-      medieBac: {
-        label: 'Media generală bacalaureat',
-        column: 1,
-        isNumber: true,
-        inGroup: 3,
-      },
+
       group4: {
         label: 'Limbi străine cunoscute',
         group: 4,
@@ -291,21 +293,83 @@ export const docTypes = {
         inGroup: 4,
       },
       certificatLingvisticTip: {
-        label: 'tip',
+        label: 'Certificat-Tip',
         column: 1,
         line: 11,
         inGroup: 4,
       },
       certificatLingvisticLimba: {
-        label: 'limba',
+        label: 'Certificat-Limba',
         column: 1,
         inLine: 11,
         inGroup: 4,
       },
-      foto: {
-        label: 'Fotografie',
+
+      group5: {
+        label: 'Date de contact',
+        group: 5,
         column: 2,
-        isImage: true,
+        margin: '60px 0px 20px 0px',
+        collapsed: true,
+      },
+      telefon: {
+        label: 'Numar de telefon',
+        column: 2,
+        inGroup: 5,
+      },
+      email: {
+        label: 'E-mail',
+        column: 2,
+        inGroup: 5,
+        isEmail: true,
+      },
+
+      group6: {
+        label: 'Media de admitere',
+        group: 6,
+        column: 2,
+        margin: '15px 0px 20px 0px',
+        collapsed: true,
+      },
+      text4: {
+        label:
+          '<span class="red">MB</span> - Media la examenul de <b>bacalaureat</b>',
+        isText: true,
+        column: 2,
+        inGroup: 6,
+      },
+      medieBac: {
+        label: 'Media BAC',
+        shortLabel: 'MB',
+        column: 2,
+        isNumber: true,
+        inGroup: 6,
+      },
+      text5: {
+        label:
+          '<span class="red">NB</span> - Nota cea mai mare obtinuta la bacalaureat pentru una din materiile: <b>matematica</b>, <b>informatica</b>, <b>fizica</b>',
+        isText: true,
+        column: 2,
+        inGroup: 6,
+      },
+      notaBac1: {
+        label: 'Nota',
+        shortLabel: 'NB',
+        column: 2,
+        isNumber: true,
+        inGroup: 6,
+        line: 20,
+      },
+      materiaBac1: {
+        label: 'Materia',
+        column: 2,
+        inLine: 20,
+        inGroup: 6,
+      },
+      optiuneFormulaCalcul: {
+        isOption: true,
+        column: 2,
+        inGroup: 6,
       },
     },
   },

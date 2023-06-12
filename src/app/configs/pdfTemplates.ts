@@ -336,7 +336,17 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         margin: [0, 7, 0, 0],
         with: '*',
         fontSize: 10,
-        text: '7. Domiciliul stabil:  ' + getFieldValue(value, 'adresa', 91),
+        columns: [
+          {
+            margin: [0, 0, 3, 0],
+            width: 'auto',
+            text: '7.',
+          },
+          {
+            width: '*',
+            text: 'Domiciliul stabil:  ' + getFieldValue(value, 'adresa', 91),
+          },
+        ],
       },
       value.adresa
         ? ''
@@ -350,17 +360,30 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         margin: [0, 7, 0, 0],
         with: '*',
         fontSize: 10,
-        text: '8. Liceul absolvit:  ' + getFieldValue(value, 'liceul', 93),
+        columns: [
+          {
+            margin: [0, 0, 3, 0],
+            width: 'auto',
+            text: '8.',
+          },
+          {
+            width: '*',
+            text: 'Liceul absolvit:  ' + getFieldValue(value, 'liceul', 93),
+          },
+        ],
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '   sectia absolvita:  ' + getFieldValue(value, 'sectia', 55),
       },
       {
         margin: [10, 7, 0, 0],
         with: '*',
         fontSize: 10,
         text:
-          '   sectia absolvita:  ' +
-          getFieldValue(value, 'sectia', 55) +
-          ' anul absolvirii: ' +
-          getFieldValue(value, 'anulAbsolvirii', 22),
+          '   anul absolvirii: ' + getFieldValue(value, 'anulAbsolvirii', 22),
       },
       {
         margin: [0, 7, 0, 0],

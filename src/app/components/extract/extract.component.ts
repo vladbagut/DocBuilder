@@ -95,6 +95,8 @@ export class ExtractComponent implements OnInit, AfterViewInit {
   configOpenState;
   menuGroupsItems = [];
 
+  consoleOpenState;
+
   @ViewChildren(TemplateDirective)
   public templates: QueryList<TemplateDirective>;
 
@@ -213,6 +215,11 @@ export class ExtractComponent implements OnInit, AfterViewInit {
           );
         return g;
       });
+
+    // muta imaginea la sfarsit
+    const image = this.menuGroupsItems.find((f) => f.isImage);
+    this.menuGroupsItems.splice(this.menuGroupsItems.indexOf(image), 1);
+    this.menuGroupsItems.push(image);
   }
 
   getFormSubGroup(dic, dicKey) {
@@ -316,6 +323,12 @@ export class ExtractComponent implements OnInit, AfterViewInit {
               .get(field.key)
               .setValue(moment(text, 'DD.MM.YYYY'));
           }
+
+          const group = this.getFieldGroup(field);
+          this.formGroup
+            .get(this.selectedDocType.key)
+            .get(group.key)
+            .setValue(false);
         } else {
           this.textConsola = text;
         }
@@ -403,12 +416,16 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     );
   }
 
+  getFieldGroup(field) {
+    return this.selectedDocType.fieldsList.find(
+      (f) => f.group === field.inGroup
+    );
+  }
+
   isGroupCollapsed(field) {
     if (!field.inGroup || field.group) return false;
 
-    let group = this.selectedDocType.fieldsList.find(
-      (f) => f.group === field.inGroup
-    );
+    let group = this.getFieldGroup(field);
     if (group) {
       return this.formGroup.get(this.selectedDocType.key).get(group.key)?.value;
     }
@@ -416,14 +433,15 @@ export class ExtractComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  groupHasError(field) {
-    let group = this.selectedDocType.fieldsList.filter(
-      (f) => f.inGroup === field.group
+  groupHasError(groupField) {
+    let groupItems = this.selectedDocType.fieldsList.filter(
+      (f) => f.inGroup === groupField.group
     );
-    return group.some(
+    return groupItems.some(
       (f) =>
         this.formGroup.get(this.selectedDocType.key).get(f.key).invalid &&
-        this.formSubmitted
+        (this.formSubmitted ||
+          this.formGroup.get(this.selectedDocType.key).get(f.key).touched)
     );
   }
 
@@ -432,6 +450,17 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       this.configList.find((c) => c.key == this.selectedDocType.key)
         ?.fieldsList || []
     );
+  }
+
+  dragOverGroup = null;
+  openGroup(field) {
+    setTimeout(() => {
+      if (this.dragOverGroup == field)
+        this.formGroup
+          .get(this.selectedDocType.key)
+          .get(field.key)
+          .setValue(false);
+    }, 200);
   }
 
   getFormularTemplate() {

@@ -38,6 +38,8 @@ import { FunctionPipe } from './directives/function.pipe';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { SidebarResizerComponent } from './directives/sidebar-resizer/sidebar-resizer.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     TemplateDirective,
     CropImageDirective,
     FunctionPipe,
+    SidebarResizerComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,6 +88,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatDatepickerModule,
     MatMomentDateModule,
     MatSnackBarModule,
+    MatRadioModule,
   ],
   providers: [FunctionPipe],
   bootstrap: [AppComponent],

@@ -1,265 +1,167 @@
-<rsz-layout
-  class="row"
-  [directions]="['none']"
-  [rFlex]="true"
-  class="d-flex w-100"
+<app-sidebar-resizer
+  class="h-100 w-100"
+  leftContainerWidth="50%"
+  minLeft="100px"
+  [minRight]="100"
 >
-  <!-- LEFT - UPLOAD -->
-  <rsz-layout
-    class="cell"
-    [className]="'cell'"
-    [directions]="['right']"
-    [rFlex]="true"
-    (resizing)="resizing()"
-  >
-    <div appDragDrop (filesDropped)="setFile($event)" class="asig-wrapper">
-      <!-- upload & drag& drop area -->
-      <button
-        class="position-relative align-self-center upload-button"
-        mat-icon-button
-        (click)="fileInput.click()"
-      >
-        <mat-icon svgIcon="cloudUpload"></mat-icon>
-        <mat-icon>logout</mat-icon>
-      </button>
-
-      <div
-        color="primary"
-        class="mat-body-2 primary-main mt-3 align-self-center"
-      >
-        Incarca imagine
-      </div>
-      <div class="subtext align-self-center">
-        Tipurile de fisiere permise: *.jpg, *.png
-      </div>
-      <input
-        hidden
-        type="file"
-        onclick="this.value=null"
-        #fileInput
-        [accept]="CERTIFICATE_UPLOAD_FILE_FORMATS"
-        (change)="setFile($event.target.files[0])"
-      />
-      <mat-error class="mt-4 max-w-400 align-self-center" *ngIf="errorMessage">
-        Eroare la incarcare fisier: {{ errorMessage }}
-      </mat-error>
-
-      <!-- lista imagini incarcate -->
-      <div class="mt-4">
-        <div
-          *ngFor="let upFile of files; let i = index"
-          class="d-flex flex-row mt-3 file-item not-allow-drop"
+  <ng-container left-container>
+    <div class="w-100 h-100 d-flex p-4 pt-5">
+      <div appDragDrop (filesDropped)="setFile($event)" class="asig-wrapper">
+        <!-- upload & drag& drop area -->
+        <button
+          class="position-relative align-self-center upload-button"
+          mat-icon-button
+          (click)="fileInput.click()"
         >
-          <!-- o imagine incarcata -->
-          <mat-expansion-panel
-            [expanded]="upFile.expanded"
-            class="mat-elevation-z0 flex-grow-1"
+          <mat-icon svgIcon="cloudUpload"></mat-icon>
+          <mat-icon>logout</mat-icon>
+        </button>
+
+        <div
+          color="primary"
+          class="mat-body-2 primary-main mt-3 align-self-center"
+        >
+          Incarca imagine
+        </div>
+        <div class="subtext align-self-center">
+          Tipurile de fisiere permise: *.jpg, *.png
+        </div>
+        <input
+          hidden
+          type="file"
+          onclick="this.value=null"
+          #fileInput
+          [accept]="CERTIFICATE_UPLOAD_FILE_FORMATS"
+          (change)="setFile($event.target.files[0])"
+        />
+        <mat-error
+          class="mt-4 max-w-400 align-self-center"
+          *ngIf="errorMessage"
+        >
+          Eroare la incarcare fisier: {{ errorMessage }}
+        </mat-error>
+
+        <!-- lista imagini incarcate -->
+        <div class="mt-4">
+          <div
+            *ngFor="let upFile of files; let i = index"
+            class="d-flex flex-row mt-3 file-item not-allow-drop"
           >
-            <mat-expansion-panel-header>
-              <div
-                class="d-flex flex-row justify-content-between align-items-center w-100 ps-2"
-              >
-                <div class="text-start flex-grow-1 word-break">
-                  {{ upFile.fileName }}
+            <!-- o imagine incarcata -->
+            <mat-expansion-panel
+              [expanded]="upFile.expanded"
+              class="mat-elevation-z0 flex-grow-1"
+            >
+              <mat-expansion-panel-header>
+                <div
+                  class="d-flex flex-row justify-content-between align-items-center w-100 ps-2"
+                >
+                  <div class="text-start flex-grow-1 word-break">
+                    {{ upFile.fileName }}
+                  </div>
+                  <button
+                    class="ms-3 action-button close-button"
+                    mat-icon-button
+                    (click)="
+                      $event.preventDefault();
+                      $event.stopPropagation();
+                      deleteMedia(upFile)
+                    "
+                    color="primary"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </div>
-                <button
-                  class="ms-3 action-button close-button"
-                  mat-icon-button
-                  (click)="
+              </mat-expansion-panel-header>
+
+              <div class="d-flex flex-row">
+                <!-- imagine (cu un canvas ascuns pe care se deseneaza selectia) -->
+                <div
+                  class="image-cropper-wrapper w-100 h-100 position-relative"
+                  (contextmenu)="
                     $event.preventDefault();
                     $event.stopPropagation();
-                    deleteMedia(upFile)
+                    textExtractingFor = upFile;
+                    contextMenuPosition.x = $event.clientX;
+                    contextMenuPosition.y = $event.clientY;
+                    upFile.croppedFile && contextMenuTrigger.openMenu()
                   "
-                  color="primary"
                 >
-                  <mat-icon>close</mat-icon>
-                </button>
-              </div>
-            </mat-expansion-panel-header>
-
-            <div class="d-flex flex-row">
-              <!-- imagine (cu un canvas ascuns pe care se deseneaza selectia) -->
-              <div
-                class="image-cropper-wrapper w-100 h-100 position-relative"
-                (contextmenu)="
-                  $event.preventDefault();
-                  $event.stopPropagation();
-                  textExtractingFor = upFile;
-                  contextMenuPosition.x = $event.clientX;
-                  contextMenuPosition.y = $event.clientY;
-                  upFile.croppedFile && contextMenuTrigger.openMenu()
-                "
-              >
-                <div
-                  style="visibility: hidden; position: fixed"
-                  [style.left]="contextMenuPosition.x + 'px'"
-                  [style.top]="contextMenuPosition.y + 'px'"
-                  #contextMenuTrigger="matMenuTrigger"
-                  [matMenuTriggerFor]="myMenu"
-                  [matMenuTriggerData]="{
-                    upFile: upFile,
-                    items: menuGroupsItems
-                  }"
-                  (onMenuOpen)="onMenuOpen(contextMenuTrigger)"
-                  (onMenuClose)="openedTrigger = null"
-                ></div>
-                <img
-                  appCropImage
-                  (imageCropped)="cropImg($event, upFile)"
-                  (imageDragged)="textExtractingFor = upFile"
-                  class="noselect"
-                  [src]="upFile.fileBase64"
-                  draggable="false"
-                  style="
-                    height: auto;
-                    object-fit: scale-down !important;
-                    max-width: 100%;
-                  "
-                />
-              </div>
-              <!-- butoane pt actiuni imagine-->
-              <div
-                style="width: 40px"
-                class="d-flex flex-column align-items-end pt-2"
-              >
-                <button
-                  type="button"
-                  [class.opacity-0]="!upFile.croppedFile"
-                  [class.spinner-grow-inline]="
-                    textExtracting && upFile == textExtractingFor
-                  "
-                  color="primary"
-                  mat-icon-button
-                  class="action-button mb-3"
-                >
-                  <a
-                    class="nav-link"
-                    #myMenuTrigger="matMenuTrigger"
-                    [matMenuTriggerData]="{ upFile: upFile }"
+                  <div
+                    style="visibility: hidden; position: fixed"
+                    [style.left]="contextMenuPosition.x + 'px'"
+                    [style.top]="contextMenuPosition.y + 'px'"
+                    #contextMenuTrigger="matMenuTrigger"
                     [matMenuTriggerFor]="myMenu"
-                    (onMenuOpen)="onMenuOpen(myMenuTrigger)"
+                    [matMenuTriggerData]="{
+                      upFile: upFile,
+                      items: menuGroupsItems
+                    }"
+                    (onMenuOpen)="onMenuOpen(contextMenuTrigger)"
                     (onMenuClose)="openedTrigger = null"
-                    (click)="textExtractingFor = upFile"
+                  ></div>
+                  <img
+                    appCropImage
+                    (imageCropped)="cropImg($event, upFile)"
+                    (imageDragged)="textExtractingFor = upFile"
+                    class="noselect"
+                    [src]="upFile.fileBase64"
+                    draggable="false"
+                    style="
+                      height: auto;
+                      object-fit: scale-down !important;
+                      max-width: 100%;
+                    "
+                  />
+                </div>
+                <!-- butoane pt actiuni imagine-->
+                <div
+                  style="width: 40px"
+                  class="d-flex flex-column align-items-end pt-2"
+                >
+                  <button
+                    type="button"
+                    [class.opacity-0]="!upFile.croppedFile"
+                    [class.spinner-grow-inline]="
+                      textExtracting && upFile == textExtractingFor
+                    "
+                    color="primary"
+                    mat-icon-button
+                    class="action-button mb-3"
                   >
-                    <mat-icon class="mt-1">arrow_forward</mat-icon>
-                  </a>
-                </button>
+                    <a
+                      class="nav-link"
+                      #myMenuTrigger="matMenuTrigger"
+                      [matMenuTriggerData]="{ upFile: upFile }"
+                      [matMenuTriggerFor]="myMenu"
+                      (onMenuOpen)="onMenuOpen(myMenuTrigger)"
+                      (onMenuClose)="openedTrigger = null"
+                      (click)="textExtractingFor = upFile"
+                    >
+                      <mat-icon class="mt-1">arrow_forward</mat-icon>
+                    </a>
+                  </button>
+                </div>
               </div>
-            </div>
-          </mat-expansion-panel>
+            </mat-expansion-panel>
+          </div>
         </div>
       </div>
     </div>
-  </rsz-layout>
-
-  <!-- RIGHT: FORMULAR SI CONSOLA -->
-  <rsz-layout class="cell" [directions]="['none']" [rFlex]="false">
-    <div class="asig-wrapper asig-wrapper-right w-100 px-3 pe-5">
-      <div class="content cols h-100 w-100">
-        <rsz-layout
-          class="row"
-          [directions]="['none']"
-          [rFlex]="true"
-          style="flex-basis: 100%"
-        >
-          <!-- FORMULAR -->
-          <rsz-layout
-            [class.console-closed]="!textConsola"
-            class="cell"
-            [directions]="['bottom']"
-            [rFlex]="true"
-            [class.flex-90]="textConsola"
-            [class.flex-100]="!textConsola"
-          >
-            <div class="d-flex flex-row h-100 pt-2 pe-4">
-              <div class="h-100 d-flex flex-column flex-grow-1">
-                <div
-                  class="w-100 d-flex flex-column justify-content-center px-5 pb-3"
-                >
-                  <span class="doc-title pt-2">
-                    {{ selectedDocType.label }}
-                  </span>
-                </div>
-
-                <!-- formular -->
-                <ng-container *ngTemplateOutlet="formularTemplate">
-                </ng-container>
-              </div>
-            </div>
-          </rsz-layout>
-
-          <!-- CONSOLA -->
-          <rsz-layout
-            class="cell"
-            [directions]="['none']"
-            [rFlex]="false"
-            [style.margin-bottom]="'5px'"
-          >
-            <!-- consola -->
-            <div
-              class="h-100 w-100 position-relative consola-wrapper"
-              *ngIf="textConsola"
-            >
-              <span class="consola-titlu position-absolute">Consola</span>
-              <button
-                class="action-button close-button position-absolute"
-                (click)="textConsola = null"
-                mat-icon-button
-                color="primary"
-              >
-                <mat-icon>close</mat-icon>
-              </button>
-              <div class="h-100 consola w-100">
-                <div class="py-4 ps-3 pe-4">{{ textConsola }}</div>
-              </div>
-            </div>
-          </rsz-layout>
-        </rsz-layout>
+  </ng-container>
+  <ng-container right-container>
+    <div class="h-100 d-flex flex-column flex-grow-1 pt-4 pe-5">
+      <div class="w-100 d-flex flex-column justify-content-center px-5 pb-3">
+        <span class="doc-title pt-2">
+          {{ selectedDocType.label }}
+        </span>
       </div>
+
+      <!-- formular -->
+      <ng-container *ngTemplateOutlet="formularTemplate"> </ng-container>
     </div>
-  </rsz-layout>
-</rsz-layout>
-
-<!-- Meniu-->
-<!-- <mat-menu #myMenu="matMenu">
-  <ng-template matMenuContent let-upFile="upFile">
-    <button
-      [class.image-menu-button]="field.isImage"
-      *ngFor="let field of selectedDocType?.fieldsList"
-      mat-menu-item
-      (click)="
-        sendFileInFiled(
-          { file: upFile.croppedFile, fileBase64: upFile.croppedFileBase64 },
-          field
-        )
-      "
-    >
-      <mat-icon *ngIf="!field.key.isImage; else imageImg"> </mat-icon>
-      <ng-template #imageImg>
-        <mat-icon>assignment_ind</mat-icon>
-      </ng-template>
-
-      <span class="px-2">{{ field.label }}</span>
-      <span *ngIf="field.shortName" class="px-2">({{ field.shortName }})</span>
-      <mat-icon class="float-end">arrow_forward</mat-icon>
-    </button>
-
-    <button
-      mat-menu-item
-      (click)="
-        sendFileInFiled({
-          file: upFile.croppedFile,
-          fileBase64: upFile.croppedFileBase64
-        })
-      "
-      class="show-in-console"
-    >
-      <mat-icon>view_headline</mat-icon>
-      <span class="px-2">Afisare text extras in consola</span>
-      <mat-icon class="float-end">arrow_downward</mat-icon>
-    </button>
-  </ng-template>
-</mat-menu> -->
+  </ng-container>
+</app-sidebar-resizer>
 
 <!-- Menu & SubMenu -->
 <mat-menu #myMenu="matMenu" xPosition="after">
@@ -295,6 +197,8 @@
     <button
       mat-menu-item
       (click)="
+        consoleOpenState = true;
+        textConsola = '';
         sendFileInFiled({
           file: upFile.croppedFile,
           fileBase64: upFile.croppedFileBase64
@@ -334,7 +238,7 @@
   </ng-template>
 </mat-menu>
 
-<!-- Formulare -->
+<!-- FORM -->
 <ng-template
   appTemplateDirective
   #formularTemplate
@@ -357,8 +261,10 @@
           *ngFor="let field of getSelectedDocTypeFields(column); let i = index"
           [class.collapsed]="isGroupCollapsed(field)"
         >
-          <!-- separator-->
+          <!-- group header-->
           <div
+            (dragover)="dragOverGroup = field; openGroup(field)"
+            (dragleave)="dragOverGroup = null"
             [style.margin]="field.margin || '0px'"
             *ngIf="field.group"
             class="field-separator"
@@ -383,14 +289,52 @@
             <!-- text -->
             <div
               *ngIf="field.isText"
-              class="mb-3 ms-1"
+              class="mb-2 ms-1"
               [style.padding-left]="'2px'"
               style="color: lightslategray"
             >
               <span [innerHTML]="field.label"></span>
             </div>
+
+            <div
+              *ngIf="
+                field.isOption &&
+                configFormGroup.get(this.selectedDocType.key).get('tipConcurs')
+                  ?.value === 1
+              "
+            >
+              <div class="pb-2 ps-2" style="color: lightslategray">
+                {{ "Optiune formula calcul:" }}
+              </div>
+              <mat-radio-group class="mb-3" [formControlName]="field.key">
+                <mat-radio-button
+                  color="primary"
+                  class="d-block mb-2 ms-3"
+                  [value]="i"
+                  >{{
+                    configFormGroup
+                      .get(this.selectedDocType.key)
+                      .get("formulaExam1")?.value
+                  }}
+                </mat-radio-button>
+                <mat-radio-button
+                  color="primary"
+                  class="d-block mb-2 ms-3"
+                  [value]="i"
+                  >{{
+                    configFormGroup.get("fisaInscriere").get("formulaExam2")
+                      ?.value
+                  }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+
             <!--  field normal( nu linie) -->
-            <ng-container *ngIf="!field.line && !field.inLine && !field.isText">
+            <ng-container
+              *ngIf="
+                !field.line && !field.inLine && !field.isText && !field.isOption
+              "
+            >
               <!-- field: nu data, nu imagine (input, text area)-->
               <ng-container *ngIf="!field.isImage && !field.isDate">
                 <mat-form-field
@@ -488,27 +432,30 @@
 
               <!-- imagine-->
               <div
-                class="w-100"
                 *ngIf="field.isImage"
-                [class.hasImage]="
-                  formGroup.get(selectedDocType.key).get(field.key).value
-                "
-                class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
-                appDragDrop
-                (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                class="w-100 d-flex justify-content-center"
               >
-                <img
-                  *ngIf="
-                    formGroup.get(selectedDocType.key).get(field.key).value;
-                    else noIcon
-                  "
-                  [src]="
+                <div
+                  [class.hasImage]="
                     formGroup.get(selectedDocType.key).get(field.key).value
                   "
-                />
-                <ng-template #noIcon>
-                  <mat-icon svgIcon="image"></mat-icon>
-                </ng-template>
+                  class="formular-image-wrapper d-flex justify-content-center align-items-center"
+                  appDragDrop
+                  (filesDropped)="sendFileInFiled({ file: $event }, field)"
+                >
+                  <img
+                    *ngIf="
+                      formGroup.get(selectedDocType.key).get(field.key).value;
+                      else noIcon
+                    "
+                    [src]="
+                      formGroup.get(selectedDocType.key).get(field.key).value
+                    "
+                  />
+                  <ng-template #noIcon>
+                    <mat-icon svgIcon="image"></mat-icon>
+                  </ng-template>
+                </div>
               </div>
             </ng-container>
 
@@ -930,47 +877,107 @@
         </button>
       </div>
     </div>
+
+    <!-- Consola-->
+    <mat-expansion-panel
+      class="console-mat-expansion"
+      [(expanded)]="consoleOpenState"
+      hideToggle="true"
+    >
+      <div class="h-100 w-100 position-relative console-wrapper mt-4">
+        <span class="sign-titlu position-absolute">Consola</span>
+        <button
+          class="action-button close-button position-absolute"
+          (click)="consoleOpenState = false"
+          mat-icon-button
+          color="primary"
+          [class.spinner-grow-inline]="textExtracting"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <div class="h-100 w-100">
+          <div
+            class="py-4 ps-3 pe-4"
+            [style.color]="'gray'"
+            *ngIf="textExtracting"
+          >
+            {{ "Procesare selectie si extragere text..." }}
+          </div>
+          <div class="py-4 ps-3 pe-4">{{ textConsola }}</div>
+        </div>
+      </div>
+    </mat-expansion-panel>
   </form>
 </ng-template>
 
+<!-- config -->
 <ng-template appTemplateDirective #configTemplate templateName="configTemplate">
   <div>
     <form
       *ngIf="selectedDocType"
       autocomplete="off"
       class="d-flex flex-column flex-wrap"
-      style="max-height: 450px; width: 600px; column-gap: 30px"
+      style="max-height: 460px; width: 900px; column-gap: 50px"
       [formGroup]="
         selectedDocType
           ? configFormGroup.get(selectedDocType.key)
           : configFormGroup
       "
     >
-      <ng-container *ngFor="let field of getSelectedDocTypeConfigFields()">
-        <mat-form-field
-          appearance="outline"
-          color="primary"
-          *ngIf="!field.isImage"
-        >
-          <mat-label>{{ field.label }}</mat-label>
-          <input type="text" matInput [formControlName]="field.key" />
-        </mat-form-field>
-
+      <ng-container
+        *ngFor="let field of getSelectedDocTypeConfigFields(); let idx = index"
+      >
+        <!-- text -->
         <div
-          *ngIf="field.isImage"
-          class="config-image-wrapper d-flex justify-content-center align-items-center mt-2 position-relative"
-          appDragDrop
-          (filesDropped)="sendFileInConfigField($event, field)"
+          *ngIf="field.isText"
+          class="ms-1 mb-3"
+          [style.padding-left]="'2px'"
+          style="color: lightslategray"
         >
-          <mat-label class="position-absolute config-image-label">{{
-            field.label
-          }}</mat-label>
-          <img
-            [src]="
-              configFormGroup.get(selectedDocType.key).get(field.key).value
-            "
-          />
+          <span [innerHTML]="field.label"></span>
         </div>
+
+        <ng-container *ngIf="field.isOption">
+          <mat-radio-group class="mb-3" [formControlName]="field.key">
+            <mat-radio-button
+              color="primary"
+              class="d-block mb-2 ms-3"
+              *ngFor="let opt of field.options; let i = index"
+              [value]="i"
+              >{{ opt }}</mat-radio-button
+            >
+          </mat-radio-group>
+        </ng-container>
+
+        <ng-container *ngIf="!field.isText && !field.isOption">
+          <mat-form-field
+            [style.min-width]="idx == 0 ? '415px' : '0px'"
+            appearance="outline"
+            color="primary"
+            *ngIf="!field.isImage"
+          >
+            <mat-label>{{ field.label }}</mat-label>
+            <input type="text" matInput [formControlName]="field.key" />
+          </mat-form-field>
+
+          <div
+            *ngIf="field.isImage"
+            class="config-image-wrapper d-flex justify-content-center align-items-center mt-2 position-relative"
+            appDragDrop
+            (filesDropped)="sendFileInConfigField($event, field)"
+          >
+            <mat-label class="position-absolute config-image-label">{{
+              field.label
+            }}</mat-label>
+            <img
+              style="height: 100px"
+              [src]="
+                configFormGroup.get(selectedDocType.key).get(field.key).value
+              "
+            />
+          </div>
+        </ng-container>
       </ng-container>
     </form>
   </div>

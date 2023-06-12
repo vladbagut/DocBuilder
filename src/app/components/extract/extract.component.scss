@@ -1,15 +1,16 @@
 @import "src/styles";
 
-.cell {
-  background-color: $background-clor !important;
+:host {
+  height: calc(100vh - 100px);
+  display: flex;
 }
 
 [appDragDrop].asig-wrapper {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   text-align: center;
   padding: 20px;
-  margin: 20px;
   /* background-image: url(data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='5' ry='5' stroke='rgb(25, 118, 210)' stroke-width='2' stroke-dasharray='10%2c 10' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e); */
   border-radius: 5px;
   border: 2px dashed lightblue;
@@ -29,19 +30,20 @@
 }
 .formular-image-wrapper {
   background-color: transparent;
-  height: 300px;
+  height: 167px;
   border-radius: 10px;
   border: 1px solid lightblue;
+  margin-top: 35px;
 
   &.drag-over {
     background-color: white;
   }
 
   img {
-    width: auto;
+    width: 100%;
     object-fit: scale-down !important;
-    max-height: 90%;
-    max-width: 90%;
+    max-height: 100%;
+    max-width: 100%;
   }
   .mat-icon {
     width: 50%;
@@ -53,7 +55,7 @@
 }
 .config-image-wrapper {
   background-color: transparent;
-  height: 100px;
+  height: 110px;
   border-radius: 10px;
   border: 1px solid lightblue;
 
@@ -71,12 +73,11 @@
 
 .asig-wrapper {
   //border: 2px solid lightblue;
-  height: calc(100vh - 138px);
+  height: 100%;
   overflow-y: scroll;
   &.asig-wrapper-right {
     padding-top: 20px;
     padding-right: 160px;
-    height: calc(100vh - 120px);
   }
 }
 
@@ -264,8 +265,10 @@
   min-width: 200px !important;
 
   .mat-menu-content {
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    background-color: white;
+
     .show-in-console {
       background: #add8e624;
       font-size: 13px;
@@ -315,9 +318,9 @@ textarea {
   flex: 0 0 100% !important;
 }
 
-.flex-90 {
-  flex: 0 0 90%;
-  flex-basis: 90%;
+.flex-80 {
+  flex: 0 0 80%;
+  flex-basis: 80%;
   transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
@@ -387,6 +390,70 @@ mat-form-field:hover .mat-icon.mat-accent {
   box-shadow: none !important;
 
   .sign-wrapper {
+    background-color: #e1eff3;
+    box-shadow: 0px 1px 15px -1px rgba(62, 129, 167, 0.43);
+    padding: 30px;
+    border: 2px solid #b6d8e3;
+
+    .sign-titlu {
+      z-index: 100;
+      top: -27px;
+      left: 22px;
+      background-color: #e1eff3;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-top: 5px;
+      color: black;
+      font-weight: 500;
+      border-radius: 6px 6px 0px 0px;
+      box-shadow: 0px -9px 12px -9px rgb(62 129 167 / 43%);
+      font-size: 15px;
+      border: 2px solid #b6d8e3;
+      border-bottom: none;
+      user-select: none;
+    }
+    .action-button.close-button {
+      z-index: 100;
+      top: 1px;
+      right: 1px;
+    }
+    .sign {
+      overflow: auto;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      border: 1px dashed #b6d8e3;
+    }
+    .sign + button {
+      border-radius: 0px;
+      height: 22px;
+      line-height: 22px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      /* padding: 10px; */
+      background: transparent;
+    }
+
+    .mat-form-field-can-float.mat-form-field-should-float ::ng-deep {
+      .mat-form-field-label {
+        mat-label {
+          background-color: #e1eff3;
+        }
+      }
+    }
+  }
+}
+
+.console-mat-expansion {
+  position: fixed;
+  right: 70px;
+  width: 45%;
+  bottom: 0px;
+  background: transparent;
+  box-shadow: none !important;
+
+  .console-wrapper {
     background-color: #e1eff3;
     box-shadow: 0px 1px 15px -1px rgba(62, 129, 167, 0.43);
     padding: 30px;
@@ -518,4 +585,12 @@ mat-form-field:hover .mat-icon.mat-accent {
 .collapsed {
   height: 0px;
   visibility: collapse;
+}
+
+::ng-deep .mat-radio-inner-circle {
+  background-color: #3a91b7 !important;
+}
+
+::ng-deep .mat-radio-outer-circle {
+  border-color: #72a2cd !important;
 }
