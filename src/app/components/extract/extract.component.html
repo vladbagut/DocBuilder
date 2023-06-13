@@ -267,7 +267,7 @@
             (dragleave)="dragOverGroup = null"
             [style.margin]="field.margin || '0px'"
             *ngIf="field.group"
-            class="field-separator"
+            class="field-separator no-select"
             [class.expanded]="
               !formGroup.get(selectedDocType.key).get(field.key).value
             "
@@ -309,8 +309,8 @@
               <mat-radio-group class="mb-3" [formControlName]="field.key">
                 <mat-radio-button
                   color="primary"
-                  class="d-block mb-2 ms-3"
-                  [value]="i"
+                  class="d-block mb-3 ms-3 mt-1"
+                  [value]="1"
                   >{{
                     configFormGroup
                       .get(this.selectedDocType.key)
@@ -320,7 +320,7 @@
                 <mat-radio-button
                   color="primary"
                   class="d-block mb-2 ms-3"
-                  [value]="i"
+                  [value]="2"
                   >{{
                     configFormGroup.get("fisaInscriere").get("formulaExam2")
                       ?.value

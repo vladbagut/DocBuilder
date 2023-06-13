@@ -211,7 +211,7 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       .map((g) => {
         if (g.group)
           g.items = this.selectedDocType?.fieldsList.filter(
-            (f) => f.inGroup === g.group && !f.isText
+            (f) => f.inGroup === g.group && !f.isText && !f.isOption
           );
         return g;
       });

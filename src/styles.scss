@@ -371,3 +371,7 @@ $dark-text: black;
 .red {
   color: red;
 }
+
+.no-select {
+  user-select: none !important;
+}

@@ -253,7 +253,19 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           },
           {
             width: 'auto',
-            stack: [getImagine(value.foto, 100)],
+            stack: [
+              getImagine(value.foto, 100),
+              {
+                margin: [0, 10, 0, 0],
+                text: 'Tel:        ' + getFieldValue(value, 'telefon', 30),
+                fontSize: 8,
+              },
+              {
+                margin: [0, 5, 0, 30],
+                text: 'E-mail:  ' + getFieldValue(value, 'email', 30),
+                fontSize: 8,
+              },
+            ],
           },
         ],
       },
@@ -356,6 +368,30 @@ export function fisaInscriereTemplate(value, config, semnatura) {
             fontSize: 10,
             text: '   ' + '_'.repeat(109),
           },
+
+      {
+        margin: [0, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '8. Părinţi sau sutinători legali:',
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          '   mama:   ' +
+          getFieldValue(value, 'mama', 46) +
+          ' ,  tata:   ' +
+          getFieldValue(value, 'tata', 46),
+      },
+      {
+        margin: [10, 7, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: 'adresa:    ' + getFieldValue(value, 'adresaParinti', 99),
+      },
+
       {
         margin: [0, 7, 0, 0],
         with: '*',
@@ -364,7 +400,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           {
             margin: [0, 0, 3, 0],
             width: 'auto',
-            text: '8.',
+            text: '9.',
           },
           {
             width: '*',
@@ -385,28 +421,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         text:
           '   anul absolvirii: ' + getFieldValue(value, 'anulAbsolvirii', 22),
       },
-      {
-        margin: [0, 7, 0, 0],
-        with: '*',
-        fontSize: 10,
-        text: '9. Părinţi sau sutinători legali:',
-      },
-      {
-        margin: [10, 7, 0, 0],
-        with: '*',
-        fontSize: 10,
-        text:
-          '   mama:   ' +
-          getFieldValue(value, 'mama', 46) +
-          ' ,  tata:   ' +
-          getFieldValue(value, 'tata', 46),
-      },
-      {
-        margin: [10, 7, 0, 0],
-        with: '*',
-        fontSize: 10,
-        text: 'adresa:    ' + getFieldValue(value, 'adresaParinti', 99),
-      },
+
       {
         margin: [-6, 7, 0, 0],
         with: '*',

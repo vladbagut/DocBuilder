@@ -127,7 +127,8 @@ export const docTypes = {
         label: 'Date personale',
         group: 1,
         column: 1,
-        margin: '5px 0px 20px 0px',
+        margin: '25px 0px 20px 0px',
+        collapsed: true,
       },
       nume: {
         label: 'Nume',
@@ -180,6 +181,26 @@ export const docTypes = {
         big: true,
         inGroup: 1,
       },
+
+      group11: {
+        label: 'Date de contact',
+        group: 11,
+        column: 1,
+        margin: '5px 0px 20px 0px',
+        collapsed: true,
+      },
+      telefon: {
+        label: 'Numar de telefon',
+        column: 1,
+        inGroup: 11,
+      },
+      email: {
+        label: 'E-mail',
+        column: 1,
+        inGroup: 11,
+        isEmail: true,
+      },
+
       group2: {
         label: 'Părinţi / suținători legali',
         group: 2,
@@ -305,31 +326,12 @@ export const docTypes = {
         inGroup: 4,
       },
 
-      group5: {
-        label: 'Date de contact',
-        group: 5,
-        column: 2,
-        margin: '60px 0px 20px 0px',
-        collapsed: true,
-      },
-      telefon: {
-        label: 'Numar de telefon',
-        column: 2,
-        inGroup: 5,
-      },
-      email: {
-        label: 'E-mail',
-        column: 2,
-        inGroup: 5,
-        isEmail: true,
-      },
-
       group6: {
         label: 'Media de admitere',
         group: 6,
         column: 2,
-        margin: '15px 0px 20px 0px',
-        collapsed: true,
+        margin: '55px 0px 20px 0px',
+        collapsed: false,
       },
       text4: {
         label:
