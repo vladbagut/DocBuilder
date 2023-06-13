@@ -369,7 +369,9 @@ $dark-text: black;
 }
 
 .red {
-  color: red;
+  color: rgb(67, 137, 170);
+  font-weight: 500;
+  min-width: 40px;
 }
 
 .no-select {
@@ -378,4 +380,13 @@ $dark-text: black;
 
 .noTextInConsola {
   color: #b1b1b1;
+}
+
+.fs-500 {
+  font-weight: 500;
+  color: rgb(148, 148, 148);
+}
+
+.min-w-0 {
+  min-width: 0;
 }
