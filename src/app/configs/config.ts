@@ -75,7 +75,7 @@ export const config = {
       },
       text3: {
         label:
-          '<div class="ps-3 comment"><span class="red">MB</span> - Media la examenul de bacalaureat</div><div class="ps-3 comment"><span class="red">NB</span> - Nota cea mai mare obtinuta la bacalaureat</div><div class="ps-3 comment"><span class="red">NTG</span> - nota la testul grilă la matematică</div>',
+          '<div class="ps-3 comment"><span class="red">MB</span> - Media la examenul de bacalaureat</div><div class="ps-3 comment"><span class="red">NB</span> - Nota cea mai mare obtinuta la bacalaureat</div><div class="ps-3 comment"><span class="red">NTG</span> - Nota la testul grilă la matematică</div>',
         isText: true,
       },
     },

@@ -218,8 +218,10 @@ export class ExtractComponent implements OnInit, AfterViewInit {
 
     // muta imaginea la sfarsit
     const image = this.menuGroupsItems.find((f) => f.isImage);
-    this.menuGroupsItems.splice(this.menuGroupsItems.indexOf(image), 1);
-    this.menuGroupsItems.push(image);
+    if (image) {
+      this.menuGroupsItems.splice(this.menuGroupsItems.indexOf(image), 1);
+      this.menuGroupsItems.push(image);
+    }
   }
 
   getFormSubGroup(dic, dicKey) {

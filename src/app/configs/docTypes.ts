@@ -41,82 +41,89 @@ export const docTypes = {
         big: true,
         inGroup: 1,
       },
-      group2: {
-        label: 'Valori asigurare:',
-        group: 2,
-        margin: '17px 0px 20px 0px',
-      },
-      primaAsigurare: {
-        label: 'Prima de despagubire',
-        inGroup: 2,
-      },
-      limitaDespagubireVatamari: {
-        label: 'Limita despagubire vatamari / deces',
-        inGroup: 2,
-      },
-      limitaDespagubirePagube: {
-        label: 'Limita despagubire pagube materiale',
-        inGroup: 2,
-      },
-      data: {
-        label: 'Data de la care incepe contractul',
-        isDate: true,
-        inGroup: 2,
-      },
+
       group3: {
         label: 'Date autovehicul:',
         group: 3,
-        column: 2,
+        column: 1,
         margin: '5px 0px 20px 0px',
       },
       nrInmatriculare: {
         label: 'Numar inmatriculare',
         shortLabel: 'A',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       modelVehicul: {
         label: 'Model vehicul',
         shortLabel: 'D1-D3',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       serieŞasiu: {
         label: 'Serie şasiu',
         shortLabel: 'E',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       nrInventar: {
         label: 'Numar inventar',
         shortLabel: 'X',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       capacitateaCilindrica: {
         label: 'Capacitatea cilindrica',
         shortLabel: 'P.1',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       putere: {
         label: 'Putere',
         shortLabel: 'P.2',
-        column: 2,
+        column: 1,
         inGroup: 3,
       },
       numarLocuri: {
         label: 'Numar locuri',
         shortLabel: 'S.1',
-        column: 2,
+        column: 1,
         isNumber: true,
         inGroup: 3,
       },
       greutateMaximaAdmisa: {
         label: 'Greutate maxima admisa',
         shortLabel: 'F.1',
-        column: 2,
+        column: 1,
         inGroup: 3,
+      },
+
+      group2: {
+        label: 'Valori asigurare:',
+        group: 2,
+        margin: '5px 0px 20px 0px',
+        column: 2,
+      },
+      primaAsigurare: {
+        label: 'Prima de despagubire',
+        inGroup: 2,
+        column: 2,
+      },
+      limitaDespagubireVatamari: {
+        label: 'Limita despagubire vatamari / deces',
+        inGroup: 2,
+        column: 2,
+      },
+      limitaDespagubirePagube: {
+        label: 'Limita despagubire pagube materiale',
+        inGroup: 2,
+        column: 2,
+      },
+      data: {
+        label: 'Data de la care incepe contractul',
+        isDate: true,
+        inGroup: 2,
+        column: 2,
       },
     },
   },
@@ -314,13 +321,15 @@ export const docTypes = {
         inGroup: 4,
       },
       certificatLingvisticTip: {
-        label: 'Certificat-Tip',
+        label: 'Tip',
+        shortLabel: 'Certificat',
         column: 1,
         line: 11,
         inGroup: 4,
       },
       certificatLingvisticLimba: {
-        label: 'Certificat-Limba',
+        label: 'Limba',
+        shortLabel: 'Certificat',
         column: 1,
         inLine: 11,
         inGroup: 4,
@@ -333,13 +342,7 @@ export const docTypes = {
         margin: '55px 0px 20px 0px',
         collapsed: false,
       },
-      text4: {
-        label:
-          '<span class="red">MB</span> - Media la examenul de <b>bacalaureat</b>',
-        isText: true,
-        column: 2,
-        inGroup: 6,
-      },
+
       medieBac: {
         label: 'Media BAC',
         shortLabel: 'MB',
@@ -347,15 +350,8 @@ export const docTypes = {
         isNumber: true,
         inGroup: 6,
       },
-      text5: {
-        label:
-          '<span class="red">NB</span> - Nota cea mai mare obtinuta la bacalaureat pentru una din materiile: <b>matematica</b>, <b>informatica</b>, <b>fizica</b>',
-        isText: true,
-        column: 2,
-        inGroup: 6,
-      },
       notaBac1: {
-        label: 'Nota',
+        label: 'Nota BAC',
         shortLabel: 'NB',
         column: 2,
         isNumber: true,
@@ -370,6 +366,13 @@ export const docTypes = {
       },
       optiuneFormulaCalcul: {
         isOption: true,
+        column: 2,
+        inGroup: 6,
+      },
+      legenda: {
+        label:
+          '<div class="ps-3 comment"><span class="red">MB</span> - Media la examenul de bacalaureat</div><div class="ps-3 comment"><span class="red">NB</span> - Nota cea mai mare obtinuta la bacalaureat pentru una din materiile: <b>matematica</b>, <b>informatica</b>, <b>fizica</b></div><div class="ps-3 comment"><span class="red">NTG</span> - Nota la testul grilă la matematică</div>',
+        isText: true,
         column: 2,
         inGroup: 6,
       },

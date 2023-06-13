@@ -218,7 +218,7 @@ export function asigAutoTemplate(value, config, semnatura) {
 export function fisaInscriereTemplate(value, config, semnatura) {
   return {
     pageSize: 'A4',
-    pageMargins: [20, 40, 20, 40],
+    pageMargins: [30, 40, 20, 40],
     content: [
       {
         columns: [
@@ -283,13 +283,13 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         text: 'la concursul de admitere în învăţământul universitar de licenţă (ciclul I de studii universitare)',
       },
       {
-        margin: [0, 20, 0, 0],
+        margin: [0, 25, 0, 0],
         with: '*',
         fontSize: 10,
         text: '1. Numele şi prenumele candidatului: ' + value.nume,
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -299,13 +299,13 @@ export function fisaInscriereTemplate(value, config, semnatura) {
             : '___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___ ___'),
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '3. Sexul:  ' + extrageDateDinCNP(value.CNP).sex,
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -313,13 +313,13 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           (value.nationalitatea || '_________________'),
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '5. Data naşterii:  ' + extrageDateDinCNP(value.CNP).dataNasterii,
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -330,7 +330,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           (value.judet || '________________'),
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -345,7 +345,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           (getDateFromMoment(value.buletinEliberatLaData) || '_______________'),
       },
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         columns: [
@@ -370,13 +370,13 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           },
 
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '8. Părinţi sau sutinători legali:',
       },
       {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -386,14 +386,14 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           getFieldValue(value, 'tata', 46),
       },
       {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: 'adresa:    ' + getFieldValue(value, 'adresaParinti', 99),
       },
 
       {
-        margin: [0, 7, 0, 0],
+        margin: [0, 10, 0, 0],
         with: '*',
         fontSize: 10,
         columns: [
@@ -409,27 +409,23 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         ],
       },
       {
-        margin: [10, 7, 0, 0],
-        with: '*',
-        fontSize: 10,
-        text: '   sectia absolvita:  ' + getFieldValue(value, 'sectia', 55),
-      },
-      {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
-          '   anul absolvirii: ' + getFieldValue(value, 'anulAbsolvirii', 22),
+          '   sectia absolvita:  ' +
+          getFieldValue(value, 'sectia', 52) +
+          '  ,   anul absolvirii: ' +
+          getFieldValue(value, 'anulAbsolvirii', 22),
       },
-
       {
-        margin: [-6, 7, 0, 0],
+        margin: [-6, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '10. Limbi străine cunoscute:',
       },
       {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         columns: [
           {
             width: '33%',
@@ -449,7 +445,7 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         ],
       },
       {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         columns: [
           {
             width: '33%',
@@ -469,28 +465,29 @@ export function fisaInscriereTemplate(value, config, semnatura) {
         ],
       },
       {
-        margin: [-6, 7, 0, 0],
+        margin: [-6, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '11. Certificat de competenţă lingvistică:',
       },
       {
-        margin: [10, 7, 0, 0],
+        margin: [10, 10, 0, 0],
         columns: [
           {
             width: '33%',
             fontSize: 9,
-            text: 'tip: ' + getFieldValue(value, 'engleza', 21),
+            text: 'Tip: ' + getFieldValue(value, 'certificatLingvisticTip', 21),
           },
           {
             width: '33%',
             fontSize: 9,
-            text: 'limba: ' + getFieldValue(value, 'franceza', 21),
+            text:
+              'Limba: ' + getFieldValue(value, 'certificatLingvisticLimba', 21),
           },
         ],
       },
       {
-        margin: [-6, 30, 0, 0],
+        margin: [-6, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: '12. Media de admitere:',
@@ -591,11 +588,14 @@ function getMediaAdmitere(value, config) {
 
     const media =
       value.notaBac1 && value.medieBac
-        ? Math.max(d1 * value.notaBac1 + d2 * value.medieBac, value.medieBac)
-        : '__________________';
+        ? Math.max(
+            d1 * value.notaBac1 + d2 * value.medieBac,
+            value.medieBac
+          ).toPrecision(3)
+        : 0;
     return [
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -603,35 +603,38 @@ function getMediaAdmitere(value, config) {
           getFieldValue(value, 'medieBac'),
       },
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
           'Nota cea mai mare obtinuta la bacalaureat ( NB ):   ' +
-          getFieldValue(value, 'notaBac1') +
-          '       ' +
-          getFieldValue(value, 'materiaBac1', 0),
+          getFieldValue(value, 'materiaBac1', 0) +
+          (value.materiaBac1 ? '  :    ' : '') +
+          getFieldValue(value, 'notaBac1'),
       },
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          'Formula de calcul a mediei de admitere:  ' + config.formulaDosare,
+      },
+      {
         with: '*',
         fontSize: 10,
         columns: [
           {
             width: 'auto',
-            text:
-              'Media de admitere: ' +
-              config.formulaDosare
-                .replace('MB', value.medieBac || '_'.repeat(10))
-                .replace('NB', value.notaBac1 || '_'.repeat(10))
-                .replace('MB', value.medieBac || '_'.repeat(10)) +
-              '  =  ',
+            margin: [12, 10, 0, 0],
+            with: '*',
+            fontSize: 10,
+            text: 'Media de admitere:  ',
           },
           {
-            text: media,
-            bold: true,
-            fontSize: 14,
-            margin: [10, -3, 0, 0],
+            text: media || '__________________',
+            bold: media != 0 ? true : false,
+            fontSize: 12,
+            margin: [10, 7, 0, 0],
           },
         ],
       },
@@ -645,7 +648,7 @@ function getMediaAdmitere(value, config) {
 
     return [
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -653,7 +656,7 @@ function getMediaAdmitere(value, config) {
           getFieldValue(value, 'medieBac'),
       },
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text:
@@ -663,7 +666,7 @@ function getMediaAdmitere(value, config) {
           getFieldValue(value, 'notaBac1'),
       },
       {
-        margin: [0, 10, 0, 0],
+        margin: [12, 10, 0, 0],
         with: '*',
         fontSize: 10,
         text: 'Formula de calcul a mediei de admitere:  ' + formulaCalcul,

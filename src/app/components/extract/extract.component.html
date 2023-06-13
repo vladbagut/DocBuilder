@@ -289,11 +289,19 @@
             <!-- text -->
             <div
               *ngIf="field.isText"
-              class="mb-2 ms-1"
-              [style.padding-left]="'2px'"
+              class="mb-2"
+              [class.indent]="field.key != 'legenda'"
               style="color: lightslategray"
             >
-              <span [innerHTML]="field.label"></span>
+              <span
+                [innerHTML]="field.label"
+                *ngIf="
+                  field.key != 'legenda' ||
+                  configFormGroup
+                    .get(this.selectedDocType.key)
+                    .get('tipConcurs')?.value === 1
+                "
+              ></span>
             </div>
 
             <div
@@ -306,10 +314,10 @@
               <div class="pb-2 ps-2" style="color: lightslategray">
                 {{ "Optiune formula calcul:" }}
               </div>
-              <mat-radio-group class="mb-3" [formControlName]="field.key">
+              <mat-radio-group [formControlName]="field.key">
                 <mat-radio-button
                   color="primary"
-                  class="d-block mb-3 ms-3 mt-1"
+                  class="d-block mb-2 ms-3 mt-1"
                   [value]="1"
                   >{{
                     configFormGroup
@@ -319,7 +327,7 @@
                 </mat-radio-button>
                 <mat-radio-button
                   color="primary"
-                  class="d-block mb-2 ms-3"
+                  class="d-block mb-4 ms-3"
                   [value]="2"
                   >{{
                     configFormGroup.get("fisaInscriere").get("formulaExam2")
@@ -897,12 +905,8 @@
         </button>
 
         <div class="h-100 w-100">
-          <div
-            class="py-4 ps-3 pe-4"
-            [style.color]="'gray'"
-            *ngIf="textExtracting"
-          >
-            {{ "Procesare selectie si extragere text..." }}
+          <div class="py-4 ps-3 pe-4 noTextInConsola" *ngIf="textExtracting">
+            {{ "Procesare imagine selectata si extragere text..." }}
           </div>
           <div class="py-4 ps-3 pe-4">{{ textConsola }}</div>
         </div>
