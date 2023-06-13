@@ -489,6 +489,13 @@ export function fisaInscriereTemplate(value, config, semnatura) {
           },
         ],
       },
+      {
+        margin: [-6, 30, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: '12. Media de admitere:',
+      },
+      ...getMediaAdmitere(value, config),
     ],
   };
 }
@@ -566,4 +573,101 @@ function getDateFromMoment(data, addYear?) {
 
 function getFieldValue(value, field, length = 10) {
   return value[field] || '_'.repeat(length);
+}
+
+function getMediaAdmitere(value, config) {
+  if (config.tipConcurs === 0) {
+    //dosare
+
+    const formula1 = config.formulaDosare
+      ?.replace('MAX', '')
+      .replace('(', '')
+      .replace(')', '')
+      .split(',')[0];
+
+    const p = formula1.split('+');
+    const d1: number = +p[0].split('*')[0];
+    const d2: number = +p[1].split('*')[0];
+
+    const media =
+      value.notaBac1 && value.medieBac
+        ? Math.max(d1 * value.notaBac1 + d2 * value.medieBac, value.medieBac)
+        : '__________________';
+    return [
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          'Media de la bacalaureat ( MB ):   ' +
+          getFieldValue(value, 'medieBac'),
+      },
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          'Nota cea mai mare obtinuta la bacalaureat ( NB ):   ' +
+          getFieldValue(value, 'notaBac1') +
+          '       ' +
+          getFieldValue(value, 'materiaBac1', 0),
+      },
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        columns: [
+          {
+            width: 'auto',
+            text:
+              'Media de admitere: ' +
+              config.formulaDosare
+                .replace('MB', value.medieBac || '_'.repeat(10))
+                .replace('NB', value.notaBac1 || '_'.repeat(10))
+                .replace('MB', value.medieBac || '_'.repeat(10)) +
+              '  =  ',
+          },
+          {
+            text: media,
+            bold: true,
+            fontSize: 14,
+            margin: [10, -3, 0, 0],
+          },
+        ],
+      },
+    ];
+  } else {
+    //examen
+
+    let formulaCalcul = '_'.repeat(20);
+    if (value.optiuneFormulaCalcul == 1) formulaCalcul = config.formulaExam1;
+    if (value.optiuneFormulaCalcul == 2) formulaCalcul = config.formulaExam2;
+
+    return [
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          'Media de la bacalaureat ( MB ):   ' +
+          getFieldValue(value, 'medieBac'),
+      },
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text:
+          'Nota cea mai mare obtinuta la bacalaureat ( NB ):   ' +
+          getFieldValue(value, 'materiaBac1', 0) +
+          (value.materiaBac1 ? '  :    ' : '') +
+          getFieldValue(value, 'notaBac1'),
+      },
+      {
+        margin: [0, 10, 0, 0],
+        with: '*',
+        fontSize: 10,
+        text: 'Formula de calcul a mediei de admitere:  ' + formulaCalcul,
+      },
+    ];
+  }
 }
