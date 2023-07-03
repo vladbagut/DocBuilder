@@ -25,8 +25,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { HttpClientModule } from '@angular/common/http';
 import { FloatingMenuComponent } from './components/floating-menu/floating-menu.component';
-import { ExtractComponent } from './components/extract/extract.component';
-import { DragDropDirective } from './directives/drag-drop.directive';
+import { EditorComponent } from './components/editor/editor.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ScrollVisibleDirective } from './directives/scroll-visible.directive';
 import { CamelToSpacePipe } from './directives/camel-to-space.pipe';
@@ -40,6 +39,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SidebarResizerComponent } from './directives/sidebar-resizer/sidebar-resizer.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { DropImageDirective } from './directives/drop-image.directive';
 
 @NgModule({
   declarations: [
@@ -48,8 +48,8 @@ import { MatRadioModule } from '@angular/material/radio';
     AboutComponent,
     HeaderComponent,
     FloatingMenuComponent,
-    ExtractComponent,
-    DragDropDirective,
+    EditorComponent,
+    DropImageDirective,
     ScrollVisibleDirective,
     CamelToSpacePipe,
     TemplateDirective,

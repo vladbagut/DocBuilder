@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 
 @Directive({
-  selector: '[appDragDrop]',
+  selector: '[appDropImage]',
 })
-export class DragDropDirective {
+export class DropImageDirective {
   @Output() filesDropped = new EventEmitter<File>();
   @Output() textDropped = new EventEmitter<string>();
 

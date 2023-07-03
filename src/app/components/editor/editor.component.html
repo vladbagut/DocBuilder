@@ -6,7 +6,7 @@
 >
   <ng-container left-container>
     <div class="w-100 h-100 d-flex p-4 pt-5">
-      <div appDragDrop (filesDropped)="setFile($event)" class="asig-wrapper">
+      <div appDropImage (filesDropped)="setFile($event)" class="asig-wrapper">
         <!-- upload & drag& drop area -->
         <button
           class="position-relative align-self-center upload-button"
@@ -31,7 +31,7 @@
           type="file"
           onclick="this.value=null"
           #fileInput
-          [accept]="CERTIFICATE_UPLOAD_FILE_FORMATS"
+          [accept]="ACCEPTED_FILE_FORMATS"
           (change)="setFile($event.target.files[0])"
         />
         <mat-error
@@ -171,7 +171,7 @@
         mat-menu-item
         *ngIf="group.items?.length"
         [matMenuTriggerFor]="subMenu"
-        [matMenuTriggerData]="{ items: group.items, upFile }"
+        [matMenuTriggerData]="{ items: group.items, upFile: this.upFile }"
       >
         <span class="ms-1 ps-4">{{ group.label }}</span>
       </button>
@@ -349,7 +349,7 @@
                   class="w-100 mb-2"
                   appearance="outline"
                   color="primary"
-                  appDragDrop
+                  appDropImage
                   (textDropped)="sendTextInField($event, field.key)"
                   (filesDropped)="sendFileInFiled({ file: $event }, field)"
                 >
@@ -399,7 +399,7 @@
                   </mat-icon>
 
                   <mat-error>
-                    {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                    {{ field | appFunctionPipe: getErrorMessage.bind(this) }}
                   </mat-error>
                 </mat-form-field>
               </ng-container>
@@ -410,7 +410,7 @@
                 *ngIf="field.isDate"
                 appearance="outline"
                 color="primary"
-                appDragDrop
+                appDropImage
                 (textDropped)="sendTextInField($event, field.key)"
                 (filesDropped)="sendFileInFiled({ file: $event }, field)"
               >
@@ -434,7 +434,7 @@
                 <mat-datepicker #dpstart disabled="false"></mat-datepicker>
 
                 <mat-error>
-                  {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                  {{ field | appFunctionPipe: getErrorMessage.bind(this) }}
                 </mat-error>
               </mat-form-field>
 
@@ -448,7 +448,7 @@
                     formGroup.get(selectedDocType.key).get(field.key).value
                   "
                   class="formular-image-wrapper d-flex justify-content-center align-items-center"
-                  appDragDrop
+                  appDropImage
                   (filesDropped)="sendFileInFiled({ file: $event }, field)"
                 >
                   <img
@@ -476,7 +476,7 @@
                     class="mb-2 line-item"
                     appearance="outline"
                     color="primary"
-                    appDragDrop
+                    appDropImage
                     (textDropped)="sendTextInField($event, field.key)"
                     (filesDropped)="sendFileInFiled({ file: $event }, field)"
                   >
@@ -528,7 +528,7 @@
                     </mat-icon>
 
                     <mat-error>
-                      {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                      {{ field | appFunctionPipe: getErrorMessage.bind(this) }}
                     </mat-error>
                   </mat-form-field>
                 </ng-container>
@@ -539,7 +539,7 @@
                   *ngIf="field.isDate"
                   appearance="outline"
                   color="primary"
-                  appDragDrop
+                  appDropImage
                   (textDropped)="sendTextInField($event, field.key)"
                   (filesDropped)="sendFileInFiled({ file: $event }, field)"
                 >
@@ -563,7 +563,7 @@
                   <mat-datepicker #dpstart disabled="false"></mat-datepicker>
 
                   <mat-error>
-                    {{ field | appFunctionPipe : getErrorMessage.bind(this) }}
+                    {{ field | appFunctionPipe: getErrorMessage.bind(this) }}
                   </mat-error>
                 </mat-form-field>
 
@@ -575,7 +575,7 @@
                     formGroup.get(selectedDocType.key).get(field.key).value
                   "
                   class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
-                  appDragDrop
+                  appDropImage
                   (filesDropped)="sendFileInFiled({ file: $event }, field)"
                 >
                   <img
@@ -599,7 +599,7 @@
                       class="mb-2 line-item"
                       appearance="outline"
                       color="primary"
-                      appDragDrop
+                      appDropImage
                       (textDropped)="sendTextInField($event, nextField.key)"
                       (filesDropped)="
                         sendFileInFiled({ file: $event }, nextField)
@@ -657,7 +657,7 @@
                       <mat-error>
                         {{
                           nextField
-                            | appFunctionPipe : getErrorMessage.bind(this)
+                            | appFunctionPipe: getErrorMessage.bind(this)
                         }}
                       </mat-error>
                     </mat-form-field>
@@ -669,7 +669,7 @@
                     *ngIf="nextField.isDate"
                     appearance="outline"
                     color="primary"
-                    appDragDrop
+                    appDropImage
                     (textDropped)="sendTextInField($event, nextField.key)"
                     (filesDropped)="
                       sendFileInFiled({ file: $event }, nextField)
@@ -698,7 +698,7 @@
 
                     <mat-error>
                       {{
-                        nextField | appFunctionPipe : getErrorMessage.bind(this)
+                        nextField | appFunctionPipe: getErrorMessage.bind(this)
                       }}
                     </mat-error>
                   </mat-form-field>
@@ -712,7 +712,7 @@
                         .value
                     "
                     class="formular-image-wrapper d-flex justify-content-center align-items-center mt-2"
-                    appDragDrop
+                    appDropImage
                     (filesDropped)="
                       sendFileInFiled({ file: $event }, nextField)
                     "
@@ -968,7 +968,7 @@
           <div
             *ngIf="field.isImage"
             class="config-image-wrapper d-flex justify-content-center align-items-center mt-2 position-relative"
-            appDragDrop
+            appDropImage
             (filesDropped)="sendFileInConfigField($event, field)"
           >
             <mat-label class="position-absolute config-image-label">{{

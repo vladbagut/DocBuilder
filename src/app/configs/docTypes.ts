@@ -134,8 +134,8 @@ export const docTypes = {
         label: 'Date personale',
         group: 1,
         column: 1,
-        margin: '25px 0px 20px 0px',
-        collapsed: true,
+        margin: '15px 0px 20px 0px',
+        collapsed: false,
       },
       nume: {
         label: 'Nume',

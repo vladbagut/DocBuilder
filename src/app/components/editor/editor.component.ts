@@ -62,16 +62,16 @@ const Errors = {
 };
 
 @Component({
-  selector: 'app-extract',
-  templateUrl: './extract.component.html',
-  styleUrls: ['./extract.component.scss'],
+  selector: 'app-editor',
+  templateUrl: './editor.component.html',
+  styleUrls: ['./editor.component.scss'],
   animations: [ChangeBackgroundAnimation, FadingAnimation],
   providers: [{ provide: MAT_DATE_FORMATS, useValue: DATE_FORMATS }],
 })
-export class ExtractComponent implements OnInit, AfterViewInit {
+export class EditorComponent implements OnInit, AfterViewInit {
   errorMessage: string;
-  CERTIFICATE_UPLOAD_FILE_MAX_SIZE = 5242880;
-  CERTIFICATE_UPLOAD_FILE_FORMATS = '.jpeg,.jpg,.png';
+  FILE_MAX_SIZE = 5242880;
+  ACCEPTED_FILE_FORMATS = '.jpeg,.jpg,.png';
   private worker;
   selectedDocType;
 
@@ -251,12 +251,10 @@ export class ExtractComponent implements OnInit, AfterViewInit {
       const fileType = '.' + typeSplit[typeSplit.length - 1];
       this.errorMessage = '';
 
-      if (file.size > this.CERTIFICATE_UPLOAD_FILE_MAX_SIZE) {
+      if (file.size > this.FILE_MAX_SIZE) {
         this.errorMessage =
           'Fisierul este prea mare, dimensiunea maxima este de 5MB';
-      } else if (
-        !this.CERTIFICATE_UPLOAD_FILE_FORMATS.split(',').includes(fileType)
-      ) {
+      } else if (!this.ACCEPTED_FILE_FORMATS.split(',').includes(fileType)) {
         this.errorMessage = 'Formatul fisierului este invalid';
       } else {
         const newFile: UpFile = {
@@ -317,7 +315,10 @@ export class ExtractComponent implements OnInit, AfterViewInit {
               .get(field.key)
               .setValue(
                 (this.formGroup.get(this.selectedDocType.key).get(field.key)
-                  .value || '') + text
+                  .value
+                  ? this.formGroup.get(this.selectedDocType.key).get(field.key)
+                      .value + ' '
+                  : '') + text
               );
           else {
             this.formGroup

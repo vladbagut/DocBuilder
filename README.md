@@ -57,7 +57,7 @@ Am definit 2 directive angular, care se ataseaza la niste elemente html si le da
 - drag-drop - directiva care se ocupa de drag/drop-ul unei imagini
 - crop-image - directiva care se ocupa de crop o bucata de imagine dintr-una mai mare
 
-1. drag-drop (appDragDrop)
+1. drag-drop (appDropImage)
 
 - se ataseaza de elemente in care se poate face drop: containerul(div) in care se incarca imagini (partea stanga), input/img din formular (din partea dreapta)
 - functionalitatea: capteaza evenimentele 'dragOver', 'drop' ale elementului html
@@ -85,7 +85,7 @@ In continuare intra in actiune elementul de care a fost atasata directiva:
 - pe "mouse up", se decupeaza din imaginea de sub canvas o zona de la coordonatele rectangle-ului desenat in canvas
 - se creaza un element img cu imaginea crop-uita si se aseaza exact peste rectangle
 - noul img fiind deasupra capteaza evenimentele de drag/drop, si va putea fi tras (ca orice element web img) -> si apoi intra directiva 1 in functiune
-  (elementele care au appDragDrop vor reactiona cand se face dragOver peste ele si vor capta imaginea trasa la "drop")
+  (elementele care au appDropImage vor reactiona cand se face dragOver peste ele si vor capta imaginea trasa la "drop")
 - img mai are si context menu: cand se apasa pe o optiune din meniu, imaginea (base64 string) poate fi trimisa la un field sau la consola
 
 ## Pdfmake:

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './components/about/about.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ExtractComponent } from './components/extract/extract.component';
+import { EditorComponent } from './components/editor/editor.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -10,12 +10,12 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   {
     path: 'asigurare',
-    component: ExtractComponent,
+    component: EditorComponent,
     data: { docTypeKey: 'asigAuto' },
   },
   {
     path: 'inscriere',
-    component: ExtractComponent,
+    component: EditorComponent,
     data: { docTypeKey: 'fisaInscriere' },
   },
 ];
