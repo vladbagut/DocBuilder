@@ -3,63 +3,36 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
   OnInit,
   QueryList,
-  Renderer2,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { FileService } from 'src/app/services/file.service';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-import {
-  FormControl,
-  FormGroup,
-  MaxLengthValidator,
-  Validators,
-} from '@angular/forms';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import { TemplateDirective } from 'src/app/directives/template.directive';
 import { ChangeBackgroundAnimation, FadingAnimation } from 'src/animations';
 import { MatMenuTrigger } from '@angular/material/menu';
-import * as Tesseract from 'tesseract.js';
-import { createWorker } from 'tesseract.js';
-
 import { docTypes } from 'src/app/configs/docTypes';
 import * as PDFTemplates from 'src/app/configs/pdfTemplates';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SignaturePad } from 'angular2-signaturepad';
+import { ActivatedRoute } from '@angular/router';
+import { config, initialConfig } from 'src/app/configs/config';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+import * as moment from 'moment';
+import { DATE_FORMATS, Errors, UpFile } from 'src/app/model';
 
-export type UpFile = {
-  file: File;
-  fileName: string;
-  fileBase64: string;
-  croppedFile?: File;
-  croppedFileBase64?: string;
-  expanded: boolean;
-  textExtracting?: boolean;
-};
-export const DATE_FORMATS = {
-  parse: {
-    dateInput: 'DD.MM.YYYY',
-  },
-  display: {
-    dateInput: 'DD.MM.YYYY',
-    customDateInput: 'DD.MM.YYYY',
-    monthYearLabel: 'MMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY',
-  },
-};
+// pdfMake
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
-const Errors = {
-  required: 'Câmpul este obligatoriu',
-  InvalidCNP: 'CNP invalid',
-  pattern: 'Valoarea introdusa este gresita',
-  matDatepickerParse: 'Introduceti o data in formatul: "dd.mm.yyyy"',
-  InvalidDate: 'Introduceti o data in formatul: "dd.mm.yyyy"',
-};
+// tesseract
+import * as Tesseract from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
+import { CNPValidator, dateValidator } from 'src/app/validators';
 
 @Component({
   selector: 'app-editor',
@@ -116,6 +89,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.initConfigFormGroup();
   }
 
+  // INITIALIZARE EDITOR
   async ngOnInit() {
     this.route.data.subscribe((routerData) => {
       const doc = this.docTypesList.find(
@@ -387,7 +361,97 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // 4. Utils (ALTE METODE)-------------
+  // 4. Generare PDF  ----------
+  resetForm() {
+    const form = this.formGroup.get(this.selectedDocType.key);
+    form.reset();
+    Object.keys(form['controls']).forEach((key) => {
+      form.get(key).markAsPending();
+    });
+  }
+
+  formSubmitted = false;
+  generarePdf(actiune = 'open') {
+    const form = this.formGroup.get(this.selectedDocType.key);
+    Object.keys(form['controls']).forEach((key) => {
+      form.get(key).updateValueAndValidity();
+    });
+    this.formSubmitted = true;
+
+    if (!this.formGroup.get(this.selectedDocType.key).valid) {
+      this.showMessage('Formularul este invalid !');
+      return;
+    }
+
+    let nrSerie;
+    if (this.selectedDocType.key == 'asigAuto') {
+      nrSerie =
+        +this.configFormGroup.get(this.selectedDocType.key).get('numarSerie')
+          .value || 100000001;
+    }
+
+    const documentDefinition = this.getPdfDefinition();
+    switch (actiune) {
+      case 'open':
+        pdfMake.createPdf(documentDefinition).open();
+        break;
+      case 'print':
+        pdfMake.createPdf(documentDefinition).print();
+        break;
+      case 'download':
+        pdfMake.createPdf(documentDefinition).download();
+        break;
+      default:
+        pdfMake.createPdf(documentDefinition).open();
+        break;
+    }
+
+    if (this.selectedDocType.key == 'asigAuto') {
+      this.configFormGroup
+        .get(this.selectedDocType.key)
+        .get('numarSerie')
+        .setValue(nrSerie + 1);
+    }
+  }
+  getPdfDefinition() {
+    return PDFTemplates[this.selectedDocType.key + 'Template']
+      ? PDFTemplates[this.selectedDocType.key + 'Template'](
+          this.formGroup.get(this.selectedDocType.key).value,
+          this.configFormGroup.get(this.selectedDocType.key).value,
+          this.getSignature()
+        )
+      : {};
+  }
+  getSignature() {
+    return this.signatureBase64
+      ? {
+          image: this.signatureBase64,
+          width: 100,
+          alignment: 'center',
+        }
+      : null;
+  }
+
+  // 5. Signature
+  drawComplete() {
+    this.signatureBase64 = this.signaturePad.toDataURL();
+    localStorage.setItem('signature', JSON.stringify(this.signatureBase64));
+  }
+  clearSign() {
+    this.signatureBase64 = null;
+    localStorage.setItem('signature', null);
+    this.signaturePad.clear();
+  }
+
+  public showMessage(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 2000,
+      horizontalPosition: 'right',
+      panelClass: ['error-snackbar'],
+    });
+  }
+
+  // 6. Utils (ALTE METODE)-------------
   deleteMedia(upFile: UpFile) {
     this.files.splice(this.files.indexOf(upFile), 1);
   }
@@ -496,192 +560,4 @@ export class EditorComponent implements OnInit, AfterViewInit {
       return Errors[msgKey];
     } else return null;
   }
-
-  // 5. Generare PDF  ----------
-  resetForm() {
-    const form = this.formGroup.get(this.selectedDocType.key);
-    form.reset();
-    Object.keys(form['controls']).forEach((key) => {
-      form.get(key).markAsPending();
-    });
-  }
-
-  formSubmitted = false;
-  generarePdf(actiune = 'open') {
-    const form = this.formGroup.get(this.selectedDocType.key);
-    Object.keys(form['controls']).forEach((key) => {
-      form.get(key).updateValueAndValidity();
-    });
-    this.formSubmitted = true;
-
-    if (!this.formGroup.get(this.selectedDocType.key).valid) {
-      this.showMessage('Formularul este invalid !');
-      return;
-    }
-
-    let nrSerie;
-    if (this.selectedDocType.key == 'asigAuto') {
-      nrSerie =
-        +this.configFormGroup.get(this.selectedDocType.key).get('numarSerie')
-          .value || 100000001;
-    }
-
-    const documentDefinition = this.getPdfDefinition();
-    switch (actiune) {
-      case 'open':
-        pdfMake.createPdf(documentDefinition).open();
-        break;
-      case 'print':
-        pdfMake.createPdf(documentDefinition).print();
-        break;
-      case 'download':
-        pdfMake.createPdf(documentDefinition).download();
-        break;
-      default:
-        pdfMake.createPdf(documentDefinition).open();
-        break;
-    }
-
-    if (this.selectedDocType.key == 'asigAuto') {
-      this.configFormGroup
-        .get(this.selectedDocType.key)
-        .get('numarSerie')
-        .setValue(nrSerie + 1);
-    }
-  }
-  getPdfDefinition() {
-    return PDFTemplates[this.selectedDocType.key + 'Template']
-      ? PDFTemplates[this.selectedDocType.key + 'Template'](
-          this.formGroup.get(this.selectedDocType.key).value,
-          this.configFormGroup.get(this.selectedDocType.key).value,
-          this.getSignature()
-        )
-      : {};
-  }
-
-  getSignature() {
-    return this.signatureBase64
-      ? {
-          image: this.signatureBase64,
-          width: 100,
-          alignment: 'center',
-        }
-      : null;
-  }
-
-  // 6. Signature
-  drawComplete() {
-    this.signatureBase64 = this.signaturePad.toDataURL();
-    localStorage.setItem('signature', JSON.stringify(this.signatureBase64));
-  }
-  clearSign() {
-    this.signatureBase64 = null;
-    localStorage.setItem('signature', null);
-    this.signaturePad.clear();
-  }
-
-  public showMessage(message: string): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 2000,
-      horizontalPosition: 'right',
-      panelClass: ['error-snackbar'],
-    });
-  }
-}
-
-//-----------------------------------
-//  CNP validator
-//-----------------------------------
-import { ValidatorFn, AbstractControl } from '@angular/forms';
-import { SignaturePad } from 'angular2-signaturepad';
-import { ActivatedRoute } from '@angular/router';
-import { config, initialConfig } from 'src/app/configs/config';
-import { MAT_DATE_FORMATS } from '@angular/material/core';
-
-export function CNPValidator(): ValidatorFn {
-  let isValidCNP = (text) => {
-    var i = 0,
-      year = 0,
-      hashResult = 0,
-      cnp = [],
-      hashTable = [2, 7, 9, 1, 4, 6, 3, 5, 8, 2, 7, 9];
-    if (text.length !== 13) {
-      return false;
-    }
-    for (i = 0; i < 13; i++) {
-      cnp[i] = parseInt(text.charAt(i), 10);
-      if (isNaN(cnp[i])) {
-        return false;
-      }
-      if (i < 12) {
-        hashResult = hashResult + cnp[i] * hashTable[i];
-      }
-    }
-    hashResult = hashResult % 11;
-    if (hashResult === 10) {
-      hashResult = 1;
-    }
-    year = cnp[1] * 10 + cnp[2];
-    switch (cnp[0]) {
-      case 1:
-      case 2:
-        {
-          year += 1900;
-        }
-        break;
-      case 3:
-      case 4:
-        {
-          year += 1800;
-        }
-        break;
-      case 5:
-      case 6:
-        {
-          year += 2000;
-        }
-        break;
-      case 7:
-      case 8:
-      case 9:
-        {
-          year += 2000;
-          if (year > new Date().getFullYear() - 14) {
-            year -= 100;
-          }
-        }
-        break;
-      default: {
-        return false;
-      }
-    }
-    if (year < 1800 || year > 2099) {
-      return false;
-    }
-
-    return cnp[12] === hashResult;
-  };
-
-  return (control: AbstractControl): { [key: string]: boolean } | null => {
-    let p_cnp = control.value;
-    if (!p_cnp) return null;
-    return !isValidCNP(p_cnp) ? { InvalidCNP: true } : null;
-  };
-}
-
-//-----------------------------------
-//  Date validator
-
-import * as moment from 'moment';
-export function dateValidator(): ValidatorFn {
-  return (control: AbstractControl): { [key: string]: boolean } | null => {
-    const yearValid =
-      moment(control.value, 'YYY').format('L') !== 'Invalid date';
-    const monthValid =
-      moment(control.value, 'MMM').format('L') !== 'Invalid date' ||
-      moment(control.value, 'MM').format('L') !== 'Invalid date';
-
-    const forbidden = !control.value ? false : !(yearValid && monthValid);
-    return forbidden ? { InvalidDate: true } : null;
-  };
 }
